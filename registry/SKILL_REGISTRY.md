@@ -18,6 +18,7 @@ Full inventory of all skills. Before creating a new skill, check if one already 
 | [write-module-tests](../src/skills/code/write-module-tests/SKILL.md) | Pytest test code from test plan (per-module) | code | `tests` | draft |
 | [write-test-coverage](../src/skills/docs/write-test-coverage/SKILL.md) | Test coverage register mapping acceptance criteria to test scenarios | docs | `test-coverage` | stable |
 | [test-runner](../src/skills/code/test-runner/SKILL.md) | Run pytest test suites safely through a validated execution pipeline | code | — | draft |
+| [test-audit](../src/skills/code/test-audit/SKILL.md) | Read-only diagnostic audit of test coverage health — produces AuditGapReport feeding test-generate/evaluate/integrate | code.test | — | draft |
 | [jira-reporter](../external/jira-suite/skills/jira-reporter/SKILL.md) | JIRA updates as observability/HITL layer during agent workflows | integration | — | stable |
 | [auto-research](../src/skills/optimization/auto-research/SKILL.md) | Autonomous iterative improvement loop with subagent-per-iteration execution | optimization | — | stable |
 | [skill-brainstorm](../synapse/skills/skill/skill-brainstorm/SKILL.md) | **Deprecated** — superseded by synapse-brainstorm | skill | — | deprecated |
