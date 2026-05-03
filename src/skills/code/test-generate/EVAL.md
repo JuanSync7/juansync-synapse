@@ -100,7 +100,7 @@ Empty `AuditGapReport` (`gaps=[]`) → "no gaps to close" message printed; zero 
 For every gap closed in `COVERAGE_STATE.yaml`, `coverage_analyzer` confirms coverage actually improved at that gap; gaps where coverage did not improve are downgraded to `coverage-unchanged` instead of `closed`.
 
 ### EVAL-O14
-No local declaration of `AuditGapReport`, `LintReport`, `LintIssue`, or `CoverageState` exists outside `ai-synapse/tools/testing/schemas.py`; all imports resolve to that path.
+No local declaration of `AuditGapReport`, `LintReport`, `LintIssue`, or `CoverageState` exists outside their canonical homes: `AuditGapReport` and `CoverageState` in `src/skills/code/test-evaluate/schemas.py`; `LintReport` and `LintIssue` in `src/tools/testing/lint_reporter/schemas.py`. All imports resolve to those paths.
 
 ### EVAL-O15
 Generated tests that fail the green run are NOT present in the final committed file; failing tests are either rewritten green in one cycle or discarded with an `unresolvable` log entry in `COVERAGE_STATE.yaml`.

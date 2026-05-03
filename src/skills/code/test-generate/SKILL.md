@@ -38,9 +38,9 @@ Third stage of the 6-skill test coverage engine. Consumes `AuditGapReport` from 
 ### [NEW] Fresh session
 Do:
   1. Parse arguments: `--audit-report` (default `project/coverage/state/AUDIT_GAP_REPORT.json`), `--max-gaps` (default unlimited), `--mutation-threshold` (default `all` = all-mutants-killed), `--no-pr` (skip [GATE]; write intent list to disk and stop).
-  2. Load `AuditGapReport` from disk; verify it parses against `ai-synapse/tools/testing/schemas.py` `AuditGapReport` model.
+  2. Load `AuditGapReport` from disk; verify it parses against `src/skills/code/test-evaluate/schemas.py` `AuditGapReport` model.
   3. If `gaps` is empty → print "no gaps to close — coverage already meets thresholds" and exit (no PR, no state mutation).
-  4. Confirm engine tools available in `ai-synapse/tools/testing/`: `branch_mapper`, `hypothesis_strategy_generator`, `mutation_runner`, `assertion_quality`, `coverage_analyzer`, `log_contract_validator`. Abort if missing.
+  4. Confirm engine tools available in `src/tools/testing/`: `branch_mapper`, `hypothesis_strategy_generator`, `mutation_runner`, `assertion_quality`, `coverage_analyzer`, `log_contract_validator` (invoke as `python -m src.tools.testing.<tool>`). Abort if missing.
   5. Initialize `closed_gaps`, `unresolvable_gaps`, `human_rejected_gaps` accumulators; generate batch `generation_id` (UUID).
 Don't: Proceed if report cannot be parsed; touch source code; pre-commit anything.
 Exit: → [BRANCH-MAP] (first gap)
