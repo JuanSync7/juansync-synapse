@@ -34,7 +34,7 @@ Read-only first stage of the 6-skill test coverage engine. Orchestrates 9 testin
 Do:
   1. Verify precondition: lint passes (or all `LintReport.issues` flagged `requires-human-review`). If not, abort with directive to run `/test-lint` first.
   2. Detect mode: `--delta` (default if `AUDIT_HISTORY/` non-empty), `--absolute` (default on first run, or explicit flag).
-  3. Confirm tool inventory available in `ai-synapse/tools/testing/` — abort with clear error if any of the 9 tools missing.
+  3. Confirm tool inventory available under `src/tools/testing/<tool>/` (one directory per tool) — abort with clear error if any of the 9 tools missing.
 Don't: Proceed without lint-clean precondition. Re-run lint inline.
 Exit: → [SNAPSHOT]
 
@@ -87,7 +87,7 @@ Exit: → [CONSOLIDATE]
 
 ### [CONSOLIDATE] Merge
 Load: templates/audit-report.md, references/coverage-pyramid.md
-Do: Merge all tool outputs into a single `AuditGapReport` (pydantic, schema in `ai-synapse/tools/testing/schemas.py`). Record `audit_timestamp` and `project_sha`. Classify gaps by pyramid layer.
+Do: Merge all tool outputs into a single `AuditGapReport` (pydantic; sub-schemas live in each tool's `src/tools/testing/<tool>/schemas.py`, with shared `CoverageState` in `src/skills/code/test-evaluate/schemas.py`). Record `audit_timestamp` and `project_sha`. Classify gaps by pyramid layer.
 Don't: Omit any tool's output.
 Exit: → [WRITE-HISTORY]
 

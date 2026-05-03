@@ -148,7 +148,7 @@ Binary criteria graded against the execution trace.
   - **Test:** [NEW] checks lint pass; failed lint aborts before [SNAPSHOT].
   - **Fail:** [SNAPSHOT] begins without lint check, or audit continues past failed lint.
 
-- [ ] **EVAL-E06:** All 9 tools invoked from `ai-synapse/tools/testing/`
+- [ ] **EVAL-E06:** All 9 tools invoked from `src/tools/testing/<tool>/` (per-tool directories)
   - **Test:** All 9 tool invocations recorded; inventory check at [NEW].
   - **Fail:** Tool absent, wrong path, or inventory check skipped.
 

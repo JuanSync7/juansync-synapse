@@ -9,19 +9,21 @@
 
 ## Pydantic Model Definition
 
-All sub-types are imported from `ai-synapse/tools/testing/schemas.py` — that module is
-the canonical source of truth. Do not redefine them here.
+All sub-types are imported from each tool's per-tool `schemas.py` module under
+`src/tools/testing/<tool>/schemas.py` — those modules are the canonical sources of truth.
+Do not redefine them here. The shared `CoverageState` lives in
+`src/skills/code/test-evaluate/schemas.py`.
 
 ```python
 from datetime import datetime
-from ai_synapse.tools.testing.schemas import (
+from src.tools.testing.coverage_analyzer.schemas import (
     CoverageGap,            # per-function gap with line %, uncovered branches, layer
-    PriorityRanking,        # critical/standard/cold tier assignments + coverage targets
-    GamingAlert,            # flagged AST anti-pattern with test_id and pattern name
-    DependencyVulnerability,# advisory ID, severity, affected package, fixed version
     EdgeCoverageGaps,       # (caller_module, callee_module) edges: covered vs unanalyzed
-    LogContractViolation,   # call-site path, violation type, log-path coverage fraction
 )
+from src.tools.testing.critical_scorer.schemas import PriorityRanking  # critical/standard/cold tier assignments + coverage targets
+from src.tools.testing.gaming_detector.schemas import GamingAlert      # flagged AST anti-pattern with test_id and pattern name
+from src.tools.testing.dep_vulnerability.schemas import DependencyVulnerability  # advisory ID, severity, affected package, fixed version
+from src.tools.testing.log_contract_validator.schemas import LogContractViolation  # call-site path, violation type, log-path coverage fraction
 
 class AuditGapReport(BaseModel):
     gaps: list[CoverageGap]                         # <list[CoverageGap]> — one entry per function
@@ -65,7 +67,7 @@ failure — do not pass a malformed report to [WRITE-HISTORY].
    - `list` fields → `[]`
    - `dict` fields → `{}`
    - Object fields (`PriorityRanking`, `EdgeCoverageGaps`) → sentinel instance with
-     empty tier lists / edge lists as defined in `ai-synapse/tools/testing/schemas.py`
+     empty tier lists / edge lists as defined in each tool's `src/tools/testing/<tool>/schemas.py`
 
 2. **`audit_timestamp` MUST be timezone-aware UTC.**
    Use `datetime.now(timezone.utc)` — never `datetime.utcnow()` (naive, deprecated).

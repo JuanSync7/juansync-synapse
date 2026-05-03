@@ -182,7 +182,7 @@ No prior integration test run has produced trace artifacts. Treat as equivalent 
 ## Output Contract
 
 `edge_coverage_analyzer` returns an `EdgeCoverageGaps` model (defined in
-`ai-synapse/tools/testing/schemas.py`) containing:
+`src/tools/testing/coverage_analyzer/schemas.py`) containing:
 
 - `total_edges`, `covered_edges`, `coverage_ratio`
 - `uncovered: list[EdgePair]`
