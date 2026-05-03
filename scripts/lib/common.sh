@@ -48,7 +48,7 @@ usage() {
     echo "  ai-skills codex all             # Codex CLI: install everything (global)"
     echo "  ai-skills codex-project all     # Codex CLI: install to current project"
     echo "  ai-skills gemini all            # Gemini CLI: install everything"
-    echo "  ai-skills install synapse/skills/skill src/skills/docs"
+    echo "  ai-skills install synapse/skills/skill synapse/skills/orchestration"
     echo "  ai-skills zip all"
 }
 

@@ -214,6 +214,26 @@ for skill_dir in "${changed_skill_dirs[@]}"; do
     if git diff --cached --name-only --diff-filter=A | grep -q "^${skill_dir}/SKILL.md$"; then
         echo "  WARN  $skill_dir: new skill — run /synapse-gatekeeper before merging (or mark status: draft in registry/SKILL_REGISTRY.md)"
     fi
+
+    # --- Check 7: Auto-demote stable → draft if SKILL.md changed ---
+    # Stable means "this exact SKILL.md was approved by gatekeeper". Any edit
+    # invalidates that claim. Companion-file edits (references/, templates/)
+    # are NOT in scope — only SKILL.md itself triggers demotion.
+    if git diff --cached --name-only --diff-filter=M | grep -q "^${skill_dir}/SKILL.md$"; then
+        if [ -f "$skill_registry_md" ] && grep -qE "\[$skill_name\].*\| *stable *\|" "$skill_registry_md"; then
+            # Rewrite the row's last column from stable → draft. Match by skill name.
+            tmp_file="$(mktemp)"
+            awk -v name="$skill_name" '
+                $0 ~ "\\["name"\\]" && /\| *stable *\|/ {
+                    sub(/\| *stable *\|[[:space:]]*$/, "| draft |")
+                }
+                { print }
+            ' "$skill_registry_md" > "$tmp_file"
+            mv "$tmp_file" "$skill_registry_md"
+            git add "$skill_registry_md"
+            echo "  DEMOTE  $skill_dir: SKILL.md changed — registry status stable → draft. Re-run /synapse-gatekeeper to restore."
+        fi
+    fi
 done
 
 # =============================================================================

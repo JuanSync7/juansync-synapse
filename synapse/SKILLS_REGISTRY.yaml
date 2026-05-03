@@ -3,6 +3,13 @@
 # Only pipeline-routable skills are listed here (those consumed by the autonomous-orchestrator).
 # Non-pipeline skills belong in registry/SKILL_REGISTRY.md only.
 # Files without version: 2 are rejected by the autonomous-orchestrator with a clear error.
+#
+# NOTE: This is the reference engineering pipeline shipped with the framework.
+# Most stage→skill bindings below (write-spec-docs, write-design-docs, etc.) are
+# adopter skills that live in an adopter repo, not in framework `synapse/`.
+# In a pure framework distribution (ai-synapse), running `autonomous-orchestrator`
+# requires installing the corresponding adopter skills first. Adopters typically
+# fork ai-synapse and populate `src/skills/docs/`, `src/skills/code/`, etc.
 
 version: 2
 

@@ -46,6 +46,7 @@ TaskCreate "Phase 2 — Structural tier check"
 TaskCreate "Phase 3 — Quality / Conformance tier check"
 TaskCreate "Phase 4 — Registry tier check (skills only)"
 TaskCreate "Phase 5 — Issue verdict and report"
+TaskCreate "Phase 6 — Record verdict (skill flow, APPROVE only)"
 ```
 
 ---
@@ -271,3 +272,17 @@ VERDICT: <APPROVE | REVISE | REJECT>
 ```
 
 The verdict MUST be the first line of output. DO NOT prepend preamble, headers, or explanatory text before it — orchestrators rely on this for automated parsing.
+
+---
+
+## Phase 6 — Record verdict (skill flow only, APPROVE only)
+
+When the verdict is APPROVE **and** the artifact type is skill, update the `Status` column of the skill's row in `registry/SKILL_REGISTRY.md`:
+
+- If current Status is `draft` or empty/unset → write `stable`.
+- If current Status is already `stable` → no-op.
+- If current Status is `deprecated` → no-op. Never overwrite `deprecated` from gatekeeper. (A deprecated skill that re-earns APPROVE is a human decision, not an automated one.)
+
+Do nothing for REVISE or REJECT verdicts. Do nothing for agent / protocol / tool / pathway flows — their registries do not have a Status column under this lifecycle yet.
+
+The pre-commit hook will auto-demote `stable → draft` on any subsequent edit to the skill's `SKILL.md`, so this write step is the only path to `stable`.

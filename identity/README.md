@@ -6,10 +6,10 @@ Personal identity files consumed by AI agents across all tools. These define **w
 
 | File | Purpose | Installed to |
 |------|---------|--------------|
-| `SOUL.md` | Personal identity: background, worldview, opinions, thinking style, blind spots, tensions, boundaries | `~/.claude/SOUL.md` |
-| `SOUL.template.md` | Blank skeleton with guidance for creating your own SOUL.md | *(not installed — repo reference only)* |
-| `STAKEHOLDER.md` | Decision proxy persona: priorities, expertise map, heuristics, red flags, escalation triggers | `~/.claude/stakeholder.md` |
-| `STAKEHOLDER.template.md` | Blank skeleton with guidance for creating your own STAKEHOLDER.md | *(not installed — repo reference only)* |
+| `SOUL.template.md` | Blank skeleton with guidance for creating your own SOUL.md | *(not installed — copy to `SOUL.md` and customize)* |
+| `STAKEHOLDER.template.md` | Blank skeleton with guidance for creating your own STAKEHOLDER.md | *(not installed — copy to `STAKEHOLDER.md` and customize)* |
+
+The framework distribution does not ship a pre-filled `SOUL.md` or `STAKEHOLDER.md` — those are personal artifacts each adopter authors for themselves.
 
 ## Two Consumption Modes
 

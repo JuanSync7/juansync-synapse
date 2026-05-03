@@ -52,7 +52,6 @@ AI-Synapse includes a complete lifecycle for building skills themselves — from
 | **Create** | [`/skill-creator`](synapse/skills/skill/skill-creator/) | Scaffolds SKILL.md + EVAL.md with baseline testing and design principles check |
 | **Evaluate** | [`/write-skill-eval`](synapse/skills/skill/write-skill-eval/) | Generates or regenerates EVAL.md with output criteria and test prompts |
 | **Improve** | [`/improve-skill`](synapse/skills/skill/improve-skill/) | Score-fix-rescore loop until quality criteria are met |
-| **Research** | [`/auto-research`](src/skills/optimization/auto-research/) | Autonomous modify-measure-keep loop for any measurable target |
 | **Certify** | [`/synapse-gatekeeper`](synapse/skills/skill/synapse-gatekeeper/) | Promotion gate — APPROVE / REVISE / REJECT verdict against governance criteria |
 
 The flow is: **brainstorm → create → improve → certify → PR**. Each stage is optional — jump in wherever your skill is.
@@ -270,7 +269,7 @@ make init                          # configure git hooks + submodules (first-tim
 
 ```bash
 ./cortex install all                        # install all skills to Claude Code
-./cortex install src/skills/docs            # install one domain
+./cortex install synapse/skills/skill       # install one domain
 ./cortex codex all                          # install to Codex CLI
 ./cortex gemini all                         # install to Gemini CLI
 ./cortex agents                             # install agent definitions
@@ -288,7 +287,7 @@ make init                          # configure git hooks + submodules (first-tim
 ./cortex scaffold agent ml monitor          # scaffold a new agent
 ./cortex scaffold tool integration my-mcp   # scaffold a new tool
 ./cortex validate                           # run all structural checks
-./cortex validate src/skills/docs/my-skill  # validate one artifact
+./cortex validate synapse/skills/skill/skill-creator  # validate one artifact
 ./cortex test                               # run all tool tests
 ./cortex test src/tools/synapse/my-tool     # test one tool
 ```
@@ -322,7 +321,7 @@ See [`docs/cli/`](docs/cli/) for the complete per-command documentation.
 
 ```bash
 ./cortex zip all                            # package all skills as .zip
-./cortex zip src/skills/docs/patch-docs     # package one skill
+./cortex zip synapse/skills/skill/skill-creator  # package one skill
 ```
 
 → See **[src/README.md](src/README.md)** for the full artifact catalog with per-domain tables.

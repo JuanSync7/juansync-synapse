@@ -10,17 +10,17 @@ Install skill symlinks to Claude Code.
 
 ## Description
 
-Creates symlinks from `~/.claude/skills/` to skill directories in the repo. Each target is a path relative to the repo root (e.g., `src/skills/docs`) or the keyword `all` to install every skill found in `src/` and `external/`. Existing symlinks pointing to the same target are skipped. Broken symlinks are automatically repaired. Name collisions with skills from other sources are warned about but not overwritten.
+Creates symlinks from `~/.claude/skills/` to skill directories in the repo. Each target is a path relative to the repo root (e.g., `synapse/skills/skill`) or the keyword `all` to install every skill found in `synapse/`, `src/`, and `external/`. Existing symlinks pointing to the same target are skipped. Broken symlinks are automatically repaired. Name collisions with skills from other sources are warned about but not overwritten.
 
 The target directory defaults to `~/.claude/skills/` and can be overridden via the `CLAUDE_SKILLS_DIR` environment variable.
 
 ## Examples
 
 ```bash
-./cortex install all                                        # install every skill
-./cortex install src/skills/docs                            # install all skills in the docs domain
-./cortex install src/skills/docs src/skills/code/build-plan # install specific domains/skills
-./cortex install external/jira-suite                        # install skills from an external suite
+./cortex install all                                              # install every skill
+./cortex install synapse/skills/skill                             # install all skills in the skill domain
+./cortex install synapse/skills/skill synapse/skills/orchestration # install specific domains/skills
+./cortex install external/<suite-name>                            # install skills from an external suite (if any)
 ```
 
 ## Options

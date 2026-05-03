@@ -85,7 +85,7 @@ After cloning, run `make init` to configure git hooks.
 
 ```bash
 ./scripts/install.sh install all                          # install all skills
-./scripts/install.sh install synapse/skills/skill src/skills/docs # install specific domains
+./scripts/install.sh install synapse/skills/skill synapse/skills/protocol # install specific domains
 ./scripts/install.sh agents                               # install agent definitions
 ./scripts/install.sh identity                             # install identity files (SOUL.md, stakeholder.md)
 ./scripts/install.sh list                                 # show installed skills

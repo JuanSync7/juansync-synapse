@@ -49,11 +49,11 @@ Validates ai-synapse artifacts against structural rules: required frontmatter fi
 ## Examples
 
 ```bash
-./cortex validate                                       # validate all artifacts
-./cortex validate src/skills/docs/write-spec-docs       # validate one skill (by directory)
-./cortex validate src/skills/docs/write-spec-docs/SKILL.md  # validate one skill (by file)
-./cortex validate src/agents/                           # validate all agents
-./cortex validate scripts/install.sh                    # validate one script
+./cortex validate                                                # validate all artifacts
+./cortex validate synapse/skills/skill/skill-creator             # validate one skill (by directory)
+./cortex validate synapse/skills/skill/skill-creator/SKILL.md    # validate one skill (by file)
+./cortex validate synapse/agents/                                # validate all agents
+./cortex validate scripts/install.sh                             # validate one script
 ```
 
 ## Options
