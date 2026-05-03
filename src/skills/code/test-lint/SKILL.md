@@ -33,8 +33,8 @@ Read-only first stage of the 6-skill test coverage engine. Runs the project's fu
 ### [NEW] Fresh session
 Do:
   1. Parse arguments: `--repo-root` (default cwd), `--output` (default `project/coverage/state/LINT_REPORT.json`).
-  2. Confirm tool inventory: `lint_reporter` and `secret_scanner` available in `ai-synapse/tools/testing/` — abort with clear error if missing.
-  3. Verify `ai-synapse/tools/testing/schemas.py` defines `LintIssue` and `LintReport` — abort if missing (no local redeclaration).
+  2. Confirm tool inventory: `lint_reporter` (`python -m src.tools.testing.lint_reporter`) and `secret_scanner` (`python -m src.tools.testing.secret_scanner`) available — abort with clear error if missing.
+  3. Verify `src/tools/testing/lint_reporter/schemas.py` defines `LintIssue` and `LintReport` — abort if missing (no local redeclaration).
 Don't: Proceed without tool inventory verified.
 Exit: → [SCAN]
 
@@ -57,7 +57,7 @@ Exit: → [AGGREGATE]
 
 ### [AGGREGATE] Merge findings
 Load: templates/lint-report.md
-Do: Import `LintIssue` and `LintReport` from `ai-synapse/tools/testing/schemas.py`. Merge per-tool JSON into normalized `LintIssue` objects; populate `severity`, `files_scanned`, `duration_ms`. Partition descriptive-test docstring violations into `descriptive_test_violations` (subset of `issues`, surfaced separately). Include all findings — do not deduplicate or filter.
+Do: Import `LintIssue` and `LintReport` from `src/tools/testing/lint_reporter/schemas.py` (secret findings come from `src/tools/testing/secret_scanner/schemas.py`). Merge per-tool JSON into normalized `LintIssue` objects; populate `severity`, `files_scanned`, `duration_ms`. Partition descriptive-test docstring violations into `descriptive_test_violations` (subset of `issues`, surfaced separately). Include all findings — do not deduplicate or filter.
 Exit: → [EMIT-REPORT]
 
 ### [EMIT-REPORT] Persist + summarize

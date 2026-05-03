@@ -67,7 +67,7 @@ Hard constraints for `test-lint`. Loaded at every node. No exceptions.
 
 ## Schema Source of Truth
 
-- MUST import `LintIssue` and `LintReport` from `ai-synapse/tools/testing/schemas.py`.
+- MUST import `LintIssue` and `LintReport` from `src/tools/testing/lint_reporter/schemas.py` (and secret-finding schemas from `src/tools/testing/secret_scanner/schemas.py`).
 - MUST NOT redeclare these types locally, even partially. If the import fails, abort with a clear error rather than falling back to a local definition.
 
 ---

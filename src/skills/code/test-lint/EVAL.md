@@ -153,8 +153,8 @@ Binary pass/fail criteria for evaluating the `LintReport` produced by a skill ru
   - **Test:** With a committed `.secrets.baseline`, verify (a) no `detect-secrets` issue references a baselined secret; (b) every `detect-secrets` issue's `message` contains the absolute path to `.secrets.baseline`.
   - **Fail signal:** A baselined secret appears, or the baseline path is missing from `message`.
 
-- [ ] **EVAL-O12:** Schema imported from `ai-synapse/tools/testing/schemas.py`, not redeclared
-  - **Test:** Search all files generated/modified for class definitions named `LintIssue` or `LintReport`. None should exist outside the canonical schema file. Imports must resolve to `ai_synapse.tools.testing.schemas`.
+- [ ] **EVAL-O12:** Schema imported from `src/tools/testing/lint_reporter/schemas.py` (and `src/tools/testing/secret_scanner/schemas.py` for secret findings), not redeclared
+  - **Test:** Search all files generated/modified for class definitions named `LintIssue` or `LintReport`. None should exist outside the canonical schema files. Imports must resolve to `src.tools.testing.lint_reporter.schemas` (and `src.tools.testing.secret_scanner.schemas` where applicable).
   - **Fail signal:** A local class definition exists, or imports resolve elsewhere.
 
 - [ ] **EVAL-O13:** A test function with no docstring emits exactly one `MISSING_DOCSTRING` issue
@@ -184,11 +184,11 @@ Graded against the agent's execution trace, not the final output.
   - **Fail signal:** Fewer than five reference files loaded, or any reference loaded at a different node.
 
 - [ ] **EVAL-E03:** Tool inventory verified at [NEW] before any linter is invoked
-  - **Test:** [NEW] shows existence checks for `ai-synapse/tools/testing/lint_reporter` and `ai-synapse/tools/testing/secret_scanner` preceding any linter invocation.
+  - **Test:** [NEW] shows existence checks for `src/tools/testing/lint_reporter` and `src/tools/testing/secret_scanner` (invoked as `python -m src.tools.testing.lint_reporter` / `python -m src.tools.testing.secret_scanner`) preceding any linter invocation.
   - **Fail signal:** Skill proceeds with no tool-inventory check, or check occurs after first linter call.
 
 - [ ] **EVAL-E04:** `schemas.py` verified at [NEW]; schema imported from canonical path at [AGGREGATE]
-  - **Test:** [NEW] verifies `schemas.py` exports `LintIssue`/`LintReport`. [AGGREGATE] imports from `ai_synapse.tools.testing.schemas`. No local class definitions.
+  - **Test:** [NEW] verifies `src/tools/testing/lint_reporter/schemas.py` exports `LintIssue`/`LintReport`. [AGGREGATE] imports from `src.tools.testing.lint_reporter.schemas` (and `src.tools.testing.secret_scanner.schemas` for secret findings). No local class definitions.
   - **Fail signal:** Local class defined, or no canonical-path import.
 
 - [ ] **EVAL-E05:** All four nodes visited in declared order
