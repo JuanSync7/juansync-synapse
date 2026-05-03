@@ -37,10 +37,10 @@ Fifth stage of the 6-skill test coverage engine. Consumes `CoverageState` from `
 ### [NEW] Fresh session
 Do:
   1. Parse arguments: `--coverage-state` (default `project/coverage/state/COVERAGE_STATE.yaml`), `--top-n` (default `critical` = all critical-tier modules from `AuditGapReport.priority_ranking`; integer also accepted), `--rerun-mode` (default `source-changed`), `--no-pr` (write strategies to disk; skip PR).
-  2. Load `CoverageState` from disk; verify it parses against `ai-synapse/tools/testing/schemas.py` `CoverageState` model. Verify at least one module has mocked-integration tests.
+  2. Load `CoverageState` from disk; verify it parses against `src/skills/code/test-evaluate/schemas.py` `CoverageState` model. Verify at least one module has mocked-integration tests.
   3. Load `AuditGapReport.priority_ranking` if `--top-n critical`; otherwise use top-N by criticality score.
   4. If no qualifying modules → print "no modules with mocked-integration tests — nothing to evaluate" and exit (no PR, no state mutation).
-  5. Confirm engine tools available in `ai-synapse/tools/testing/`: `boundary_classifier`, `mock_inventory`, `coverage_analyzer`. Abort if missing.
+  5. Confirm engine tools available in `src/tools/testing/`: `boundary_classifier`, `mock_inventory`, `coverage_analyzer`. Abort if missing.
   6. If `--rerun-mode source-changed`: load prior `IntegrationStrategy` documents; compute source-hash delta; skip unchanged modules.
 Don't: Modify source or tests; proceed if `CoverageState` cannot be parsed.
 Exit: → [LOAD]

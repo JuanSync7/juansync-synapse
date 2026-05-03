@@ -100,7 +100,7 @@ Empty CoverageState (no modules with mocked-integration tests) → "no modules w
 Every excluded candidate in `Considered but excluded` carries an exclusion reason from the fixed set: `low-marginal-gain`, `low-failure-mode-risk`, `cost-exceeds-budget`, `over_mocking_warning`, `wrapper-coupling`, `already-covered`, `unsupported-category`. Zero free-form exclusion reasons.
 
 ### EVAL-O14
-No local declaration of `CoverageState` or `IntegrationStrategy` exists outside `ai-synapse/tools/testing/schemas.py`; all imports resolve to that path.
+No local declaration of `CoverageState` or `IntegrationStrategy` exists outside `src/skills/code/test-evaluate/schemas.py`; all imports resolve to that path.
 
 ### EVAL-O15
 For Temporal-decorated workers and Celery tasks specifically, lifecycle assignment uses the framework harness (`WorkflowEnvironment`, Celery test harness) where applicable per `references/boundary-queue.md`, not generic `ephemeral-container`, when explicitly indicated.
