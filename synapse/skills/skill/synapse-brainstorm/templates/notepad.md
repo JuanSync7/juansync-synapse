@@ -11,7 +11,8 @@
 ## Artifacts Discovered
 | # | Type | Name | Lens-complete? | Memo type |
 |---|------|------|----------------|-----------|
-<!-- Rows added at [N] when artifacts are named and confirmed -->
+<!-- APPEND a row the moment an artifact crystallizes at [N] — same turn, before composing the response.
+     Mirror the entry into meta.yaml.artifacts[]. Use TBD-<descriptor> for Name if not yet confirmed. -->
 
 ## Cross-cutting
 <!-- Shared decisions spanning 2+ artifacts. Only items that genuinely can't be assigned to one artifact.
@@ -40,6 +41,11 @@
 
 ## Artifact: <name>
 Type: <agent|tool|protocol|skill> | Name: <validated-name> | Convention: <pattern> ✓
+<!-- Optional per-artifact metadata (omit lines that don't apply):
+     depends_on: [<artifact-name>, ...]      # prospective dependency edges, recorded at [B] pre-move check
+     conflicts_with: [<artifact-name>, ...]  # bidirectional lateral conflict (record on both artifacts)
+     stance: <collaborator|socratic>         # per-artifact override of session-level stance (see meta.yaml) -->
+
 
 ### Resolved
 <!-- Fully fleshed decisions — purpose, input contract, output contract, behavioral rules, etc.

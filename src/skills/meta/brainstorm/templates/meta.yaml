@@ -17,6 +17,10 @@ shape: ""                  # Decision | Plan | Spec | Reframe | Decompose | Defe
 # Persistence scope
 scope: project             # project | global
 
+# Session policy (set in Phase A; per-thread overrides recorded in the notepad's thread records)
+ambient_mode: off          # on | off — when on, agent reads in-repo files unprompted to advance threads
+stance: collaborator       # socratic | collaborator — collaborator is default (see SKILL.md ## Stances)
+
 # Timestamps
 created: "YYYY-MM-DD"
 last_updated: "YYYY-MM-DD"

@@ -3,6 +3,9 @@
 
 slug: <YYYY-MM-DD>-<slug>          # Must match the directory name
 status: active                      # active | paused | done | abandoned | deferred
+stance: collaborator                # collaborator (default) | socratic
+                                    # Set at [A]. `socratic` only when user explicitly requests pure facilitation.
+                                    # Per-artifact override may be recorded in the notepad's per-artifact section.
 position: "[A] — initial discovery" # Current node + context string
                                     # Examples:
                                     #   "[A] — initial discovery"
@@ -17,7 +20,12 @@ position: "[A] — initial discovery" # Current node + context string
 
 artifacts_discovered: 0
 artifacts: []
-  # Each artifact entry when discovered at [N]:
+  # APPEND an entry the moment an artifact crystallizes at [N] — same tool-call batch as the
+  # notepad section update, BEFORE composing the response. Do not batch-update at session end.
+  # If naming is still pending, use `name: TBD-<descriptor>` so the count and entry exist;
+  # update name once user confirms.
+  #
+  # Each entry shape:
   # - type: <skill | tool | agent | protocol>
   #   name: <validated-name>          # Confirmed by user, validated against taxonomy
   #   lens_complete: false            # true when all 5 lenses pass for this artifact

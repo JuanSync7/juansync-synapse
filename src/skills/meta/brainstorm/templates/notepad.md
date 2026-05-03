@@ -72,7 +72,10 @@
 
 ## T1: <short title>
 **Status:** open | resolved | discarded | deferred | decomposed
-**Depends on:** <T-IDs, if any>
+**Depends on:** <T-IDs, if any — prospective dependencies from [B:Generate]/[B:Pressure-test] pre-move scans; e.g., `T2`>
+**Conflicts with:** <T-IDs, if any — bidirectional edge for mutually exclusive resolutions across threads>
+**Ambient mode (override):** <on | off — only set if the thread's topic is off-scope from session-level ambient_mode; otherwise omit>
+**Stance (override):** <socratic | collaborator — only set if the user signaled a per-thread stance change; otherwise omit>
 
 ### Discussion
 <!-- Concerns surfaced, options generated, pressure-test notes, resolution reasoning.
