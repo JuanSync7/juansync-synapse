@@ -1,0 +1,3 @@
+[submodule "external/jira-suite"]
+	path = external/jira-suite
+	url = https://github.com/JuanSync7/jira-suite.git
