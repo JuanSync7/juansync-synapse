@@ -108,7 +108,7 @@ DB items default to `transaction-rollback`; `schema-per-test` only when DDL or a
 Empty queue (no qualifying strategy items) → "no strategy items to integrate — nothing to do" message; zero PRs; zero state mutation.
 
 ### EVAL-O14
-No local declaration of `IntegrationStrategy`, `CoverageState`, `FlakinessSummary`, or `EdgeCoverageReport` exists outside `ai-synapse/tools/testing/schemas.py`; all imports resolve to that path.
+Each shared schema is declared in exactly one canonical location: `IntegrationStrategy` and `CoverageState` in `src/skills/code/test-evaluate/schemas.py`; `FlakinessSummary` in `src/tools/testing/flakiness_checker/schemas.py`; `EdgeCoverageReport` in `src/tools/testing/coverage_analyzer/schemas.py`. No duplicate declarations exist elsewhere; all imports resolve to the canonical path.
 
 ### EVAL-O15
 For items where the strategy's `recommended_pattern` conflicts with the category table in `references/lifecycle-patterns.md`, the item is aborted and logged as `pattern-mismatch` in the run summary; no test file is written, no service is spun up, no PR is opened.

@@ -38,7 +38,7 @@ Sixth and final stage of the test coverage engine. Consumes `IntegrationStrategy
 ### [NEW] Fresh session
 Do:
   1. Parse arguments: `--strategy-dir` (default `project/coverage/state/integration-strategies/`), `--item` (single item id; default = process all), `--rerecord` (re-record vcrpy cassettes for items where dependency version changed), `--retry-rejected` (re-attempt items previously marked `human-rejected`), `--notify` (notification channel; default `gh-pr-review`).
-  2. Discover `IntegrationStrategy` documents in `--strategy-dir`; verify each parses against `ai-synapse/tools/testing/schemas.py` `IntegrationStrategy` model.
+  2. Discover `IntegrationStrategy` documents in `--strategy-dir`; verify each parses against `src/skills/code/test-evaluate/schemas.py` `IntegrationStrategy` model.
   3. Verify `project/coverage/state/COVERAGE_STATE.yaml` exists and parses against `CoverageState` model.
   4. Confirm engine tools available: `flakiness_checker`, `coverage_analyzer`, `secret_scanner`. Abort if missing.
   5. Build per-item work queue ordered by source `IntegrationStrategy` ranking (replacement_value descending). Filter out items already merged (`status: merged`), already rejected (`status: human-rejected`) unless `--retry-rejected`, and currently flaky-quarantined within SLA window.
@@ -81,8 +81,8 @@ Don't: Delete the mock test now; emit a test that passes only because the mock w
 Exit: → [FLAKE-CHECK]
 
 ### [FLAKE-CHECK] Validate stability over ≥10 reruns
-Load: rules/integration-constraints.md
-Do: Invoke `flakiness_checker` to run the new integration test ≥10 times in isolation. Compute fail rate (failures / total runs). Record outcomes into a `FlakinessSummary` per `ai-synapse/tools/testing/schemas.py`.
+Load: rules/integration-constraints.md, src/tools/testing/flakiness_checker/schemas.py
+Do: Invoke `flakiness_checker` to run the new integration test ≥10 times in isolation. Compute fail rate (failures / total runs). Record outcomes into a `FlakinessSummary` per `src/tools/testing/flakiness_checker/schemas.py`.
   - **Fail rate < 2%** → proceed to [HARD-GATE].
   - **Fail rate ≥ 2%** → mark item `flaky-quarantined` with 7-day SLA in `COVERAGE_STATE.yaml`; teardown service; advance to next item without opening PR. Quarantined items are excluded from required CI; revisited after SLA expiry.
 Don't: Stop early after the first 10 pass; suppress intermittent failures; lower the threshold mid-run.
@@ -102,7 +102,7 @@ Don't: Auto-merge; time the gate out; merge based on CI green alone; advance to 
 Exit: → [MERGE-UPDATE] (approved) | → next item (rejected)
 
 ### [MERGE-UPDATE] Merge approved PR and update state
-Load: ai-synapse/tools/testing/schemas.py
+Load: src/skills/code/test-evaluate/schemas.py
 Do:
   1. Merge the approved PR (squash merge on default branch).
   2. Delete the original mock-integration test (it's now superseded by the merged real test).
