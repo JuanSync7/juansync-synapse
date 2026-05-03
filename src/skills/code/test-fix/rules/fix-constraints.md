@@ -76,7 +76,7 @@ Commit message format: `fix(lint): <category>` with suppression reasons in the b
 
 ## 9. Schema Canonical Source
 
-Import `LintIssue` and `LintReport` exclusively from `ai-synapse/tools/testing/schemas.py`.
+Import `LintIssue` and `LintReport` exclusively from `src/tools/testing/lint_reporter/schemas.py`.
 Do not redeclare these types in fix nodes, verify nodes, or helper modules.
 Rationale: a single definition prevents silent schema drift across the pipeline.
 

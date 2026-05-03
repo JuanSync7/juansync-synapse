@@ -36,9 +36,9 @@ Second stage of the 6-skill test coverage engine. Consumes `LintReport` produced
 ### [NEW] Fresh session
 Do:
   1. Parse arguments: `--lint-report` (default `project/coverage/state/LINT_REPORT.json`), `--no-pr` (skip [OPEN-PR], stop after VERIFY-VULTURE).
-  2. Load `LintReport` from disk; verify it parses against `ai-synapse/tools/testing/schemas.py` `LintReport` model.
+  2. Load `LintReport` from disk; verify it parses against `src/tools/testing/lint_reporter/schemas.py` `LintReport` model.
   3. If `LintReport.issues` is empty AND `descriptive_test_violations` is empty → print "nothing to fix — codebase already lint-clean" and exit (no PR).
-  4. Confirm `lint_reporter` tool is available in `ai-synapse/tools/testing/` — abort if missing.
+  4. Confirm `lint_reporter` tool is available in `src/tools/testing/lint_reporter/` — abort if missing.
 Don't: Proceed if the report cannot be parsed; proceed if `lint_reporter` is missing.
 Exit: → [TRIAGE]
 

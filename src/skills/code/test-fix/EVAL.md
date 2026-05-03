@@ -97,7 +97,7 @@ Empty LintReport (`issues=[]` and `descriptive_test_violations=[]`) → "nothing
 Re-verification residuals appear in `requires_human_review` with reason containing "introduced during fix phase"; git log shows exactly one `fix(lint): <category>` commit per category (no re-fix loop).
 
 ### EVAL-O13
-No local declaration of `LintIssue` or `LintReport` exists outside `ai-synapse/tools/testing/schemas.py`; all imports resolve to that path.
+No local declaration of `LintIssue` or `LintReport` exists outside `src/tools/testing/lint_reporter/schemas.py`; all imports resolve to that path.
 
 ### EVAL-O14
 GitHub label `requires-human-review` is applied iff the list is non-empty.
