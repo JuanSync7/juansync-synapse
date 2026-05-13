@@ -1,0 +1,37 @@
+# Tests — {{name}}
+
+Tests for `{{name}}` are exit-code-driven bash scripts. Each test invokes the tool and asserts the exit code and, where applicable, stdout content.
+
+## How to run
+
+From the repo root:
+
+```bash
+bash {{tool_dir}}/test/test-{{name}}.sh
+```
+
+The test script is self-contained — it creates its own temp fixtures in a `mktemp -d` directory and cleans up on exit. No network access or external services are required unless the tool declares them.
+
+## Fixture conventions
+
+- Each test case creates isolated fixtures in `$TEST_DIR` — a temp directory created at suite start.
+- Fixtures are written inline inside the test script via heredocs or `echo` redirects; no checked-in fixture files are required unless the tool's inputs are large/complex.
+- The suite resets `$TEST_DIR` between tests by calling `setup_case()` (see test script template).
+
+## Exit code expectations per case
+
+| Case | Expected exit | Rationale |
+|------|--------------|-----------|
+| Happy path — all required args present | 0 | Nominal success |
+| Missing required arg | 1 (`ERR_USAGE`) | Bad input → usage error |
+| Required file not found | 2 (`ERR_NOT_FOUND`) | Input path does not exist |
+| Missing external dependency | 3 (`ERR_DEPENDENCY`) | Dependency unavailable |
+| {{add-case}} | {{exit-code}} | {{rationale}} |
+
+## Adding tests
+
+1. Add a new `echo "--- Test N: <description> ---"` block in `test-{{name}}.sh`.
+2. Call `setup_case` at the start of the block to reset fixtures.
+3. Invoke the tool and capture output: `output=$("$TOOL_PATH" ... 2>&1) || true`
+4. Assert with `assert_exit`, `assert_output_contains`, or a direct `if` check.
+5. Increment pass/fail counter via `log_pass` / `log_fail`.

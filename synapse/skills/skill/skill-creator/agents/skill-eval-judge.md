@@ -1,1 +1,0 @@
-../../../../agents/skill-eval/skill-eval-judge.md

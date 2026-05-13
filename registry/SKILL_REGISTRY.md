@@ -1,46 +1,19 @@
 # Skills Registry
 
-Full inventory of all skills. Before creating a new skill, check if one already covers the capability you need. Pipeline-routable skills are also registered in `synapse/SKILLS_REGISTRY.yaml` with their stage metadata.
+Full inventory of all skills. Before creating a new skill, check if one already covers the capability you need. Pipeline-routable skills are also registered in [`synapse/SKILLS_REGISTRY.yaml`](../synapse/SKILLS_REGISTRY.yaml) with their stage metadata.
 
-| Skill | Description | Domain | Pipeline Stage | Status |
-|-------|-------------|--------|----------------|--------|
-| [write-scope-docs](../src/skills/docs/write-scope-docs/SKILL.md) | Scope document with phase plan, scope boundary, and readiness gate | docs | — | stable |
-| [write-architecture-docs](../src/skills/docs/write-architecture-docs/SKILL.md) | Architecture doc with technology decisions, component boundaries, and data flow patterns | docs | — | stable |
-| [write-spec-docs](../src/skills/docs/write-spec-docs/SKILL.md) | Formal requirements spec with FRs, NFRs, acceptance criteria | docs | `spec` | stable |
-| [write-spec-summary](../src/skills/docs/write-spec-summary/SKILL.md) | Concise spec digest synced with companion spec | docs | `spec-summary` | stable |
-| [write-design-docs](../src/skills/docs/write-design-docs/SKILL.md) | Technical design with task decomposition and code contracts | docs | `design` | stable |
-| [write-implementation-docs](../src/skills/docs/write-implementation-docs/SKILL.md) | Phased implementation plan from design doc (canonical impl stage) | docs | `impl` | stable |
-| [build-plan](../src/skills/code/build-plan/SKILL.md) | Implementation plan skill — retained for direct invocation; pipeline use via write-implementation-docs | code | — | draft |
-| [parallel-agents-dispatch](../synapse/skills/orchestration/parallel-agents-dispatch/SKILL.md) | Execute implementation plan via parallel subagents | orchestration | `code` | stable |
-| [write-engineering-guide](../src/skills/docs/write-engineering-guide/SKILL.md) | Post-implementation engineering guide | docs | `eng-guide` | stable |
-| [patch-docs](../src/skills/docs/patch-docs/SKILL.md) | Diff-driven incremental doc patcher — targeted section updates from git diffs | docs | `patch-docs` | stable |
-| [write-test-docs](../src/skills/docs/write-test-docs/SKILL.md) | Test planning document from engineering guide and spec | docs | `test-docs` | stable |
-| [write-module-tests](../src/skills/code/write-module-tests/SKILL.md) | Pytest test code from test plan (per-module) | code | `tests` | draft |
-| [write-test-coverage](../src/skills/docs/write-test-coverage/SKILL.md) | Test coverage register mapping acceptance criteria to test scenarios | docs | `test-coverage` | stable |
-| [test-runner](../src/skills/code/test-runner/SKILL.md) | Run pytest test suites safely through a validated execution pipeline | code | — | draft |
-| [test-lint](../src/skills/code/test-lint/SKILL.md) | Read-only lint sweep (ruff/mypy/bandit/vulture/detect-secrets + descriptive-test docstring validator) — produces LintReport feeding test-fix | code.test | — | draft |
-| [test-audit](../src/skills/code/test-audit/SKILL.md) | Read-only diagnostic audit of test coverage health — produces AuditGapReport feeding test-generate/evaluate/integrate | code.test | — | draft |
-| [test-fix](../src/skills/code/test-fix/SKILL.md) | Per-category lint remediation (ruff→mypy→bandit→vulture→secrets) with re-verification; surfaces requires-human-review and opens soft-gated PR | code.test | — | draft |
-| [test-generate](../src/skills/code/test-generate/SKILL.md) | Per-gap test generation (branch-map → input → Hypothesis → green-run → per-gap mutation → assertion-quality → HARD-GATE intent review → commit) consuming AuditGapReport | code.test | — | draft |
-| [test-evaluate](../src/skills/code/test-evaluate/SKILL.md) | Per-module mock-vs-real classification (boundary-detect → mock-inventory → score → assign lifecycle → emit IntegrationStrategy → soft-gate PR); analysis-only | code.test | — | draft |
-| [test-integrate](../src/skills/code/test-integrate/SKILL.md) | Per-item conversion of mock-integration tests to real-service tests (pick-pattern → spin-up → convert → flake-check → hard-gate PR → merge → edge-feedback); HITL-gated, never auto-merges, never points at production | code.test | — | draft |
-| [jira-reporter](../external/jira-suite/skills/jira-reporter/SKILL.md) | JIRA updates as observability/HITL layer during agent workflows | integration | — | stable |
-| [auto-research](../src/skills/optimization/auto-research/SKILL.md) | Autonomous iterative improvement loop with subagent-per-iteration execution | optimization | — | stable |
-| [skill-brainstorm](../synapse/skills/skill/skill-brainstorm/SKILL.md) | **Deprecated** — superseded by synapse-brainstorm | skill | — | deprecated |
-| [synapse-brainstorm](../synapse/skills/skill/synapse-brainstorm/SKILL.md) | Generalized brainstorm for any artifact type — coaching, pressure-testing, N memos | skill | — | stable |
-| [skill-creator](../synapse/skills/skill/skill-creator/SKILL.md) | Creates new skills with EVAL.md and registry entry | skill | — | stable |
-| [improve-skill](../synapse/skills/skill/improve-skill/SKILL.md) | Karpathy-style score-fix-rescore loop for skill quality | skill | — | stable |
-| [write-skill-eval](../synapse/skills/skill/write-skill-eval/SKILL.md) | Generates EVAL.md with output criteria and test prompts | skill | — | stable |
-| [synapse-gatekeeper](../synapse/skills/skill/synapse-gatekeeper/SKILL.md) | Certifies skill promotion readiness (APPROVE/REVISE/REJECT) against governance criteria | skill | — | stable |
-| [agent-creator](../synapse/skills/agent/agent-creator/SKILL.md) | Creates new agent definitions with frontmatter and taxonomy alignment | agent | — | draft |
-| [write-agent-eval](../synapse/skills/agent/write-agent-eval/SKILL.md) | Generates evaluation criteria for agent definitions | agent | — | draft |
-| [protocol-creator](../synapse/skills/protocol/protocol-creator/SKILL.md) | Creates new protocol definitions with frontmatter and taxonomy alignment | protocol | — | stable |
-| [write-protocol-eval](../synapse/skills/protocol/write-protocol-eval/SKILL.md) | Generates conformance testing criteria for protocol definitions | protocol | — | draft |
-| [skill-router](../synapse/skills/meta/skill-router/SKILL.md) | Routes user intent to the right skill based on domain matching | meta | — | stable |
-| [doc-authoring](../src/skills/docs/doc-authoring/SKILL.md) | Router directing to write-spec-summary, write-spec-docs, or write-engineering-guide | docs | — | stable |
-| [brainstorm](../src/skills/meta/brainstorm/SKILL.md) | Generic brainstorm protocol with indexed notepad, phase gates, and mentor circuit breaker | meta | — | stable |
-| [autonomous-orchestrator](../synapse/skills/orchestration/autonomous-orchestrator/SKILL.md) | Fully autonomous dev pipeline with stakeholder gates | orchestration | — | stable |
-| [stakeholder-reviewer](../synapse/skills/orchestration/stakeholder-reviewer/SKILL.md) | Evaluates decisions against stakeholder persona (APPROVE/REVISE/ESCALATE) | orchestration | — | stable |
-| [langgraph-architect](../src/skills/frameworks/langgraph-architect/SKILL.md) | Design, review, or code-review LangGraph workflow graphs | frameworks | — | stable |
-| [create-animation-page](../src/skills/creative/create-animation-page/SKILL.md) | Single-page interactive animation as one HTML file with embedded CSS/JS | creative | — | draft |
-| [write-postmortem](../src/skills/docs/write-postmortem/SKILL.md) | Structured blameless postmortem document from incident facts | docs | — | stable |
+Schema: see [registry/README.md](README.md).
+
+| Skill | Description | Status | Consumers |
+|------|-------------|--------|-----------|
+| [synapse-router-artifact-brainstormer](../synapse/skills/synapse-router-artifact-brainstormer/SKILL.md) | Use when exploring an idea for a new artifact (skill, tool, agent, protocol) or reworking an existing one — before committing to build | draft | synapse-git-dispatch-cr, synapse-router-artifact-creator, synapse-router-eval-writer, synapse-skill |
+| [synapse-router-artifact-creator](../synapse/skills/synapse-router-artifact-creator/SKILL.md) | Use when creating a new skill, protocol, agent, or tool in ai-synapse. Routes to type-specific creation flow. | draft | synapse-router-suite-validator, synapse-skill, synapse-skill-anatomy-reviewer, synapse-skill-companion-auditor, synapse-skill-design-grader, synapse-skill-signal-orchestrator |
+| [synapse-router-artifact-gatekeeper](../synapse/skills/synapse-router-artifact-gatekeeper/SKILL.md) | Use when a skill, agent, protocol, tool, or pathway is complete and ready for promotion review, or to check if an artifact meets the bar to land in ai-synapse. | draft | synapse-router-artifact-brainstormer, synapse-router-artifact-creator, synapse-router-eval-writer, synapse-router-suite-validator, synapse-skill, synapse-skill-companion-auditor, synapse-skill-signal-orchestrator |
+| [synapse-router-eval-writer](../synapse/skills/synapse-router-eval-writer/SKILL.md) | Use when generating an EVAL.md for a skill, protocol, agent, or tool. | draft | synapse-router-artifact-gatekeeper, synapse-router-suite-validator, synapse-skill, synapse-skill-skill-improver |
+| [synapse-router-suite-validator](../synapse/skills/synapse-router-suite-validator/SKILL.md) | Use when adding or updating an external submodule suite (under external/), or when checking whether a candidate suite conforms to ai-synapse conventions before it is wired in. Sweeps every artifact in the suite and produces a structural conformance rollup. | draft | — |
+| [synapse-skill-skill-improver](../synapse/skills/synapse-skill-skill-improver/SKILL.md) | Use when a skill needs quality improvement. Triggered by improve this skill, fix the skill, review skill quality, make the skill better. | draft | synapse-observability-execution-trace, synapse-meta-readme-maintainer, synapse-router-artifact-brainstormer, synapse-router-artifact-creator, synapse-router-artifact-gatekeeper, synapse-router-eval-writer, synapse-router-suite-validator, synapse-skill, synapse-skill-anatomy-reviewer, synapse-skill-design-grader, synapse-skill-signal-orchestrator |
+| [test-lint](../src/skills/code/test-lint/SKILL.md) | Read-only lint sweep (ruff/mypy/bandit/vulture/detect-secrets + descriptive-test docstring validator) — produces LintReport feeding test-fix | draft | test-fix |
+| [test-audit](../src/skills/code/test-audit/SKILL.md) | Read-only diagnostic audit of test coverage health — produces AuditGapReport feeding test-generate/evaluate/integrate | draft | test-generate, test-evaluate |
+| [test-fix](../src/skills/code/test-fix/SKILL.md) | Per-category lint remediation (ruff→mypy→bandit→vulture→secrets) with re-verification; surfaces requires-human-review and opens soft-gated PR | draft | — |
+| [test-generate](../src/skills/code/test-generate/SKILL.md) | Per-gap test generation (branch-map → input → Hypothesis → green-run → per-gap mutation → assertion-quality → HARD-GATE intent review → commit) consuming AuditGapReport | draft | — |
+| [test-evaluate](../src/skills/code/test-evaluate/SKILL.md) | Per-module mock-vs-real classification (boundary-detect → mock-inventory → score → assign lifecycle → emit IntegrationStrategy → soft-gate PR); analysis-only | draft | — |

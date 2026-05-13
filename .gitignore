@@ -1,2 +1,3 @@
 dist/
 .brainstorms/
+*.pem

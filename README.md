@@ -15,7 +15,7 @@
 
 ## What is AI-Synapse?
 
-AI-Synapse is a central library of reusable, composable artifacts — skills, agents, protocols, and tools — for [Claude Code](https://claude.ai/code) and other AI coding harnesses. Artifacts (synapses) are installed as symlinks and discovered automatically. Once installed, invoking a skill is as simple as `/write-spec-docs` or `/autonomous-orchestrator` in any Claude Code session.
+AI-Synapse is a central library of reusable, composable artifacts — skills, agents, protocols, and tools — for [Claude Code](https://claude.ai/code) and other AI coding harnesses. Artifacts (synapses) are installed as symlinks and discovered automatically. Once installed, invoking a skill is as simple as `/write-spec-docs` or `/synapse-router-artifact-creator` in any Claude Code session.
 
 The repo serves two roles: a **home for standalone artifacts** (self-contained, no shared infrastructure) and a **registry that submodules artifact suites** from external repos (multi-artifact projects with shared config and their own CI). Both are installed the same way via the `cortex` CLI.
 
@@ -48,12 +48,11 @@ AI-Synapse includes a complete lifecycle for building skills themselves — from
 
 | Stage | Skill | What it does |
 |-------|-------|-------------|
-| **Brainstorm** | [`/synapse-brainstorm`](synapse/skills/skill/synapse-brainstorm/) | Coaching brainstorm for any artifact type — discovers whether ideas are artifact-worthy, pressure-tests through five lenses, produces per-artifact memos |
-| **Create** | [`/skill-creator`](synapse/skills/skill/skill-creator/) | Scaffolds SKILL.md + EVAL.md with baseline testing and design principles check |
-| **Evaluate** | [`/write-skill-eval`](synapse/skills/skill/write-skill-eval/) | Generates or regenerates EVAL.md with output criteria and test prompts |
-| **Improve** | [`/improve-skill`](synapse/skills/skill/improve-skill/) | Score-fix-rescore loop until quality criteria are met |
-| **Research** | [`/auto-research`](src/skills/optimization/auto-research/) | Autonomous modify-measure-keep loop for any measurable target |
-| **Certify** | [`/synapse-gatekeeper`](synapse/skills/skill/synapse-gatekeeper/) | Promotion gate — APPROVE / REVISE / REJECT verdict against governance criteria |
+| **Brainstorm** | [`/synapse-router-artifact-brainstormer`](synapse/skills/synapse-router-artifact-brainstormer/) | Coaching brainstorm for any artifact type — discovers whether ideas are artifact-worthy, pressure-tests through five lenses, produces per-artifact memos |
+| **Create** | [`/synapse-router-artifact-creator`](synapse/skills/synapse-router-artifact-creator/) | Unified router — scaffolds SKILL.md / agent / protocol / tool with baseline testing and design principles check |
+| **Evaluate** | [`/synapse-router-eval-writer`](synapse/skills/synapse-router-eval-writer/) | Generates or regenerates EVAL.md (skill / agent / protocol) with output criteria and test prompts |
+| **Improve** | [`/synapse-skill-skill-improver`](synapse/skills/synapse-skill-skill-improver/) | Score-fix-rescore loop until quality criteria are met |
+| **Certify** | [`/synapse-router-artifact-gatekeeper`](synapse/skills/synapse-router-artifact-gatekeeper/) | Promotion gate — APPROVE / REVISE / REJECT verdict against governance criteria |
 
 The flow is: **brainstorm → create → improve → certify → PR**. Each stage is optional — jump in wherever your skill is.
 
@@ -70,7 +69,7 @@ The flow is: **brainstorm → create → improve → certify → PR**. Each stag
 - [ ] Protocol and tool lifecycle skills (create → evaluate → certify)
 - [ ] Agent creator improvements — companion scaffolding, symlink wiring
 - [ ] Pre-commit enforcement of `change_requests/` gate on `main` branch
-- [x] ~~Auto-branch creation from `/synapse-brainstorm`~~ — `synapse-cr-dispatcher` tool dispatches CRs to `feature/<synapse>/<name>/<slug>` branches
+- [x] ~~Auto-branch creation from `/synapse-router-artifact-brainstormer`~~ — `synapse-git-dispatch-cr` tool dispatches CRs to `feature/<synapse>/<name>/<slug>` branches
 - [x] ~~Tool test infrastructure~~ — `./cortex test` discovers and runs tool tests; pre-commit auto-runs tests for changed tools
 
 ### Future
@@ -90,21 +89,20 @@ ai-synapse/
 │
 ├── cortex                           # Top-level CLI dispatcher (./cortex help)
 │
-├── src/                             # ai-synapse-owned artifacts
-│   ├── skills/
-│   │   └── <domain>/               # Skills organized by domain (docs, code, orchestration, etc.)
-│   │       └── <skill-name>/       # Each skill: SKILL.md + EVAL.md + companions
-│   ├── agents/
-│   │   └── <domain>/               # Agents organized by domain (skill-eval, docs, protocol-eval)
-│   ├── protocols/
-│   │   └── <domain>/               # Protocols organized by domain (observability, memory)
-│   ├── tools/
-│   │   └── <domain>/               # Tools organized by domain (integration, testing, etc.)
-│   │       └── <tool-name>/        # Each tool: TOOL.md + optional scripts
+├── synapse/                         # Framework artifacts (meta-tools shipped by ai-synapse)
+│   ├── skills/<domain>/<skill>/    # Each skill: SKILL.md + EVAL.md + references/ + templates/
+│   ├── agents/<domain>/            # Internal agents dispatched by skills
+│   ├── protocols/<domain>/         # Behavioral contracts (observability, memory, ...)
+│   ├── tools/<domain>/<tool>/      # Mechanical capabilities — TOOL.md + optional scripts
 │   └── SKILLS_REGISTRY.yaml        # Pipeline metadata and stage dependency graph
 │
-├── external/                        # Externally-owned submodule suites
-│   └── jira-suite/                 # git submodule — may contain skills/, agents/, protocols/
+├── src/                             # Adopter artifact slot (empty in framework distribution)
+│   ├── skills/<domain>/<skill>/    # Adopter skills with same shape as synapse/skills/
+│   ├── agents/<domain>/            # Adopter agents
+│   ├── protocols/<domain>/         # Adopter protocols
+│   └── tools/<domain>/<tool>/      # Adopter tools
+│
+├── external/                        # Externally-owned submodule slot (empty in framework distribution)
 │
 ├── pathways/                        # Named bundles of synapses (pathway YAML files)
 │
@@ -151,7 +149,7 @@ ai-synapse/
 Top-level CLI dispatcher. Routes all commands to scripts under `scripts/`. Run `./cortex help` for the full command reference, or `./cortex help <command>` to view detailed docs for any subcommand.
 
 ### [`synapse/SKILLS_REGISTRY.yaml`](synapse/SKILLS_REGISTRY.yaml)
-The single source of truth for pipeline metadata. Every skill that participates in an automated pipeline is registered here with its `stage_name`, `input_type`, `output_type`, `context_type`, and dependency chain (`requires_all` / `requires_any`). The `autonomous-orchestrator` reads this file to resolve stage order, validate type compatibility, and drive end-to-end pipelines.
+The single source of truth for pipeline metadata. Every skill that participates in an automated pipeline is registered here with its `stage_name`, `input_type`, `output_type`, `context_type`, and dependency chain (`requires_all` / `requires_any`). An adopter-supplied orchestrator skill reads this file to resolve stage order, validate type compatibility, and drive end-to-end pipelines.
 
 ### Registries (`registry/`)
 Discovery tables for all artifact types. Check these before creating a new artifact:
@@ -228,22 +226,22 @@ Pathways (`pathways/`) are named bundles of synapses — a YAML file listing whi
 
 ### synapse/ vs src/ vs external/
 
-- **`synapse/`** — framework artifacts shipped by ai-synapse: the meta-tools that build, evaluate, and govern artifacts (skill-creator, gatekeeper, eval generators, orchestration, tooling).
-- **`src/`** — adopter artifacts owned by this specific repo. Convention-enforced, managed by `scripts/reorganize.sh`. May be empty in a pure framework distribution.
-- **`external/`** — submodule suites from external repos. Each suite may contain `skills/`, `agents/`, `protocols/`. The `jira-suite` is the current example.
+- **`synapse/`** — framework artifacts shipped by ai-synapse: the meta-tools that build, evaluate, and govern artifacts (synapse-router-artifact-creator, synapse-router-artifact-gatekeeper, synapse-router-eval-writer, synapse-router-suite-validator, synapse-skill-skill-improver, tooling).
+- **`src/`** — adopter artifact slot owned by this repo. Convention-enforced, managed by `scripts/reorganize.sh`. Empty in the framework distribution; downstream adopters populate it with their own skills, agents, protocols, and tools.
+- **`external/`** — submodule slot for externally-owned suites. Empty in the framework distribution; adopters add multi-artifact suites here as git submodules. Each suite owns its own structure (typically `skills/`, `agents/`, `protocols/`).
 
-External suites are portable: a team can adopt `jira-suite` without pulling all of ai-synapse. Changes to an external artifact are made in the suite's own repo; this repo only tracks the submodule pointer.
+External suites are portable: a team can adopt one without pulling all of ai-synapse. Changes to an external artifact are made in the suite's own repo; this repo only tracks the submodule pointer.
 
 ### Registration is intentional, not automatic
 
-Artifacts land in ai-synapse only after review, with proper frontmatter, taxonomy-valid metadata, and registry entries. Use `./cortex scaffold` to create artifacts with correct structure, and `/synapse-gatekeeper` to certify before merging. Standalone repos are where free iteration happens; ai-synapse is where you promote to.
+Artifacts land in ai-synapse only after review, with proper frontmatter, taxonomy-valid metadata, and registry entries. Use `./cortex scaffold` to create artifacts with correct structure, and `/synapse-router-artifact-gatekeeper` to certify before merging. Standalone repos are where free iteration happens; ai-synapse is where you promote to.
 
 ### Two-tier validation
 
 Every artifact goes through two tiers of checks:
 
 1. **Structural (pre-commit, shell)** — frontmatter fields, taxonomy values, registry entries, domain README rows, EVAL.md presence. Fast, deterministic, no LLM. Run standalone via `./cortex validate`.
-2. **Quality (PR-time, LLM)** — `/synapse-gatekeeper` evaluates naming, composition, documentation quality. Covers all five synapse types: skills, agents, protocols, tools, pathways.
+2. **Quality (PR-time, LLM)** — `/synapse-router-artifact-gatekeeper` evaluates naming, composition, documentation quality. Covers all five synapse types: skills, agents, protocols, tools, pathways.
 
 ---
 
@@ -270,7 +268,7 @@ make init                          # configure git hooks + submodules (first-tim
 
 ```bash
 ./cortex install all                        # install all skills to Claude Code
-./cortex install src/skills/docs            # install one domain
+./cortex install synapse/skills/synapse-router-artifact-creator  # install one skill
 ./cortex codex all                          # install to Codex CLI
 ./cortex gemini all                         # install to Gemini CLI
 ./cortex agents                             # install agent definitions
@@ -288,7 +286,7 @@ make init                          # configure git hooks + submodules (first-tim
 ./cortex scaffold agent ml monitor          # scaffold a new agent
 ./cortex scaffold tool integration my-mcp   # scaffold a new tool
 ./cortex validate                           # run all structural checks
-./cortex validate src/skills/docs/my-skill  # validate one artifact
+./cortex validate synapse/skills/synapse-router-artifact-creator  # validate one artifact
 ./cortex test                               # run all tool tests
 ./cortex test src/tools/synapse/my-tool     # test one tool
 ```
@@ -322,10 +320,10 @@ See [`docs/cli/`](docs/cli/) for the complete per-command documentation.
 
 ```bash
 ./cortex zip all                            # package all skills as .zip
-./cortex zip src/skills/docs/patch-docs     # package one skill
+./cortex zip synapse/skills/synapse-router-artifact-creator  # package one skill
 ```
 
-→ See **[src/README.md](src/README.md)** for the full artifact catalog with per-domain tables.
+→ See **[`registry/SKILL_REGISTRY.md`](registry/SKILL_REGISTRY.md)** for the full skill catalog (and the other registries under [`registry/`](registry/) for agents, protocols, tools, and pathways).
 
 ---
 

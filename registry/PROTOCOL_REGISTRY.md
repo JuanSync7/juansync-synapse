@@ -2,8 +2,10 @@
 
 Behavioral contracts injected into agents by consuming skills. Before creating a new protocol, check if one already covers the behavioral contract you need.
 
-| Protocol | Description | Domain | Type | Consumers |
-|----------|-------------|--------|------|-----------|
-| [execution-trace](synapse/protocols/observability/execution-trace.md) | Structured self-report trace for subagent observability | observability | trace | improve-skill, auto-research |
-| [failure-reporting](synapse/protocols/observability/failure-reporting.md) | Standardized failure tag format for agents and protocols | observability | schema | all agents, all protocols |
-| [external-memory](synapse/protocols/memory/external-memory.md) | Behavioral contract for file-based working memory enabling state externalization | memory | contract | write-spec-docs |
+Schema: see [registry/README.md](README.md).
+
+| Protocol | Description | Status | Consumers |
+|------|-------------|--------|-----------|
+| [synapse-observability-execution-trace](../synapse/protocols/observability/synapse-observability-execution-trace.md) | Structured self-report trace appended by subagents when an observer requests execution observability | draft | synapse-observability-failure-reporting-schema |
+| [synapse-memory-external-memory-contract](../synapse/protocols/memory/synapse-memory-external-memory-contract.md) | Behavioral contract for file-based working memory — enables skills to externalize state into files that survive auto-compaction and context limits | draft | synapse-observability-failure-reporting-schema |
+| [synapse-observability-failure-reporting-schema](../synapse/protocols/observability/synapse-observability-failure-reporting-schema.md) | Standardized failure tag format for agents and protocols — enables grepping, aggregation, and surfacing across multi-agent workflows | draft | synapse-memory-external-memory-contract, synapse-router-artifact-brainstormer, synapse-skill-companion-auditor |

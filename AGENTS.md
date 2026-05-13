@@ -54,7 +54,7 @@ All three artifact types require YAML frontmatter, taxonomy-validated metadata, 
 
 ## Pipeline System
 
-The autonomous orchestrator (`synapse/skills/orchestration/autonomous-orchestrator/`) drives end-to-end pipelines using stages defined in `synapse/SKILLS_REGISTRY.yaml`. Each stage has typed inputs/outputs and dependency chains (`requires_all`/`requires_any`). Named presets (`full`, `feature`, `bugfix`, `docs-only`) are trusted stage sequences.
+End-to-end pipeline metadata lives in `synapse/SKILLS_REGISTRY.yaml`. Each stage has typed inputs/outputs and dependency chains (`requires_all`/`requires_any`). Named presets (`full`, `feature`, `bugfix`, `docs-only`) are trusted stage sequences. The framework defines the contract; an adopter-supplied orchestrator skill consumes it.
 
 ## Skill Design Principles
 

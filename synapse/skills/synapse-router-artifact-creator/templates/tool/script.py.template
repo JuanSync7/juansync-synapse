@@ -1,0 +1,90 @@
+#!/usr/bin/env python3
+"""{{name}} — {{one-line description of what this tool does}}
+
+Deterministic contract: given the same inputs, this tool always produces the same outputs.
+"""
+
+import argparse
+import logging
+import sys
+
+# ── Exit codes ───────────────────────────────────────────────────────
+ERR_USAGE = 1        # Missing or invalid argument
+ERR_NOT_FOUND = 2    # Required file or resource not found
+ERR_DEPENDENCY = 3   # External dependency unavailable
+# Add tool-specific exit codes here, e.g.:
+# ERR_CONFLICT = 4   # Conflict detected
+
+# ── Logging setup ────────────────────────────────────────────────────
+logging.basicConfig(
+    level=logging.INFO,
+    format="  %(levelname)-5s %(message)s",
+    stream=sys.stderr,
+)
+log = logging.getLogger(__name__)
+
+
+# ── Dependency check ─────────────────────────────────────────────────
+def require_cmd(cmd: str) -> None:
+    """Abort with ERR_DEPENDENCY if `cmd` is not on PATH."""
+    import shutil
+    if shutil.which(cmd) is None:
+        log.error("Required command not found: %s", cmd)
+        sys.exit(ERR_DEPENDENCY)
+
+
+# Declare external dependencies here:
+# require_cmd("jq")
+
+
+# ── Argument parsing ─────────────────────────────────────────────────
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        prog="{{name}}",
+        description=(
+            "{{One-paragraph description of what the tool does and its deterministic contract.}}"
+        ),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="\n".join([
+            "Exit codes:",
+            "  0  Success",
+            "  1  Missing or invalid argument",
+            "  2  Required file or resource not found",
+            "  3  External dependency unavailable",
+        ]),
+    )
+    parser.add_argument(
+        "--{{arg1}}",
+        required=True,
+        help="{{description}} (required)",
+    )
+    parser.add_argument(
+        "--{{arg2}}",
+        default="{{default}}",
+        help="{{description}} (default: %(default)s)",
+    )
+    return parser.parse_args()
+
+
+# ── Main ─────────────────────────────────────────────────────────────
+def main() -> None:
+    args = parse_args()
+
+    log.info("Starting {{name}} with {{arg1}}=%s", args.arg1)
+
+    # TODO: implement tool logic here
+    # Keep each step deterministic: same inputs → same outputs
+    # Write results to stdout on success; errors via log.error() to stderr only
+
+    # Example file-not-found guard:
+    # import pathlib
+    # if not pathlib.Path(args.arg1).exists():
+    #     log.error("File not found: %s", args.arg1)
+    #     sys.exit(ERR_NOT_FOUND)
+
+    log.info("Done.")
+    sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()

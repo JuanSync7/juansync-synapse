@@ -4,15 +4,7 @@ Framework artifacts — the meta-tools that build, evaluate, and govern skills/a
 
 ## [skills/](skills/)
 
-Framework skill domains (skill-creator, gatekeeper, brainstorm, eval generators, orchestration, routing).
-
-| Domain | Description |
-|--------|-------------|
-| [agent/](skills/agent/) | Agent definition lifecycle — create and evaluate agent recipes |
-| [meta/](skills/meta/) | Framework meta-utilities (skill routing) |
-| [orchestration/](skills/orchestration/) | Multi-agent coordination |
-| [protocol/](skills/protocol/) | Protocol development lifecycle — create and evaluate protocols |
-| [skill/](skills/skill/) | Skill development lifecycle — create, evaluate, improve, certify |
+Framework skills — artifact creation, gatekeeping, eval generation, suite validation, and skill improvement. Flat layout (no subdomains); see [`skills/README.md`](skills/README.md) for the catalog.
 
 ## [agents/](agents/)
 
@@ -20,9 +12,7 @@ Internal recipes dispatched by framework skills.
 
 | Domain | Description |
 |--------|-------------|
-| [protocol-eval/](agents/protocol-eval/) | Agents for protocol evaluation |
-| [skill/](agents/skill/) | Agents that operate on skill artifacts (e.g. companion-file writer) |
-| [skill-eval/](agents/skill-eval/) | Agents for skill quality evaluation |
+| [synapse/](agents/synapse/) | Ecosystem maintenance plus subdomain agents (skill, skill-eval, protocol, meta) |
 
 ## [protocols/](protocols/)
 
@@ -43,4 +33,4 @@ Mechanical capabilities used by framework skills.
 
 ## SKILLS_REGISTRY.yaml
 
-Pipeline routing metadata for the autonomous orchestrator. Lists pipeline-routable skills with their stage inputs/outputs and dependency edges.
+Pipeline routing metadata consumed by an adopter-supplied orchestrator skill. Lists pipeline-routable skills with their stage inputs/outputs and dependency edges.

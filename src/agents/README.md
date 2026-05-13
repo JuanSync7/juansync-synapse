@@ -1,7 +1,3 @@
 # src/agents
 
-Adopter agent definitions. Framework agents (skill, skill-eval, protocol-eval) live in [`../../synapse/agents/`](../../synapse/agents/).
-
-| Domain | Description |
-|--------|-------------|
-| [docs/](docs/) | Document authoring, review, and coherence checking |
+Adopter agents slot — empty in the framework distribution. Add agents here, organized by domain (e.g. `src/agents/docs/`).

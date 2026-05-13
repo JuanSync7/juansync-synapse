@@ -71,8 +71,11 @@ cmd_clean() {
             real="$(readlink "$link")"
             # Remove symlinks pointing into this repo OR dangling symlinks (stale from a renamed/moved repo)
             if [[ "$real" == "$SKILLS_DIR"* ]] || [ ! -e "$link" ]; then
+                local _name
+                _name="$(basename "$link")"
                 rm "$link"
-                echo "  rm  $(basename "$link")"
+                echo "  rm  $_name"
+                _lockfile_drop_artifact "skill" "$_name"
                 count=$((count + 1))
             fi
         fi
@@ -85,8 +88,11 @@ cmd_clean() {
                 local real
                 real="$(readlink "$link")"
                 if [[ "$real" == "$SKILLS_DIR"* ]] || [ ! -e "$link" ]; then
+                    local _name
+                    _name="$(basename "$link")"
                     rm "$link"
-                    echo "  rm  $(basename "$link") (agent)"
+                    echo "  rm  $_name (agent)"
+                    _lockfile_drop_artifact "agent" "${_name%.md}"
                     count=$((count + 1))
                 fi
             fi
@@ -145,6 +151,8 @@ cmd_clean() {
             fi
         fi
     done
+
+    _lockfile_stamp
 
     echo ""
     echo "Removed $count symlink(s)"
@@ -239,14 +247,19 @@ cmd_install_agents() {
 
         ln -s "$src" "$target"
         echo "  add   $name"
+        # Strip ".md" off agent filenames for the lockfile key.
+        local agent_key="${name%.md}"
+        _lockfile_record_artifact "agent" "$agent_key" "$src" "$target"
         count=$((count + 1))
     done < <(find "$AGENTS_SOURCE" "$AGENTS_SOURCE_ALT" -name '*.md' -not -name 'README.md' -type f 2>/dev/null | sort)
+
+    _lockfile_stamp
 
     echo ""
     echo "Installed $count agent(s) → $AGENTS_TARGET"
 }
 
-cmd_doctor() {
+cmd_doctor_symlinks() {
     local broken=0
 
     echo "Checking external/ submodules..."

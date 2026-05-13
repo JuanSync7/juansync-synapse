@@ -16,7 +16,7 @@ Creates symlinks from `~/.codex/skills/` to skill directories in the repo. Works
 
 ```bash
 ./cortex codex all                        # install all skills to Codex global
-./cortex codex src/skills/docs            # install docs domain skills
+./cortex codex synapse/skills/skill       # install skill-domain skills
 ```
 
 ## Options

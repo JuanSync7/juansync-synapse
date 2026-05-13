@@ -1,15 +1,15 @@
 # Identity
 
-Personal identity files consumed by AI agents across all tools. These define **who you are** — separate from what agents can do (skills) or how they evaluate decisions in a specific pipeline (stakeholder-reviewer skill).
+Personal identity files consumed by AI agents across all tools. These define **who you are** — separate from what agents can do (skills) or how they evaluate decisions in a specific pipeline (the stakeholder review gate).
 
 ## Files
 
 | File | Purpose | Installed to |
 |------|---------|--------------|
-| `SOUL.md` | Personal identity: background, worldview, opinions, thinking style, blind spots, tensions, boundaries | `~/.claude/SOUL.md` |
-| `SOUL.template.md` | Blank skeleton with guidance for creating your own SOUL.md | *(not installed — repo reference only)* |
-| `STAKEHOLDER.md` | Decision proxy persona: priorities, expertise map, heuristics, red flags, escalation triggers | `~/.claude/stakeholder.md` |
-| `STAKEHOLDER.template.md` | Blank skeleton with guidance for creating your own STAKEHOLDER.md | *(not installed — repo reference only)* |
+| `SOUL.template.md` | Blank skeleton with guidance for creating your own SOUL.md | *(not installed — copy to `SOUL.md` and customize)* |
+| `STAKEHOLDER.template.md` | Blank skeleton with guidance for creating your own STAKEHOLDER.md | *(not installed — copy to `STAKEHOLDER.md` and customize)* |
+
+The framework distribution does not ship a pre-filled `SOUL.md` or `STAKEHOLDER.md` — those are personal artifacts each adopter authors for themselves.
 
 ## Two Consumption Modes
 
@@ -46,7 +46,7 @@ If `~/.claude/stakeholder.md` already exists as a regular file, back it up and r
 | File | Scope | Always loaded? | Purpose |
 |------|-------|----------------|---------|
 | `SOUL.md` | Global identity | Yes (via `~/.claude/CLAUDE.md` reference) | Who you are |
-| `stakeholder.md` | Decision gate | No (loaded by stakeholder-reviewer skill) | How you evaluate decisions |
+| `stakeholder.md` | Decision gate | No (loaded on demand by the stakeholder review gate) | How you evaluate decisions |
 | `CLAUDE.md` (global) | Behavioral instructions | Yes (auto-loaded by Claude Code) | How Claude should interact with you |
 | `MEMORY.md` | Temporal context | Yes (auto-loaded) | What's happening now, recent learnings |
 

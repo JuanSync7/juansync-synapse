@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+# {{name}} — {{one-line description of what this tool does}}
+set -euo pipefail
+
+# ── Exit codes ───────────────────────────────────────────────────────
+readonly ERR_USAGE=1       # Missing or invalid argument
+readonly ERR_NOT_FOUND=2   # Required file or resource not found
+readonly ERR_DEPENDENCY=3  # External dependency unavailable
+# Add tool-specific exit codes here, e.g.:
+# readonly ERR_CONFLICT=4  # Conflict detected
+
+# ── Usage ────────────────────────────────────────────────────────────
+usage() {
+    cat <<'USAGE'
+Usage: {{name}}.sh --{{arg1}} <value> [--{{arg2}} <value>]
+
+{{One-paragraph description of what the tool does and its deterministic contract.}}
+
+Options:
+  --{{arg1}}   {{description}} (required)
+  --{{arg2}}   {{description}} (optional; default: {{default}})
+  -h, --help   Show this help message
+
+Exit codes:
+  0  Success
+  1  Missing or invalid argument
+  2  Required file or resource not found
+  3  External dependency unavailable
+USAGE
+}
+
+# ── Logging helpers ──────────────────────────────────────────────────
+info()  { echo "  INFO  $*"; }
+warn()  { echo "  WARN  $*" >&2; }
+error() { echo "  ERROR $*" >&2; }
+die()   { error "$*"; exit "$ERR_USAGE"; }
+
+# ── Dependency check ─────────────────────────────────────────────────
+require_cmd() {
+    local cmd="$1"
+    if ! command -v "$cmd" &>/dev/null; then
+        error "Required command not found: $cmd"
+        exit "$ERR_DEPENDENCY"
+    fi
+}
+
+# Declare external dependencies here:
+# require_cmd jq
+# require_cmd git
+
+# ── Parse args ───────────────────────────────────────────────────────
+ARG1=""
+ARG2="{{default}}"  # optional arg with default
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --{{arg1}})  ARG1="$2"; shift 2 ;;
+        --{{arg2}})  ARG2="$2"; shift 2 ;;
+        -h|--help)   usage; exit 0 ;;
+        *) error "Unknown option: '$1'"; usage; exit "$ERR_USAGE" ;;
+    esac
+done
+
+# ── Validate required args ───────────────────────────────────────────
+if [[ -z "$ARG1" ]]; then
+    die "--{{arg1}} is required"
+fi
+
+# ── Validate inputs exist (if file/path args) ────────────────────────
+# if [[ ! -f "$ARG1" ]]; then
+#     error "File not found: $ARG1"
+#     exit "$ERR_NOT_FOUND"
+# fi
+
+# ── Main ─────────────────────────────────────────────────────────────
+main() {
+    info "Starting {{name}} with {{arg1}}=$ARG1"
+
+    # TODO: implement tool logic here
+    # Keep each step deterministic: same inputs → same outputs
+    # Write to stdout on success; errors to stderr only
+
+    info "Done."
+}
+
+main

@@ -1,6 +1,6 @@
 # ai-synapse Governance
 
-> `synapse-gatekeeper` loads this file when issuing promotion verdicts.
+> `synapse-router-artifact-gatekeeper` loads this file when issuing promotion verdicts.
 
 This document defines what belongs in ai-synapse, the criteria an artifact (skill, agent, protocol, tool, or pathway) must meet to land here, and the lifecycle for submoduled suites. It is the authoritative reference — not loaded at runtime by individual skills except where noted.
 
@@ -11,7 +11,7 @@ This document defines what belongs in ai-synapse, the criteria an artifact (skil
 ai-synapse is a curated library, not a scratch pad. A skill belongs here when it meets all three conditions:
 
 1. **Reusable across projects** — the skill is not tied to a single codebase, team, or context. It solves a category of problem, not a one-off task.
-2. **Has a passing EVAL.md** — an EVAL.md exists, was generated or reviewed by `/write-skill-eval`, and the skill scores ≥ 80 against it.
+2. **Has a passing EVAL.md** — an EVAL.md exists, was generated or reviewed by `/synapse-router-eval-writer`, and the skill scores ≥ 80 against it.
 3. **Not a duplicate** — no existing skill in the registry already covers the same intent at the same scope. A variation in phrasing is not enough — the use case must be genuinely distinct.
 
 ### Agent Definitions
@@ -19,8 +19,8 @@ ai-synapse is a curated library, not a scratch pad. A skill belongs here when it
 Agent definitions (`{synapse,src}/agents/`) are internal recipes dispatched by skills — never user-invocable. They follow the same governance rigor as skills, adapted for their role:
 
 - **YAML frontmatter required** — `name`, `description`, `domain`, `role`, and `tags` fields, with `domain` and `role` values from `AGENT_TAXONOMY.md`
-- **Gatekeeper review required** — agents land via promotion PRs reviewed by `/synapse-gatekeeper`, same as skills
-- **No standalone EVAL.md** — agents are tested indirectly through the skills that dispatch them. A standalone eval format will be defined when `write-agent-eval` is built (currently a draft stub)
+- **Gatekeeper review required** — agents land via promotion PRs reviewed by `/synapse-router-artifact-gatekeeper`, same as skills
+- **No standalone EVAL.md required** — agents are tested indirectly through the skills that dispatch them. To generate an EVAL.md when needed, use `/synapse-router-eval-writer agent <path>` (the unified eval router)
 - **Listed in AGENTS_REGISTRY.md** — for discovery, not `SKILLS_REGISTRY.yaml`
 - **Installed separately** — `scripts/install.sh agents` symlinks them to `~/.claude/agents/`
 
@@ -31,8 +31,8 @@ An agent belongs in `{synapse,src}/agents/` when it is dispatched by 1+ skills a
 Protocols (`{synapse,src}/protocols/`) are shared conventions and schemas injected into agents by observers — never executed directly. They define structured formats for inter-agent communication and observability.
 
 - **YAML frontmatter required** — `name`, `description`, `domain`, `type`, and `tags` fields, with `domain` and `type` values from `PROTOCOL_TAXONOMY.md`
-- **Gatekeeper review required** — protocols land via promotion PRs reviewed by `/synapse-gatekeeper`
-- **No standalone EVAL.md** — protocols are evaluated via conformance testing (dispatch an agent with the protocol injected, check if output conforms to the schema). A standalone eval format will be defined when `write-protocol-eval` is built (currently a draft stub)
+- **Gatekeeper review required** — protocols land via promotion PRs reviewed by `/synapse-router-artifact-gatekeeper`
+- **No standalone EVAL.md required** — protocols are evaluated via conformance testing (dispatch an agent with the protocol injected, check if output conforms to the schema). To generate an EVAL.md when needed, use `/synapse-router-eval-writer protocol <path>` (the unified eval router)
 - **Zero-overhead design** — a protocol must have no cost when not injected. It is always externally injected by an observer, never self-loaded by the agent
 
 A protocol belongs in `{synapse,src}/protocols/` when it defines a reusable convention that 2+ agents or observers need to agree on (e.g., execution trace format, inter-agent message schema).
@@ -43,7 +43,7 @@ Tools (`{synapse,src}/tools/`) are mechanical utilities — scripts, wrappers, o
 
 - **YAML frontmatter required** — `name`, `description`, `domain`, `action`, `type`, and `tags` fields, with `domain` and `action` values from `TOOL_TAXONOMY.md`
 - **Type classification** — `type` must be one of `external`, `internal`, or `wrapper` (from `TOOL_TAXONOMY.md`) and must match actual content
-- **Gatekeeper review required** — tools land via promotion PRs reviewed by `/synapse-gatekeeper`
+- **Gatekeeper review required** — tools land via promotion PRs reviewed by `/synapse-router-artifact-gatekeeper`
 - **No standalone EVAL.md** — tools are tested by the skills or agents that invoke them
 - **Listed in TOOL_REGISTRY.md** — for discovery
 - **Execution model documented** — the TOOL.md must clearly describe inputs, outputs, and how to invoke the tool
@@ -57,7 +57,7 @@ Pathways (`pathways/`) are curated bundles of synapses (skills, agents, protocol
 - **YAML format** — each pathway is a `.yaml` file with `name`, `description`, `harness`, `tags`, and `synapses` fields
 - **Harness value from taxonomy** — `harness` must be a value from `taxonomy/PATHWAY_TAXONOMY.md`
 - **All synapse paths resolve** — every path listed under `synapses:` must point to an existing artifact on disk
-- **Gatekeeper review required** — pathways land via promotion PRs reviewed by `/synapse-gatekeeper`
+- **Gatekeeper review required** — pathways land via promotion PRs reviewed by `/synapse-router-artifact-gatekeeper`
 - **Listed in PATHWAY_REGISTRY.md** — for discovery
 - **Naming conventions** — documented in `taxonomy/PATHWAY_TAXONOMY.md` and evaluated by gatekeeper at PR review time (not enforced by pre-commit)
 
@@ -69,11 +69,11 @@ Skills may land on `main` as **drafts** — functional but not yet gatekeeper-ce
 
 - Has a `SKILL.md` and `EVAL.md` (pre-commit hook enforced)
 - Passes structural checks (Tier 1)
-- Has **not** been certified by `/synapse-gatekeeper` (Tiers 2-3 pending)
+- Has **not** been certified by `/synapse-router-artifact-gatekeeper` (Tiers 2-3 pending)
 
 Draft skills are usable but carry no quality guarantee. To track draft status, the skill's entry in `SKILLS_REGISTRY.yaml` should include `status: draft`. A skill without a `status` field is assumed certified.
 
-**Promoting a draft:** Run `/improve-skill` until eval score ≥ 80, then `/synapse-gatekeeper`. Update `status: certified` (or remove the field) in the registry entry.
+**Promoting a draft:** Run `/synapse-skill-skill-improver` until eval score ≥ 80, then `/synapse-router-artifact-gatekeeper`. Update `status: certified` (or remove the field) in the registry entry.
 
 ### Standalone vs. Submodule
 
@@ -109,7 +109,7 @@ Checked automatically by the pre-commit hook. No LLM required.
 
 ### Tier 2 — Quality
 
-Evaluated by `synapse-gatekeeper` against skill design principles.
+Evaluated by `synapse-router-artifact-gatekeeper` against skill design principles.
 
 - [ ] `description` is a routing contract — specifies *when* the skill fires, not what it does
 - [ ] Eval score ≥ 80 (must be provided; unverified score blocks APPROVE)
@@ -127,7 +127,7 @@ Evaluated by `synapse-gatekeeper` against skill design principles.
 
 ### Agent Promotion
 
-Agents clear two tiers. Evaluated by `synapse-gatekeeper` using `references/agent-checklist.md`.
+Agents clear two tiers. Evaluated by `synapse-router-artifact-gatekeeper` using `references/agent-checklist.md`.
 
 #### Tier 1 — Structural
 
@@ -151,7 +151,7 @@ Agents clear two tiers. Evaluated by `synapse-gatekeeper` using `references/agen
 
 ### Protocol Promotion
 
-Protocols clear two tiers. Evaluated by `synapse-gatekeeper` using `references/protocol-checklist.md`.
+Protocols clear two tiers. Evaluated by `synapse-router-artifact-gatekeeper` using `references/protocol-checklist.md`.
 
 #### Tier 1 — Structural
 
@@ -174,7 +174,7 @@ Protocols clear two tiers. Evaluated by `synapse-gatekeeper` using `references/p
 
 ### Tool Promotion
 
-Tools clear two tiers. Evaluated by `synapse-gatekeeper`.
+Tools clear two tiers. Evaluated by `synapse-router-artifact-gatekeeper`.
 
 #### Tier 1 — Structural
 
@@ -196,7 +196,7 @@ Tools clear two tiers. Evaluated by `synapse-gatekeeper`.
 
 ### Pathway Promotion
 
-Pathways clear two tiers. Evaluated by `synapse-gatekeeper`.
+Pathways clear two tiers. Evaluated by `synapse-router-artifact-gatekeeper`.
 
 #### Tier 1 — Structural
 
@@ -222,7 +222,7 @@ Pathways clear two tiers. Evaluated by `synapse-gatekeeper`.
 
 Examples:
 - Missing registry entry (skill is pipeline-routable but has no `pipeline:` block)
-- Eval score below 80 (run `/improve-skill` to raise it)
+- Eval score below 80 (run `/synapse-skill-skill-improver` to raise it)
 - `description` reads as a workflow summary instead of a routing trigger
 - Domain `README.md` is missing the skill's row
 - `argument-hint` absent despite `user-invocable: true`
@@ -274,9 +274,9 @@ Where `<synapse>` is one of: `skill`, `agent`, `protocol`, `tool`.
 
 ### Steps
 
-1. **Build** — use `/skill-creator` to scaffold the skill, or author it manually.
-2. **Improve** — run `/improve-skill` until the eval score reaches ≥ 80.
-3. **Certify** — run `/synapse-gatekeeper <skill-path> --score <score>`. Resolve any REVISE gaps.
+1. **Build** — use `/synapse-router-artifact-creator skill` to scaffold the skill, or author it manually.
+2. **Improve** — run `/synapse-skill-skill-improver` until the eval score reaches ≥ 80.
+3. **Certify** — run `/synapse-router-artifact-gatekeeper <skill-path> --score <score>`. Resolve any REVISE gaps.
 4. **PR to develop** — open a pull request with the APPROVE verdict pasted into the description. Include any `change_requests/` files documenting the rationale. The artifact owner reviews the CR + diff, deletes the CR file on acceptance, and merges.
 5. **PR to main** — maintainer merges `develop` → `main`. The PR must contain **no `change_requests/` files** — if any are present, the merge is blocked until the artifact owner resolves them.
 
@@ -331,26 +331,18 @@ When brainstorming or improving a skill reveals that another skill, agent, proto
 
 - **One file per change**, named `YYYY-MM-DD-short-description.md`
 - **Content:** what needs to change, why, and which brainstorm/skill triggered it. Free-form markdown — no enforced template. Must be self-contained — brainstorm notepads are working memory (`.brainstorms/`, gitignored) and do not ship with the CR.
-- **Consumed by** `/synapse-brainstorm` — it checks for `change_requests/` on entry and incorporates pending requests as context.
+- **Consumed by** `/synapse-router-artifact-brainstormer` — it checks for `change_requests/` on entry and incorporates pending requests as context.
 - **Lifecycle:** contributor creates the CR on a feature branch → artifact owner reviews the CR + implementation diff on the PR to `develop` → owner deletes the CR file on acceptance and merges → `develop` → `main` PR is blocked if any CR files remain. An empty `change_requests/` folder (or no folder) means no pending obligations.
 
 ---
 
 ## Naming Conventions
 
-- **Globally unique** — skill names resolve from a flat `~/.claude/skills/` directory. No namespacing is possible at runtime.
-- **Lowercase hyphenated** — `write-spec-docs`, not `WriteSpecDocs` or `write_spec_docs`.
-- **Domain-prefixed when collision risk** — if the skill name is generic (e.g., `reporter`, `planner`), prefix with the domain (`jira-reporter`, `jira-planner`).
-- `scripts/install.sh` warns on name collisions at install time. Never rely on last-write-wins to resolve a collision — rename the skill before promoting.
+Each artifact class owns its naming rules in the corresponding taxonomy file:
 
-### Agent naming
+- Skills → `taxonomy/SKILL_TAXONOMY.md`
+- Agents → `taxonomy/AGENT_TAXONOMY.md`
+- Protocols → `taxonomy/PROTOCOL_TAXONOMY.md`
+- Tools → `taxonomy/TOOL_TAXONOMY.md`
 
-- **`<domain>-<concern>-<role>`** — e.g., `skill-eval-judge`, `skill-eval-prompter`, `skill-eval-auditor`
-- The domain prefix clusters related agents (all `skill-eval-*` sort together)
-- The role noun communicates what the agent *is*, not what it produces (prefer `judge` over `generate-criteria`)
-
-### Protocol naming
-
-- **`<descriptive-name>`** — e.g., `execution-trace`, `agent-message-schema`
-- Protocols live in subdirectories of `{synapse,src}/protocols/` organized by taxonomy domain (e.g., `observability/`, `memory/`)
-- The directory name groups related protocols by domain; the file name identifies the specific protocol
+Each file specifies the structural name pattern and the controlled vocabulary that fills its slots.

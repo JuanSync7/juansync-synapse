@@ -6,7 +6,7 @@
   it reads this file to simulate your decision-making.
 
   Unlike SOUL.md (always loaded, identity context), this file is loaded on-demand
-  by skills that need to act as your decision proxy (e.g., stakeholder-reviewer).
+  by skills that need to act as your decision proxy (e.g., a stakeholder review gate).
 
   Guidelines:
   - Budget: ~100 lines max (this is a decision filter, not an essay)

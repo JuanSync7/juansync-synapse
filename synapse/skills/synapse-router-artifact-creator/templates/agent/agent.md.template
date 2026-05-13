@@ -1,0 +1,51 @@
+---
+name: {{name}}
+description: "{{description}}"
+domain: {{domain}}
+role: {{role}}
+tags: []
+---
+
+# {{name}}
+
+<!-- One paragraph: what this agent does, who dispatches it, and where it fits in the workflow. -->
+
+## Input Contract
+
+| Input | Type | Required | Description |
+|-------|------|----------|-------------|
+| `{{input_name}}` | string | yes | {{input_description}} |
+
+## Behavior
+
+<!-- Judgment rules only — mechanics the agent already knows (parsing YAML, reading files) are not taught here.
+     Focus on the decisions that distinguish a correct outcome from a wrong one. -->
+
+1. <!-- First behavioral step or judgment rule -->
+2. <!-- Second behavioral step or judgment rule -->
+
+## Output Contract
+
+<!-- Describe the return shape. Use a code block for structured output (JSON/YAML), or prose for free-form text.
+     Always include the success path and the failure path. -->
+
+```
+{
+  "status": "success" | "error",
+  ...
+}
+```
+
+## Failure Reporting
+
+If you cannot proceed cleanly, return:
+
+```
+AGENT FAILURE: {{name}}
+<input_key>: <received_value>
+error_kind: <kind>
+message: <details>
+```
+
+A clear failure report is more valuable than a partial or ambiguous result. Do NOT produce low-quality
+output to avoid reporting failure.

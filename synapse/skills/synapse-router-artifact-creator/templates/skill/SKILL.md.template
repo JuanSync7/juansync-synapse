@@ -1,0 +1,59 @@
+---
+name: {{name}}
+description: "{{description}}"
+domain: {{domain}}
+intent: {{intent}}
+tags: [{{tags}}]
+user-invocable: true
+argument-hint: "[args]"
+---
+
+# {{name}}
+
+<!-- Mental model paragraph: WHY this skill exists and the conceptual framing.
+     The agent that understands the spirit handles edge cases rules don't cover.
+     One tight paragraph. No step lists here. -->
+
+## MUST (every turn)
+- <!-- Commitment-language constraint that traces to a failure mode -->
+- <!-- Without this, agent does X which causes Y -->
+
+## MUST NOT (global)
+- <!-- Hard prohibition. Use NEVER / DO NOT. Each traces to a failure mode. -->
+- <!-- Without this, agent does X which causes Y -->
+
+## Wrong-Tool Detection
+- **<!-- trigger description -->** → redirect to `/<sibling-skill>`
+- **<!-- trigger description -->** → redirect to `/<sibling-skill>`
+
+## Entry
+
+### [NEW] Fresh session
+Do:
+  1. Wrong-tool check — if redirect applies, stop
+  2. <!-- Determine mode or preconditions -->
+Don't: Skip wrong-tool check.
+Exit:
+  → [<!-- next node -->] : <!-- condition -->
+
+## Flow
+
+### [<!-- NODE-ID -->] <!-- Node name -->
+Load: <!-- references/filename.md or none -->
+Brief: <!-- One-sentence framing of this node's purpose. -->
+Do:
+  1. <!-- Judgment call, not mechanical procedure -->
+  2. <!-- Each step traces to why it matters -->
+Don't:
+  - <!-- What the agent would do wrong without this guardrail -->
+Exit:
+  → [<!-- NODE-ID -->] : <!-- condition met -->
+  → [<!-- NODE-ID -->] : <!-- condition met -->
+
+### [END]
+Do:
+  1. Present full output summary: files created, registry entries, EVAL status
+  2. Suggest next steps (prose) — do not auto-dispatch
+Don't:
+  - End without full output summary
+  - Auto-route to next skill — suggest, do not dispatch
