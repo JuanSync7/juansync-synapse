@@ -5,6 +5,7 @@ domain: docs
 subdomain: claim
 scope: doc
 role: classifier
+tags: [classifier, read-only, entry-gate, claim-based-doc, schema-versioned]
 ---
 
 # docs-claim-doc-classifier
