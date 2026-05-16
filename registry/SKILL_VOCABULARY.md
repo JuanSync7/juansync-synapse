@@ -11,6 +11,7 @@ When creating a new skill, pick values from the tables below. If nothing fits, p
 | Domain | Description |
 |--------|-------------|
 | `synapse` | Framework-internal skills shipped by ai-synapse |
+| `docs` | User-facing documentation skills |
 
 ## Subdomains
 
@@ -18,6 +19,7 @@ When creating a new skill, pick values from the tables below. If nothing fits, p
 |-----------|-------------|
 | `router` | Cross-cutting routing/orchestration skills (artifact-creator, gatekeeper, eval-writer, suite-validator) |
 | `skill` | Skills that operate on skill artifacts (skill-improver) |
+| `claim` | Claim-based docs (identity, style, principle, decision sub-types) |
 
 ## Scopes
 
@@ -27,6 +29,7 @@ When creating a new skill, pick values from the tables below. If nothing fits, p
 | `eval` | Operates over EVAL.md generation |
 | `suite` | Operates over multi-artifact suites (external/) |
 | `skill` | Operates over a single SKILL.md |
+| `doc` | Operates on a single markdown doc |
 
 ## Roles
 
@@ -38,3 +41,4 @@ When creating a new skill, pick values from the tables below. If nothing fits, p
 | `writer` | Generates a specific artifact file (e.g., EVAL.md) |
 | `validator` | Asserts conformance against rules |
 | `improver` | Iterates on an existing artifact against its eval |
+| `shrinker` | Lossless density increase against a kept-claim set |
