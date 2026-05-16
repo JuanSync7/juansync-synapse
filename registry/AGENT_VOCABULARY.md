@@ -11,6 +11,7 @@ When creating a new agent, pick values from the tables below. If nothing fits, p
 | Domain | Description |
 |--------|-------------|
 | `synapse` | Framework-internal agents shipped by ai-synapse |
+| `docs` | User-facing documentation agents |
 
 ## Subdomains
 
@@ -19,6 +20,7 @@ When creating a new agent, pick values from the tables below. If nothing fits, p
 | `skill` | Agents that operate on skill artifacts |
 | `protocol` | Agents that operate on protocol artifacts |
 | `meta` | Cross-cutting maintenance agents (readme-maintainer, etc.) |
+| `claim` | Agents that operate within the claim-based-doc workflow |
 
 ## Scopes
 
@@ -30,6 +32,8 @@ When creating a new agent, pick values from the tables below. If nothing fits, p
 | `eval` | EVAL.md output and execution criteria |
 | `signal` | Signal-strength orchestration / review |
 | `readme` | Directory README indexes |
+| `doc` | Operates on a single markdown doc |
+| `claim` | Operates on a single claim's entailment status |
 
 ## Roles
 
@@ -43,3 +47,5 @@ When creating a new agent, pick values from the tables below. If nothing fits, p
 | `prompter` | Generates blind test prompts |
 | `reviewer` | Signal-strength reviewer |
 | `writer` | Generates the artifact |
+| `extractor` | Extracts atomic structured items from input |
+| `classifier` | Categorizes input into a fixed enum |
