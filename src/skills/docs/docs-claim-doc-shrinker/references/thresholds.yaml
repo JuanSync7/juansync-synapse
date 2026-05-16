@@ -1,0 +1,15 @@
+# Single source of truth for every numeric gate in docs-claim-doc-shrinker.
+# Verbatim from design doc §5. Do NOT hardcode any of these values in SKILL.md
+# prose, EVAL.md, or any sibling agent body — load from here.
+#
+# Editing this file is the only supported way to tune the workflow. The
+# four sibling agents (classifier, extractor, judge, writer) reference these
+# values by name; the orchestrator skill enforces them at each gate.
+
+coverage_abort_pct: 0.20            # abort compress if >20% of keep-claims fail entailment
+idempotency_delta_floor_pct: 0.05   # only rewrite if ≥5% claim delta from prior compress
+judge_confidence_floor: 0.6         # below this, escalate verdict to "partial"
+writer_length_sanity_pct: 0.30      # warn if output <30% of input length
+classifier_confidence_floor: 0.6    # below this, refuse with low-confidence message
+voice_anchor_count_min: 3
+voice_anchor_count_max: 5
