@@ -76,3 +76,11 @@ message: <details>
 ```
 
 A clear failure report is more valuable than a partial or ambiguous result. Do NOT produce a lossy or heading-renamed rewrite to avoid reporting failure — the judge will catch dropped claims downstream, but heading damage and extra-claim leakage are not caught by any downstream gate.
+
+## Reuse Review Checkpoint
+
+**Date:** 2026-08-13 (3 months from creation).
+
+**Action:** Per design doc §12 (Accepted Tensions), this agent is the most tightly coupled of the four `docs-claim-doc-shrinker` siblings to the orchestrating skill. If by 2026-08-13 no second consumer beyond `docs-claim-doc-shrinker` has emerged, demote this agent to an inline prompt inside the shrinker and remove the standalone file.
+
+**Tracker:** Issue #30.
