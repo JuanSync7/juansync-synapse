@@ -5,7 +5,7 @@ domain: docs
 subdomain: claim
 scope: doc
 role: shrinker
-status: draft
+status: stable
 tags: [docs, claim, compression, audit, entailment, hitl]
 user-invocable: true
 argument-hint: "audit <path> | compress <path> [--accept-mixed]"

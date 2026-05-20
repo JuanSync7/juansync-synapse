@@ -5,7 +5,7 @@ domain: docs
 subdomain: claim
 scope: doc
 role: extractor
-status: draft
+status: stable
 tags: [extractor, docs, claim, read-only]
 ---
 

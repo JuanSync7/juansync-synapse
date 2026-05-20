@@ -5,7 +5,7 @@ domain: docs
 subdomain: claim
 scope: doc
 role: classifier
-status: draft
+status: stable
 tags: [classifier, docs, claim, read-only]
 ---
 

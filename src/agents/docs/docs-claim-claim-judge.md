@@ -5,7 +5,7 @@ domain: docs
 subdomain: claim
 scope: claim
 role: judge
-status: draft
+status: stable
 tags: [entailment, verification, claim, judge, read-only]
 ---
 
