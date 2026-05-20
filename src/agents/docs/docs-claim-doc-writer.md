@@ -5,7 +5,7 @@ domain: docs
 subdomain: claim
 scope: doc
 role: writer
-status: draft
+status: stable
 tags: []
 ---
 
