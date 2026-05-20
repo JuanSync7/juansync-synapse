@@ -1,0 +1,12 @@
+# Single source of truth for all numeric gates in docs-claim-doc-shrinker.
+# Verbatim from design doc §5. Tuning never requires prompt edits.
+# Consumed by SKILL.md (orchestrator) and dispatched agents — agents must
+# NOT hardcode any of these values in prompts.
+
+coverage_abort_pct: 0.20            # abort compress if >20% of keep-claims fail entailment
+idempotency_delta_floor_pct: 0.05   # only rewrite if >=5% claim delta from prior compress
+judge_confidence_floor: 0.6         # below this, escalate verdict to "partial"
+writer_length_sanity_pct: 0.30      # warn if output <30% of input length
+classifier_confidence_floor: 0.6    # below this, refuse with low-confidence message
+voice_anchor_count_min: 3
+voice_anchor_count_max: 5
