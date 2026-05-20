@@ -16,9 +16,5 @@ Schema: see [registry/README.md](README.md).
 | [synapse-skill-eval-judge](../synapse/agents/synapse/skill-eval/synapse-skill-eval-judge.md) | Impartial judge — binary output quality criteria (EVAL-Oxx) from SKILL.md | draft | synapse-router-eval-writer, synapse-skill |
 | [synapse-skill-eval-prompter](../synapse/agents/synapse/skill-eval/synapse-skill-eval-prompter.md) | Blind test prompt generation across 4 personas | draft | synapse-skill |
 | [synapse-skill-signal-orchestrator](../synapse/agents/synapse/skill/synapse-skill-signal-orchestrator.md) | Signal-strength orchestrator — dispatches anatomy/design/companion sub-agents in parallel and aggregates their verdicts into a unified APPROVE/REVISE/ESCALATE before eval generation | draft | — |
-<<<<<<< HEAD
-| [docs-claim-doc-extractor](../src/agents/docs/docs-claim-doc-extractor.md) | Extracts atomic claims from a claim-based markdown doc. Returns a list of claim objects anchored by source heading, plus auto-flagged contradictions and redundancies. Read-only. | draft | docs-claim-doc-shrinker |
-||||||| 7f36016
-=======
 | [docs-claim-doc-classifier](../src/agents/docs/docs-claim-doc-classifier.md) | Read-only entry-gate classifier for the docs-claim-doc-shrinker workflow. Returns structural genre (claim-based, narrative, reference, tutorial, template, mixed), claim sub-type, and confidence. | draft | docs-claim-doc-shrinker |
->>>>>>> origin/develop
+| [docs-claim-doc-extractor](../src/agents/docs/docs-claim-doc-extractor.md) | Extracts atomic claims from a claim-based markdown doc. Returns a list of claim objects anchored by source heading, plus auto-flagged contradictions and redundancies. Read-only. | draft | docs-claim-doc-shrinker |
