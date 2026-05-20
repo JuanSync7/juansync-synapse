@@ -32,11 +32,20 @@ Lossless density increase against a human-edited kept-claim set. Claim-based doc
 
 ## Wrong-Tool Detection
 Load: `references/wrong-tool-redirect.md`
+
+Two tiers. Intent-level cases short-circuit at `[NEW]` before classifier dispatch (the user's stated goal already disqualifies the skill). Content-type cases are detected structurally by the classifier at `[CLASSIFY]` and emit Refusal #1.
+
+**Intent-level (handled at `[NEW]`):**
 - **Target is a SKILL.md** → redirect to `/synapse-skill-skill-improver`
-- **Target is narrative prose (essays, blog posts, articles)** → manual rewrite; claim-coverage destroys voice
-- **Target is reference doc (API, glossary)** → completeness is the goal, not density
-- **Target is a template** → already structural
 - **User wants lossy summary or TL;DR** → general LLM rewrite; this skill is lossless on kept claims only
+- **User asks to bypass the coverage gate or add an override flag** → refuse and point to the design contract: entailment is verified, not assumed. There is no override path; if coverage fails, edit the audit checklist and re-run.
+
+**Content-type (handled at `[CLASSIFY]` via classifier output):**
+- Narrative prose (essays, blog posts, articles) → classifier returns `narrative`; Refusal #1 with manual-rewrite redirect.
+- Reference doc (API, glossary) → classifier returns `reference`; Refusal #1 with completeness-over-density redirect.
+- Template → classifier returns `template`; Refusal #1.
+
+Do **not** intent-match narrative/reference/template at `[NEW]` from filename or keyword cues — the classifier is the source of truth for content-type and produces the populated Refusal #1.
 
 ## Agent Dispatch Contracts
 
@@ -98,11 +107,12 @@ Mark each `in_progress` on entry, `completed` on exit. Refusals close the active
 ### [NEW] Fresh session
 Load: `references/wrong-tool-redirect.md`
 Do:
-  1. Wrong-tool check — match the target file or stated user intent against the 5 redirects above. If any matches, surface the redirect and stop.
-  2. Parse the subcommand: `audit <path>` or `compress <path> [--accept-mixed]`. Reject any other shape with a usage hint.
+  1. Intent-level wrong-tool check — match only the 3 intent-level cases above (SKILL.md target, TL;DR/lossy-summary request, override-gate request). If any matches, surface the redirect or contract explanation and stop. Content-type (narrative/reference/template) is the classifier's job — do not intent-match it here.
+  2. Parse the subcommand: `audit <path>` or `compress <path> [--accept-mixed]`. Reject any other shape with a usage hint that names both subcommands explicitly.
 Don't:
-  - Skip wrong-tool check.
-  - Auto-infer subcommand from natural-language intent — require explicit `audit` or `compress`.
+  - Skip intent-level wrong-tool check.
+  - Intent-match narrative/reference/template from filename or keyword cues — defer to the classifier at `[CLASSIFY]`.
+  - Auto-infer subcommand from natural-language intent (e.g., "shrink", "densify", "tighten") — require explicit `audit` or `compress`.
 Exit:
   → `[END]` : wrong-tool match (redirect surfaced)
   → `[START]` : subcommand and path confirmed
@@ -131,7 +141,7 @@ Do:
   4. If `category == mixed`:
      - For `compress` without `--accept-mixed` → refuse with Refusal #4.
      - For `audit`, or `compress` with `--accept-mixed` → emit a one-line warning and proceed.
-  5. If `category == claim-based`, capture `sub_type` for downstream voice-anchor logic.
+  5. If `category == claim-based`, capture `sub_type` for downstream voice-anchor logic. For `audit`, surface a one-line note to the user naming the detected `sub_type` (e.g., "Detected sub_type=style; voice anchors will be sampled at compress time, count in `[voice_anchor_count_min, voice_anchor_count_max]` from `thresholds.yaml`."). This sets compress-time expectations without leaking the threshold values.
 Don't:
   - Bypass the gate even if the user "knows the doc is claim-based".
   - Paraphrase the refusal — the corrective action is load-bearing.
@@ -230,6 +240,7 @@ Do:
 Don't:
   - Write the source before this gate passes (P3).
   - Treat `partial` as success.
+  - Accept an override flag, `--force`, `--skip-coverage`, or any user request to bypass this gate — entailment is verified, not assumed. The corrective action is always: edit the audit checklist (cut claims that don't survive recomposition) and re-run.
 Exit:
   → `[END]` : coverage abort
   → `[ATOMIC-WRITE]` : coverage holds
@@ -253,4 +264,5 @@ Do:
   2. For `compress` success: print the coverage summary path and a one-line claim-count delta.
   3. For any refusal: the refusal text from the Refusal Catalog IS the output — do not prepend or append explanation.
 Don't:
-  - Auto-dispatch the next subcommand (e.g., after `audit`, suggest don't run `compress`).
+  - Auto-dispatch `compress` after `audit` completes — the human edit step on the checklist is the HITL contract (P2). Tell the user the next command to run; do not run it yourself.
+  - Chain subcommands from a single user prompt (e.g., "audit then compress") — execute only the first subcommand and surface the next-step instruction.
