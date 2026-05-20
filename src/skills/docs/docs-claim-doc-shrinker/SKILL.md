@@ -1,6 +1,6 @@
 ---
 name: docs-claim-doc-shrinker
-description: "Audit and compress claim-based markdown (identity, style, principle, decision docs). Run `audit` to produce a per-claim keep/cut/merge checklist; edit it; run `compress` to rewrite the doc preserving every kept claim. Triggers: 'shrink this doc', 'densify', 'tighten this', 'compress markdown'."
+description: "Use when a claim-based markdown doc (identity, style, principle, decision) needs lossless compression against a human-edited kept-claim set. Triggered by 'shrink this doc', 'densify', 'tighten this', 'compress markdown', 'audit claims in <path>'. Two-phase: `audit` then `compress`."
 domain: docs
 subdomain: claim
 scope: doc
@@ -18,6 +18,7 @@ Lossless density increase against a human-edited kept-claim set. Claim-based doc
 ## MUST (every turn)
 - Load `references/thresholds.yaml` at `[START]` — every numeric branch reads its key by name from this file.
 - Record position: `Position: [node-id] — <context>`.
+- Set `model:` explicitly on every agent dispatch — see the Agent Dispatch Contracts table for the assigned model per agent.
 - Run the classifier as the unconditional entry gate for both subcommands — without this, claim-preserving logic is applied to docs where it is meaningless (P1).
 - Refuse with the exact verbatim message from the Refusal Catalog when any entry gate fails — paraphrase loses the corrective action (P7).
 - For `compress`: write to `<path>.tmp` and rename to `<path>` after all gates pass — non-atomic write corrupts source on mid-write failure (P3).
@@ -39,16 +40,16 @@ Load: `references/wrong-tool-redirect.md`
 
 ## Agent Dispatch Contracts
 
-The skill is an orchestrator. Four sibling agents under `src/agents/docs/` carry the bounded responsibilities. Schema files for each contract live in `references/`.
+The skill is an orchestrator. Four sibling agents under `src/agents/docs/` carry the bounded responsibilities. Schema files for each contract live in `references/`. Every dispatch sets `model:` explicitly (per MUST clause).
 
-| Agent | Input | Output | Schema |
-|---|---|---|---|
-| `docs-claim-doc-classifier` | `{ file_content, file_path }` | `classifier_output` | `references/classifier-schema.md` |
-| `docs-claim-doc-extractor` | `{ file_content, file_path }` | `{ claims: [Claim], contradictions, redundancies }` | `references/claim-schema.md` |
-| `docs-claim-doc-writer` | `{ kept_claims, original_doc, voice_anchors? }` | `{ rewritten_doc }` | `references/claim-schema.md` |
-| `docs-claim-claim-judge` | `{ claim, rewritten_doc }` | `judge_verdict` (one per kept claim) | `references/judge-schema.md` |
+| Agent | Input | Output | Schema | Model |
+|---|---|---|---|---|
+| `docs-claim-doc-classifier` | `{ file_content, file_path }` | `classifier_output` | `references/classifier-schema.md` | `sonnet` |
+| `docs-claim-doc-extractor` | `{ file_content, file_path }` | `{ claims: [Claim], contradictions, redundancies }` | `references/claim-schema.md` | `sonnet` |
+| `docs-claim-doc-writer` | `{ kept_claims, original_doc, voice_anchors? }` | `{ rewritten_doc }` | `references/claim-schema.md` | `opus` |
+| `docs-claim-claim-judge` | `{ claim, rewritten_doc }` | `judge_verdict` (one per kept claim) | `references/judge-schema.md` | `sonnet` |
 
-Dispatch is by exact agent name. The judge is dispatched in a parallel batch — one call per kept claim — never sequentially.
+Dispatch is by exact agent name. The judge is dispatched in a parallel batch — one call per kept claim — never sequentially. Model assignments: `sonnet` for bounded read-only or schema-validation work (classifier, extractor, judge); `opus` for the recompose step that must respect kept-claim coverage without leakage (writer).
 
 ## Entry Gates
 
@@ -124,7 +125,7 @@ Exit:
 Load: `references/classifier-schema.md`
 Brief: Unconditional entry gate (P1). Both `audit` and `compress` pass through here.
 Do:
-  1. Dispatch `docs-claim-doc-classifier` with `{ file_content, file_path }`.
+  1. Dispatch `docs-claim-doc-classifier` (model: sonnet) with `{ file_content, file_path }`.
   2. If `confidence < classifier_confidence_floor` → refuse with the low-confidence variant of Refusal #1.
   3. If `category` is `narrative` | `reference` | `tutorial` | `template` → refuse with Refusal #1 verbatim, substituting `{category}`, `{c}`, and the matching `{redirect}` from `wrong-tool-redirect.md`.
   4. If `category == mixed`:
@@ -143,7 +144,7 @@ Exit:
 Load: `references/claim-schema.md`
 Brief: Read-only structured extraction. Produces the claim list that becomes the audit checklist.
 Do:
-  1. Dispatch `docs-claim-doc-extractor` with `{ file_content, file_path }`.
+  1. Dispatch `docs-claim-doc-extractor` (model: sonnet) with `{ file_content, file_path }`.
   2. If `claims == []` → refuse with: `"doc has no extractable claims"` (extractor-empty case noted in §3.1).
   3. Capture `contradictions` and `redundancies` arrays for the checklist file.
 Don't:
@@ -183,7 +184,7 @@ Exit:
 Load: `references/claim-schema.md`
 Brief: P5 enforcement — skip writes that would change nearly nothing.
 Do:
-  1. Dispatch `docs-claim-doc-extractor` against the live source; capture the fresh claim list.
+  1. Dispatch `docs-claim-doc-extractor` (model: sonnet) against the live source; capture the fresh claim list.
   2. Compare the fresh kept-claim set to the prior compress run's kept-claim set (recover from prior `.shrink/<path>.coverage.md` if present, else treat as 100% delta on first compress).
   3. If `delta < idempotency_delta_floor_pct` → emit a no-op message and exit without dispatching writer.
 Don't:
@@ -197,7 +198,7 @@ Load: `references/claim-schema.md`
 Brief: Produce the rewritten doc body. Writer self-aborts on length-sanity or missing-heading.
 Do:
   1. If classifier `sub_type == style`, sample voice anchors from source — count in `[voice_anchor_count_min, voice_anchor_count_max]`.
-  2. Dispatch `docs-claim-doc-writer` with `{ kept_claims, original_doc, voice_anchors? }`.
+  2. Dispatch `docs-claim-doc-writer` (model: opus) with `{ kept_claims, original_doc, voice_anchors? }`.
   3. Check the structural invariant: every source heading must be present in the writer output. If any missing → fail before judge stage (design §3.1).
   4. Check length sanity: if `len(output) < writer_length_sanity_pct * len(input)` → emit a WARN (do not abort; the warning is the deliverable per design).
 Don't:
@@ -211,7 +212,7 @@ Exit:
 Load: `references/judge-schema.md`
 Brief: P3 — entailment is verified, not assumed. Parallel batch dispatch.
 Do:
-  1. For each claim in `kept_claims`, dispatch `docs-claim-claim-judge` with `{ claim, rewritten_doc }`. All dispatches in a single parallel batch.
+  1. For each claim in `kept_claims`, dispatch `docs-claim-claim-judge` (model: sonnet) with `{ claim, rewritten_doc }`. All dispatches in a single parallel batch.
   2. Collect `judge_verdict` per claim. Confidence escalation (verdict → `partial` when `confidence < judge_confidence_floor`) is enforced inside the judge.
 Don't:
   - Sequence the dispatches — batching is the contract.
