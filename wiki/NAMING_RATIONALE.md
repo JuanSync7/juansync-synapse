@@ -29,7 +29,7 @@ We did not start with this schema. It emerged from iterative pressure-testing ag
 
 Original convention: `{domain}-{subdomain?}-{intent?}-{name}` for skills. Subdomain and intent included "when they aid disambiguation"; otherwise omitted. Sounds reasonable.
 
-**What broke:** Contributors couldn't agree on when to include optional slots. We ended up with `synapse-eval-writer` (intent in the name slot, no subdomain), `synapse-creator` (no intent, no subdomain), `improve-skill` (no domain), and `write-postmortem` (no domain, no subdomain). All four parsed differently. No tooling could enforce a rule because there wasn't one — just judgment.
+**What broke:** Contributors couldn't agree on when to include optional slots. We ended up with `synapse-eval-writer` (intent in the name slot, no subdomain), `synapse-router-artifact-creator` (no intent, no subdomain), `synapse-skill-skill-improver` (no domain), and `write-postmortem` (no domain, no subdomain). All four parsed differently. No tooling could enforce a rule because there wasn't one — just judgment.
 
 **Lesson:** optional slots devolve into "everyone picks differently" at any meaningful scale.
 
@@ -103,7 +103,7 @@ We initially tried to use scope+role for all four artifact types. Pushback came 
 
 ## What we explicitly rejected
 
-### Catchy single-word names (`synapse-gatekeeper`)
+### Catchy single-word names (`synapse-router-artifact-gatekeeper`)
 
 Beloved at small scale, lethal at large scale. Linux utilities (`grep`, `awk`) work because the corpus is bounded and learned over decades. With a growing artifact registry, every catchy name is a defender of an exception, and the convention erodes one negotiation at a time.
 

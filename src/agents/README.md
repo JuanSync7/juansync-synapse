@@ -1,9 +1,9 @@
 # src/agents
 
-Adopter agents slot. Agents are organized by domain (e.g. `src/agents/docs/`). Each domain directory has its own README index.
+Adopter agent definitions. Framework agents (synapse-*) live in [`../../synapse/agents/`](../../synapse/agents/). Each domain directory has its own README index.
 
 ## Domains
 
 | Domain | Description |
 |--------|-------------|
-| [docs/](docs/README.md) | User-facing documentation agents |
+| [docs/](docs/README.md) | User-facing documentation agents — claim-shrinker subagents and spec-doc section writers/reviewers |

@@ -21,6 +21,7 @@ When creating a new agent, pick values from the tables below. If nothing fits, p
 | `protocol` | Agents that operate on protocol artifacts |
 | `meta` | Cross-cutting maintenance agents (readme-maintainer, etc.) |
 | `claim` | Agents that operate within the claim-based-doc workflow |
+| `spec` | Agents that operate within the spec-doc authoring workflow |
 
 ## Scopes
 
@@ -34,6 +35,8 @@ When creating a new agent, pick values from the tables below. If nothing fits, p
 | `readme` | Directory README indexes |
 | `doc` | Operates on a single markdown doc |
 | `claim` | Operates on a single claim's entailment status |
+| `section` | Operates on a single spec-doc section |
+| `coherence` | Operates on cross-section coherence of a doc |
 
 ## Roles
 

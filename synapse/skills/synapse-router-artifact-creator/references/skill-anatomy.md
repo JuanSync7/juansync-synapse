@@ -154,7 +154,7 @@ These are checked by other agents, not the anatomy-reviewer:
 | Progressive disclosure done well | `synapse-skill-design-judge` + `synapse-skill-companion-auditor` |
 | Companion file content quality | `synapse-skill-companion-auditor` |
 | Output quality on test prompts | `synapse-skill-eval-judge` (post-EVAL grading) |
-| EVAL.md presence and content | `write-skill-eval` + `/synapse-router-artifact-gatekeeper` |
+| EVAL.md presence and content | `synapse-router-eval-writer` + `/synapse-router-artifact-gatekeeper` |
 | Registry row consistency | `.githooks/pre-commit` (Tier 1 structural) |
 
 ---

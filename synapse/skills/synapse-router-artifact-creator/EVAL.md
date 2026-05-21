@@ -75,7 +75,7 @@
 Apply each `EVAL-Fxx` check independently to all four files: `flow-skill.md`, `flow-protocol.md`, `flow-agent.md`, `flow-tool.md`. A criterion passes only if it passes for ALL four files.
 
 - [ ] **EVAL-F01:** Each flow has a `[START]` node and a real `[END]` node (Do steps + optional Don't + no Exit)
-- [ ] **EVAL-F02:** Node headings use `### [ID]` (level-3) consistently — never `## [ID]` (level-2). Source of truth: `skill-creator/references/flow-graph-pattern.md`
+- [ ] **EVAL-F02:** Node headings use `### [ID]` (level-3) consistently — never `## [ID]` (level-2). Source of truth: `synapse-router-artifact-creator/references/flow-graph-pattern.md`
 - [ ] **EVAL-F03:** Every node has Do, Don't (or explicit absence justified), and Exit blocks
 - [ ] **EVAL-F04:** Exit blocks declare labeled edges with conditions — not bare `→ [X]` without a guard
 - [ ] **EVAL-F05:** Self-loops are explicit when iteration stays on the same node (`→ [X] : <condition>`)

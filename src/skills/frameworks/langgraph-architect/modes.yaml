@@ -1,0 +1,79 @@
+# LangGraph Architect — Mode Definitions
+
+modes:
+  design:
+    description: Interactive brainstorming and graph design with the user
+    trigger:
+      - "design a graph"
+      - "build a langgraph"
+      - "brainstorm a workflow"
+      - "architect a pipeline"
+      - "plan a graph"
+    role: interactive  # runs in main context, back-and-forth with user
+    load:
+      - rules.md
+      - references/state_patterns.py
+      - references/topology_patterns.py
+      - references/hitl_patterns.py
+      - references/node_patterns.py
+      - references/routing_patterns.py
+      - references/error_patterns.py
+      - references/observability_patterns.py
+    output: templates/graph_spec.md
+    # When design stabilizes, the main agent dispatches review mode as a subagent
+    # (orchestrated in SKILL.md, not automated here)
+
+  design-autonomous:
+    description: Non-interactive design from a structured brief, with design-review loop
+    trigger:
+      - dispatched as subagent with a design brief
+      - parent agent provides templates/design_brief.md
+    role: subagent  # runs without human interaction
+    load:
+      - rules.md
+      - references/state_patterns.py
+      - references/topology_patterns.py
+      - references/hitl_patterns.py
+      - references/node_patterns.py
+      - references/routing_patterns.py
+      - references/error_patterns.py
+      - references/observability_patterns.py
+      - templates/design_brief.md
+    input: design_brief  # structured brief from parent agent
+    output: templates/graph_spec.md
+    max_review_cycles: 3  # bounded iteration: design → review → iterate
+
+  review:
+    description: Critic subagent that evaluates a graph design against rules
+    trigger:
+      - "review this graph"
+      - "critique this design"
+      - "check my langgraph"
+    role: subagent
+    load:
+      - rules.md
+      - templates/graph_spec.md
+      - templates/review_verdict.md
+    input: graph_spec
+    output: templates/review_verdict.md
+
+  code-review:
+    description: Review existing LangGraph/LangChain code against design rules
+    trigger:
+      - "review this langgraph code"
+      - "review my langgraph implementation"
+      - "check this graph code"
+      - "code review langgraph"
+    role: subagent
+    load:
+      - rules.md
+      - references/state_patterns.py
+      - references/node_patterns.py
+      - references/topology_patterns.py
+      - references/hitl_patterns.py
+      - references/routing_patterns.py
+      - references/error_patterns.py
+      - references/observability_patterns.py
+      - templates/code_review_verdict.md
+    input: python_files  # receives file paths or code to review
+    output: templates/code_review_verdict.md

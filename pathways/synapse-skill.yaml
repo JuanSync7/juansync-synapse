@@ -5,13 +5,14 @@ harness: claude
 tags: [skill, meta, creation, ai-synapse]
 ---
 
-# Pipeline (informational): synapse-router-artifact-brainstormer → synapse-router-artifact-creator → synapse-skill-skill-improver → synapse-router-eval-writer → synapse-router-artifact-gatekeeper
+# Pipeline (informational): synapse-router-artifact-brainstormer → synapse-router-artifact-creator → [synapse-skill-skill-improver ↔ auto-research loop] → synapse-router-eval-writer → synapse-router-artifact-gatekeeper
 
 synapses:
   skills:
     - synapse/skills/synapse-router-artifact-brainstormer
     - synapse/skills/synapse-router-artifact-creator
     - synapse/skills/synapse-skill-skill-improver
+    - src/skills/optimization/auto-research
     - synapse/skills/synapse-router-eval-writer
     - synapse/skills/synapse-router-artifact-gatekeeper
   agents:

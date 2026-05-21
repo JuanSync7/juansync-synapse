@@ -43,7 +43,7 @@
   - **Fail signal:** All lens reference files appear as a batch read at the start of [B], or a lens is applied in the trace without a preceding load of its reference file.
 
 - [ ] **EVAL-E10:** Wrong-tool check fires at [NEW] entry before [A] begins
-  - **Test:** Trace records a wrong-tool evaluation step (redirect check for skill-creator / synapse-skill-skill-improver / synapse-router-artifact-gatekeeper) after notepad initialization and before the first [A] turn.
+  - **Test:** Trace records a wrong-tool evaluation step (redirect check for synapse-router-artifact-creator / synapse-skill-skill-improver / synapse-router-artifact-gatekeeper) after notepad initialization and before the first [A] turn.
   - **Fail signal:** [A] discovery begins with no wrong-tool check recorded in the trace, or wrong-tool check appears after the first [A] exchange.
 
 ## Output Criteria

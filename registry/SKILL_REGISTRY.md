@@ -17,4 +17,25 @@ Schema: see [registry/README.md](README.md).
 | [test-fix](../src/skills/code/test-fix/SKILL.md) | Per-category lint remediation (ruff→mypy→bandit→vulture→secrets) with re-verification; surfaces requires-human-review and opens soft-gated PR | draft | — |
 | [test-generate](../src/skills/code/test-generate/SKILL.md) | Per-gap test generation (branch-map → input → Hypothesis → green-run → per-gap mutation → assertion-quality → HARD-GATE intent review → commit) consuming AuditGapReport | draft | — |
 | [test-evaluate](../src/skills/code/test-evaluate/SKILL.md) | Per-module mock-vs-real classification (boundary-detect → mock-inventory → score → assign lifecycle → emit IntegrationStrategy → soft-gate PR); analysis-only | draft | — |
+| [test-integrate](../src/skills/code/test-integrate/SKILL.md) | Per-item conversion of mock-integration tests to real-service tests (pick-pattern → spin-up → convert → flake-check → hard-gate PR → merge → edge-feedback); HITL-gated, never auto-merges, never points at production | draft | — |
+| [test-runner](../src/skills/code/test-runner/SKILL.md) | Run pytest test suites safely through a validated execution pipeline | draft | — |
+| [write-module-tests](../src/skills/code/write-module-tests/SKILL.md) | Pytest test code from test plan (per-module) | draft | — |
+| [build-plan](../src/skills/code/build-plan/SKILL.md) | Implementation plan skill — retained for direct invocation; pipeline use via write-implementation-docs | draft | — |
 | [docs-claim-doc-shrinker](../src/skills/docs/docs-claim-doc-shrinker/SKILL.md) | Audit and compress claim-based markdown (identity, style, principle, decision docs). Two-phase: `audit` writes a per-claim keep/cut/merge checklist; `compress` rewrites the doc preserving every kept claim with post-write entailment verification. | stable | — |
+| [write-scope-docs](../src/skills/docs/write-scope-docs/SKILL.md) | Scope document with phase plan, scope boundary, and readiness gate | stable | — |
+| [write-architecture-docs](../src/skills/docs/write-architecture-docs/SKILL.md) | Architecture doc with technology decisions, component boundaries, and data flow patterns | stable | — |
+| [write-spec-docs](../src/skills/docs/write-spec-docs/SKILL.md) | Formal requirements spec with FRs, NFRs, acceptance criteria | stable | — |
+| [write-spec-summary](../src/skills/docs/write-spec-summary/SKILL.md) | Concise spec digest synced with companion spec | stable | — |
+| [write-design-docs](../src/skills/docs/write-design-docs/SKILL.md) | Technical design with task decomposition and code contracts | stable | — |
+| [write-implementation-docs](../src/skills/docs/write-implementation-docs/SKILL.md) | Phased implementation plan from design doc (canonical impl stage) | stable | — |
+| [write-engineering-guide](../src/skills/docs/write-engineering-guide/SKILL.md) | Post-implementation engineering guide | stable | — |
+| [patch-docs](../src/skills/docs/patch-docs/SKILL.md) | Diff-driven incremental doc patcher — targeted section updates from git diffs | stable | — |
+| [write-test-docs](../src/skills/docs/write-test-docs/SKILL.md) | Test planning document from engineering guide and spec | stable | — |
+| [write-test-coverage](../src/skills/docs/write-test-coverage/SKILL.md) | Test coverage register mapping acceptance criteria to test scenarios | stable | — |
+| [write-postmortem](../src/skills/docs/write-postmortem/SKILL.md) | Structured blameless postmortem document from incident facts | stable | — |
+| [doc-authoring](../src/skills/docs/doc-authoring/SKILL.md) | Router directing to write-spec-summary, write-spec-docs, or write-engineering-guide | stable | — |
+| [brainstorm](../src/skills/meta/brainstorm/SKILL.md) | Generic brainstorm protocol with indexed notepad, phase gates, and mentor circuit breaker | stable | — |
+| [auto-research](../src/skills/optimization/auto-research/SKILL.md) | Autonomous iterative improvement loop with subagent-per-iteration execution | stable | — |
+| [langgraph-architect](../src/skills/frameworks/langgraph-architect/SKILL.md) | Design, review, or code-review LangGraph workflow graphs | stable | — |
+| [create-animation-page](../src/skills/creative/create-animation-page/SKILL.md) | Single-page interactive animation as one HTML file with embedded CSS/JS | draft | — |
+| [jira-reporter](../external/jira-suite/skills/jira-reporter/SKILL.md) | JIRA updates as observability/HITL layer during agent workflows | stable | — |

@@ -95,7 +95,7 @@ Exit:
 ---
 
 ### [C] — write companions
-Load: `agents/skill/skill-companion-file-writer.md`
+Load: `agents/skill/synapse-skill-companion-writer.md`
 Brief: Main agent becomes orchestrator. Dispatch one subagent per companion file in parallel.
 Do:
   1. For each companion file in inventory, dispatch subagent with: file_path, file_type, skill_md, content_brief

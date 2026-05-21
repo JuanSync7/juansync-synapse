@@ -1,8 +1,10 @@
 ---
 name: test-evaluate
 description: "consume post-generate CoverageState and emit per-module IntegrationStrategy documents — two-tier boundary detection, replacement-value scoring, lifecycle pattern assignment, soft-gate PR; analysis-only, never writes test code or spins up services"
-domain: code.test
-intent: implement
+domain: code
+subdomain: test
+scope: module
+role: evaluator
 tags: [test, evaluate, boundary-detection, integration-strategy, mock-classification, soft-gate]
 user-invocable: true
 argument-hint: "[--coverage-state PATH] [--top-n N|critical] [--rerun-mode source-changed|all] [--no-pr]"

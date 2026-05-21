@@ -1,8 +1,10 @@
 ---
 name: test-fix
 description: "consume a LintReport from test-lint and resolve auto-fixable issues per category (ruff→mypy→bandit→vulture→secrets) with re-verification, surfacing requires-human-review items and opening a soft-gated PR"
-domain: code.test
-intent: refactor
+domain: code
+subdomain: test
+scope: module
+role: fixer
 tags: [lint, fix, ruff, mypy, bandit, vulture, secrets, autofix]
 user-invocable: true
 argument-hint: "[--lint-report PATH] [--no-pr]"

@@ -16,7 +16,7 @@ Creates symlinks from `~/.gemini/extensions/ai-synapse/skills/` to skill directo
 
 ```bash
 ./cortex gemini all                       # install all skills to Gemini CLI
-./cortex gemini synapse/skills/skill      # install skill-domain skills
+./cortex gemini src/skills/docs           # install docs domain skills
 ```
 
 ## Options

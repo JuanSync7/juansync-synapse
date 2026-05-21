@@ -30,7 +30,7 @@
 - Verdict is REJECT
 - Verdict is the first line of output
 - Quality and Registry tiers are skipped (noted as skipped due to missing EVAL.md)
-- Gaps section instructs running `/write-skill-eval` to generate EVAL.md
+- Gaps section instructs running `/synapse-router-eval-writer` to generate EVAL.md
 
 ---
 

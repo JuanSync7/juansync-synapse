@@ -52,6 +52,7 @@ AI-Synapse includes a complete lifecycle for building skills themselves — from
 | **Create** | [`/synapse-router-artifact-creator`](synapse/skills/synapse-router-artifact-creator/) | Unified router — scaffolds SKILL.md / agent / protocol / tool with baseline testing and design principles check |
 | **Evaluate** | [`/synapse-router-eval-writer`](synapse/skills/synapse-router-eval-writer/) | Generates or regenerates EVAL.md (skill / agent / protocol) with output criteria and test prompts |
 | **Improve** | [`/synapse-skill-skill-improver`](synapse/skills/synapse-skill-skill-improver/) | Score-fix-rescore loop until quality criteria are met |
+| **Research** | [`/auto-research`](src/skills/optimization/auto-research/) | Autonomous modify-measure-keep loop for any measurable target |
 | **Certify** | [`/synapse-router-artifact-gatekeeper`](synapse/skills/synapse-router-artifact-gatekeeper/) | Promotion gate — APPROVE / REVISE / REJECT verdict against governance criteria |
 
 The flow is: **brainstorm → create → improve → certify → PR**. Each stage is optional — jump in wherever your skill is.
@@ -269,6 +270,7 @@ make init                          # configure git hooks + submodules (first-tim
 ```bash
 ./cortex install all                        # install all skills to Claude Code
 ./cortex install synapse/skills/synapse-router-artifact-creator  # install one skill
+./cortex install src/skills/docs            # install one domain
 ./cortex codex all                          # install to Codex CLI
 ./cortex gemini all                         # install to Gemini CLI
 ./cortex agents                             # install agent definitions
@@ -287,6 +289,7 @@ make init                          # configure git hooks + submodules (first-tim
 ./cortex scaffold tool integration my-mcp   # scaffold a new tool
 ./cortex validate                           # run all structural checks
 ./cortex validate synapse/skills/synapse-router-artifact-creator  # validate one artifact
+./cortex validate src/skills/docs/my-skill  # validate one artifact
 ./cortex test                               # run all tool tests
 ./cortex test src/tools/synapse/my-tool     # test one tool
 ```
