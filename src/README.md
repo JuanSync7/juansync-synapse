@@ -11,7 +11,7 @@ User-invocable recipes organized by domain.
 | [code/](skills/code/) | Code generation and testing |
 | [creative/](skills/creative/) | Visual and interactive output |
 | [docs/](skills/docs/) | Documentation authoring pipeline |
-| [frameworks/](skills/frameworks/) | Technology-specific skills |
+| [framework/](skills/framework/) | Technology-specific skills |
 | [integration/](skills/integration/) | External service integrations (submoduled suites) |
 | [meta/](skills/meta/) | Adopter meta-utilities (e.g. brainstorm) |
 | [optimization/](skills/optimization/) | Iterative improvement loops |

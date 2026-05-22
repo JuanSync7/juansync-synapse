@@ -36,6 +36,6 @@ Schema: see [registry/README.md](README.md).
 | [doc-authoring](../src/skills/docs/doc-authoring/SKILL.md) | Router directing to write-spec-summary, write-spec-docs, or write-engineering-guide | stable | — |
 | [brainstorm](../src/skills/meta/brainstorm/SKILL.md) | Generic brainstorm protocol with indexed notepad, phase gates, and mentor circuit breaker | stable | — |
 | [auto-research](../src/skills/optimization/auto-research/SKILL.md) | Autonomous iterative improvement loop with subagent-per-iteration execution | stable | — |
-| [langgraph-architect](../src/skills/frameworks/langgraph-architect/SKILL.md) | Design, review, or code-review LangGraph workflow graphs | stable | — |
+| [langgraph-architect](../src/skills/framework/langgraph-architect/SKILL.md) | Design, review, or code-review LangGraph workflow graphs | stable | — |
 | [create-animation-page](../src/skills/creative/create-animation-page/SKILL.md) | Single-page interactive animation as one HTML file with embedded CSS/JS | draft | — |
 | [jira-reporter](../external/jira-suite/skills/jira-reporter/SKILL.md) | JIRA updates as observability/HITL layer during agent workflows | stable | — |

@@ -52,7 +52,6 @@ AI-Synapse includes a complete lifecycle for building skills themselves — from
 | **Create** | [`/synapse-router-artifact-creator`](synapse/skills/synapse-router-artifact-creator/) | Unified router — scaffolds SKILL.md / agent / protocol / tool with baseline testing and design principles check |
 | **Evaluate** | [`/synapse-router-eval-writer`](synapse/skills/synapse-router-eval-writer/) | Generates or regenerates EVAL.md (skill / agent / protocol) with output criteria and test prompts |
 | **Improve** | [`/synapse-skill-skill-improver`](synapse/skills/synapse-skill-skill-improver/) | Score-fix-rescore loop until quality criteria are met |
-| **Research** | [`/auto-research`](src/skills/optimization/auto-research/) | Autonomous modify-measure-keep loop for any measurable target |
 | **Certify** | [`/synapse-router-artifact-gatekeeper`](synapse/skills/synapse-router-artifact-gatekeeper/) | Promotion gate — APPROVE / REVISE / REJECT verdict against governance criteria |
 
 The flow is: **brainstorm → create → improve → certify → PR**. Each stage is optional — jump in wherever your skill is.

@@ -14,7 +14,7 @@ When creating a new skill, pick values from the tables below. If nothing fits, p
 | `docs` | User-facing documentation skills |
 | `code` | Source-code authoring, modification, and execution skills |
 | `creative` | Visual or interactive output (HTML/CSS/JS pages, animations) |
-| `frameworks` | Skills targeted at a specific external framework or library |
+| `framework` | Skills targeted at a specific external framework or library |
 | `meta` | Cross-cutting meta-utilities (brainstorming, routing) |
 | `optimization` | Iterative measure-and-improve loops |
 | `integration` | External-service integration skills |
@@ -34,7 +34,7 @@ When creating a new skill, pick values from the tables below. If nothing fits, p
 | `post-build` | Post-implementation docs (engineering guide, test docs, postmortem, test coverage) |
 | `test` | Test-related code skills (lint, audit, fix, generate, evaluate, integrate, run, write) |
 | `plan` | Build/implementation planning skills |
-| `langgraph` | LangGraph framework skills |
+| `harness` | AI harness / orchestration framework skills (LangGraph, etc.) |
 | `general` | Catch-all for skills with no narrower subdomain |
 
 ## Scopes
@@ -49,7 +49,7 @@ When creating a new skill, pick values from the tables below. If nothing fits, p
 | `module` | Operates on a code module |
 | `repo` | Operates on a whole repository |
 | `page` | Operates on a single web page artifact |
-| `graph` | Operates on a workflow/state graph |
+| `workflow` | Operates on a workflow / state graph |
 | `process` | Operates on a development process (research loop, brainstorm session) |
 
 ## Roles
@@ -74,6 +74,6 @@ When creating a new skill, pick values from the tables below. If nothing fits, p
 | `evaluator` | Scores/classifies inputs against criteria |
 | `integrator` | Converts mock-based artifacts into real-service ones |
 | `runner` | Executes an artifact in a controlled environment |
-| `architect` | Designs an artifact's structure before implementation |
+| `designer` | Designs an artifact's structure before implementation |
 | `animator` | Builds animated interactive page artifacts |
 | `researcher` | Runs an autonomous measure-and-keep improvement loop |
