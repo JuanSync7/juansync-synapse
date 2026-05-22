@@ -1,6 +1,6 @@
 # EVAL — test-lint
 
-Quality criteria + test prompts for the test-lint skill. Used by `/improve-skill` to grade structural and behavioral quality.
+Quality criteria + test prompts for the test-lint skill. Used by `/synapse-skill-skill-improver` to grade structural and behavioral quality.
 
 > **Skill:** [`SKILL.md`](SKILL.md)
 > **Output schema:** `LintReport` (pydantic) — see [`templates/lint-report.md`](templates/lint-report.md)

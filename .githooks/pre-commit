@@ -2,14 +2,15 @@
 set -euo pipefail
 
 # Pre-commit hook: structural validation for changed skills, agents, and protocols.
-# Skills: frontmatter fields, SKILL_TAXONOMY.md values, domain README rows, EVAL.md existence.
-# Agents: frontmatter fields (name/domain/role), AGENT_TAXONOMY.md values, AGENTS_REGISTRY.md listing.
-# Protocols: frontmatter fields (name/domain/type), PROTOCOL_TAXONOMY.md values.
+# Skills: frontmatter fields, SKILL_VOCABULARY.md values (domain/subdomain/scope/role), domain README rows, EVAL.md existence.
+# Agents: frontmatter fields (name/domain/subdomain/scope/role), AGENT_VOCABULARY.md values, AGENTS_REGISTRY.md listing.
+# Protocols: frontmatter fields (name/domain/subdomain/scope/role), PROTOCOL_VOCABULARY.md values.
+# All slug slots (domain/subdomain/scope/role) must be present and validate against the corresponding vocabulary file.
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
-SKILL_TAXONOMY="$REPO_ROOT/taxonomy/SKILL_TAXONOMY.md"
-AGENT_TAXONOMY="$REPO_ROOT/taxonomy/AGENT_TAXONOMY.md"
-PROTOCOL_TAXONOMY="$REPO_ROOT/taxonomy/PROTOCOL_TAXONOMY.md"
+SKILL_VOCABULARY="$REPO_ROOT/registry/SKILL_VOCABULARY.md"
+AGENT_VOCABULARY="$REPO_ROOT/registry/AGENT_VOCABULARY.md"
+PROTOCOL_VOCABULARY="$REPO_ROOT/registry/PROTOCOL_VOCABULARY.md"
 
 errors=()
 
@@ -46,7 +47,7 @@ done
 # --- Identify changed agent files ---
 changed_agent_files=()
 for file in "${staged_files[@]+"${staged_files[@]}"}"; do
-    if echo "$file" | grep -qE '^(src|synapse)/agents/.*\.md$' && ! echo "$file" | grep -q 'README\.md$'; then
+    if echo "$file" | grep -qE '^(src|synapse)/agents/.*\.md$' && ! echo "$file" | grep -q 'change_requests/' && ! echo "$file" | grep -q 'README\.md$'; then
         found=false
         for a in "${changed_agent_files[@]+"${changed_agent_files[@]}"}"; do
             if [ "$a" = "$file" ]; then
@@ -109,34 +110,52 @@ extract_taxonomy_values() {
     done < "$file"
 }
 
-# Extract skill taxonomy values
+# Extract skill vocabulary values
 skill_domains=()
-skill_intents=()
+skill_subdomains=()
+skill_scopes=()
+skill_roles=()
 if [ ${#changed_skill_dirs[@]} -gt 0 ]; then
-    extract_taxonomy_values "$SKILL_TAXONOMY" "Domains"
+    extract_taxonomy_values "$SKILL_VOCABULARY" "Domains"
     skill_domains=("${_taxonomy_values[@]}")
-    extract_taxonomy_values "$SKILL_TAXONOMY" "Intents"
-    skill_intents=("${_taxonomy_values[@]}")
+    extract_taxonomy_values "$SKILL_VOCABULARY" "Subdomains"
+    skill_subdomains=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
+    extract_taxonomy_values "$SKILL_VOCABULARY" "Scopes"
+    skill_scopes=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
+    extract_taxonomy_values "$SKILL_VOCABULARY" "Roles"
+    skill_roles=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
 fi
 
-# Extract agent taxonomy values
+# Extract agent vocabulary values
 agent_domains=()
+agent_subdomains=()
+agent_scopes=()
 agent_roles=()
 if [ ${#changed_agent_files[@]} -gt 0 ]; then
-    extract_taxonomy_values "$AGENT_TAXONOMY" "Domains"
+    extract_taxonomy_values "$AGENT_VOCABULARY" "Domains"
     agent_domains=("${_taxonomy_values[@]}")
-    extract_taxonomy_values "$AGENT_TAXONOMY" "Roles"
+    extract_taxonomy_values "$AGENT_VOCABULARY" "Subdomains"
+    agent_subdomains=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
+    extract_taxonomy_values "$AGENT_VOCABULARY" "Scopes"
+    agent_scopes=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
+    extract_taxonomy_values "$AGENT_VOCABULARY" "Roles"
     agent_roles=("${_taxonomy_values[@]}")
 fi
 
-# Extract protocol taxonomy values
+# Extract protocol vocabulary values
 protocol_domains=()
-protocol_types=()
+protocol_subdomains=()
+protocol_subjects=()
+protocol_kinds=()
 if [ ${#changed_protocol_files[@]} -gt 0 ]; then
-    extract_taxonomy_values "$PROTOCOL_TAXONOMY" "Domains"
+    extract_taxonomy_values "$PROTOCOL_VOCABULARY" "Domains"
     protocol_domains=("${_taxonomy_values[@]}")
-    extract_taxonomy_values "$PROTOCOL_TAXONOMY" "Types"
-    protocol_types=("${_taxonomy_values[@]}")
+    extract_taxonomy_values "$PROTOCOL_VOCABULARY" "Subdomains"
+    protocol_subdomains=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
+    extract_taxonomy_values "$PROTOCOL_VOCABULARY" "Subjects"
+    protocol_subjects=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
+    extract_taxonomy_values "$PROTOCOL_VOCABULARY" "Kinds"
+    protocol_kinds=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
 fi
 
 for skill_dir in "${changed_skill_dirs[@]}"; do
@@ -146,15 +165,17 @@ for skill_dir in "${changed_skill_dirs[@]}"; do
     # --- Check 1: Frontmatter fields exist ---
     frontmatter="$(sed -n '/^---$/,/^---$/p' "$skill_md" | sed '1d;$d')"
 
-    for field in name description domain intent; do
+    for field in name description domain subdomain scope role; do
         if ! echo "$frontmatter" | grep -q "^${field}:"; then
             errors+=("$skill_dir: SKILL.md missing frontmatter field '$field'")
         fi
     done
 
-    # --- Check 2: domain and intent values are in SKILL_TAXONOMY.md ---
+    # --- Check 2: domain, subdomain, scope, role values are in SKILL_VOCABULARY.md ---
     domain_val="$(echo "$frontmatter" | grep '^domain:' | sed 's/^domain: *//' | tr -d '"' | tr -d "'" || true)"
-    intent_val="$(echo "$frontmatter" | grep '^intent:' | sed 's/^intent: *//' | tr -d '"' | tr -d "'" || true)"
+    subdomain_val="$(echo "$frontmatter" | grep '^subdomain:' | sed 's/^subdomain: *//' | tr -d '"' | tr -d "'" || true)"
+    scope_val="$(echo "$frontmatter" | grep '^scope:' | sed 's/^scope: *//' | tr -d '"' | tr -d "'" || true)"
+    role_val="$(echo "$frontmatter" | grep '^role:' | sed 's/^role: *//' | tr -d '"' | tr -d "'" || true)"
 
     if [ -n "$domain_val" ]; then
         found=false
@@ -165,25 +186,53 @@ for skill_dir in "${changed_skill_dirs[@]}"; do
             fi
         done
         if [ "$found" = false ]; then
-            errors+=("$skill_dir: domain '$domain_val' not found in SKILL_TAXONOMY.md")
+            errors+=("$skill_dir: domain '$domain_val' not found in SKILL_VOCABULARY.md")
         fi
     fi
 
-    if [ -n "$intent_val" ]; then
+    if [ -n "$subdomain_val" ]; then
         found=false
-        for i in "${skill_intents[@]}"; do
-            if [ "$i" = "$intent_val" ]; then
+        for s in "${skill_subdomains[@]+"${skill_subdomains[@]}"}"; do
+            if [ "$s" = "$subdomain_val" ]; then
                 found=true
                 break
             fi
         done
         if [ "$found" = false ]; then
-            errors+=("$skill_dir: intent '$intent_val' not found in SKILL_TAXONOMY.md")
+            errors+=("$skill_dir: subdomain '$subdomain_val' not found in SKILL_VOCABULARY.md")
         fi
     fi
 
-    # --- Check 3: Domain README.md has a matching row ---
-    domain_dir="$(echo "$skill_dir" | cut -d/ -f1-3)"
+    if [ -n "$scope_val" ]; then
+        found=false
+        for s in "${skill_scopes[@]+"${skill_scopes[@]}"}"; do
+            if [ "$s" = "$scope_val" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$skill_dir: scope '$scope_val' not found in SKILL_VOCABULARY.md")
+        fi
+    fi
+
+    if [ -n "$role_val" ]; then
+        found=false
+        for r in "${skill_roles[@]+"${skill_roles[@]}"}"; do
+            if [ "$r" = "$role_val" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$skill_dir: role '$role_val' not found in SKILL_VOCABULARY.md")
+        fi
+    fi
+
+    # --- Check 3: Parent README.md has a matching row ---
+    # Use dirname so this works for both nested (src/skills/<domain>/<skill>/)
+    # and flat (synapse/skills/<skill>/) layouts.
+    domain_dir="$(dirname "$skill_dir")"
     domain_readme="$REPO_ROOT/$domain_dir/README.md"
 
     if [ -f "$domain_readme" ]; then
@@ -214,6 +263,26 @@ for skill_dir in "${changed_skill_dirs[@]}"; do
     if git diff --cached --name-only --diff-filter=A | grep -q "^${skill_dir}/SKILL.md$"; then
         echo "  WARN  $skill_dir: new skill — run /synapse-gatekeeper before merging (or mark status: draft in registry/SKILL_REGISTRY.md)"
     fi
+
+    # --- Check 7: Auto-demote stable → draft if SKILL.md changed ---
+    # Stable means "this exact SKILL.md was approved by gatekeeper". Any edit
+    # invalidates that claim. Companion-file edits (references/, templates/)
+    # are NOT in scope — only SKILL.md itself triggers demotion.
+    if git diff --cached --name-only --diff-filter=M | grep -q "^${skill_dir}/SKILL.md$"; then
+        if [ -f "$skill_registry_md" ] && grep -qE "\[$skill_name\].*\| *stable *\|" "$skill_registry_md"; then
+            # Rewrite the row's last column from stable → draft. Match by skill name.
+            tmp_file="$(mktemp)"
+            awk -v name="$skill_name" '
+                $0 ~ "\\["name"\\]" && /\| *stable *\|/ {
+                    sub(/\| *stable *\|[[:space:]]*$/, "| draft |")
+                }
+                { print }
+            ' "$skill_registry_md" > "$tmp_file"
+            mv "$tmp_file" "$skill_registry_md"
+            git add "$skill_registry_md"
+            echo "  DEMOTE  $skill_dir: SKILL.md changed — registry status stable → draft. Re-run /synapse-gatekeeper to restore."
+        fi
+    fi
 done
 
 # =============================================================================
@@ -227,14 +296,16 @@ for agent_file in "${changed_agent_files[@]+"${changed_agent_files[@]}"}"; do
     # --- Check 1: Frontmatter fields exist ---
     frontmatter="$(sed -n '/^---$/,/^---$/p' "$agent_md" | sed '1d;$d')"
 
-    for field in name description domain role; do
+    for field in name description domain subdomain scope role; do
         if ! echo "$frontmatter" | grep -q "^${field}:"; then
             errors+=("$agent_file: missing frontmatter field '$field'")
         fi
     done
 
-    # --- Check 2: domain and role values are in AGENT_TAXONOMY.md ---
+    # --- Check 2: domain, subdomain, scope, role values are in AGENT_VOCABULARY.md ---
     domain_val="$(echo "$frontmatter" | grep '^domain:' | sed 's/^domain: *//' | tr -d '"' | tr -d "'" || true)"
+    subdomain_val="$(echo "$frontmatter" | grep '^subdomain:' | sed 's/^subdomain: *//' | tr -d '"' | tr -d "'" || true)"
+    scope_val="$(echo "$frontmatter" | grep '^scope:' | sed 's/^scope: *//' | tr -d '"' | tr -d "'" || true)"
     role_val="$(echo "$frontmatter" | grep '^role:' | sed 's/^role: *//' | tr -d '"' | tr -d "'" || true)"
 
     if [ -n "$domain_val" ]; then
@@ -246,7 +317,33 @@ for agent_file in "${changed_agent_files[@]+"${changed_agent_files[@]}"}"; do
             fi
         done
         if [ "$found" = false ]; then
-            errors+=("$agent_file: domain '$domain_val' not found in AGENT_TAXONOMY.md")
+            errors+=("$agent_file: domain '$domain_val' not found in AGENT_VOCABULARY.md")
+        fi
+    fi
+
+    if [ -n "$subdomain_val" ]; then
+        found=false
+        for s in "${agent_subdomains[@]+"${agent_subdomains[@]}"}"; do
+            if [ "$s" = "$subdomain_val" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$agent_file: subdomain '$subdomain_val' not found in AGENT_VOCABULARY.md")
+        fi
+    fi
+
+    if [ -n "$scope_val" ]; then
+        found=false
+        for s in "${agent_scopes[@]+"${agent_scopes[@]}"}"; do
+            if [ "$s" = "$scope_val" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$agent_file: scope '$scope_val' not found in AGENT_VOCABULARY.md")
         fi
     fi
 
@@ -259,7 +356,7 @@ for agent_file in "${changed_agent_files[@]+"${changed_agent_files[@]}"}"; do
             fi
         done
         if [ "$found" = false ]; then
-            errors+=("$agent_file: role '$role_val' not found in AGENT_TAXONOMY.md")
+            errors+=("$agent_file: role '$role_val' not found in AGENT_VOCABULARY.md")
         fi
     fi
 
@@ -302,15 +399,17 @@ for protocol_file in "${changed_protocol_files[@]+"${changed_protocol_files[@]}"
     # --- Check 1: Frontmatter fields exist ---
     frontmatter="$(sed -n '/^---$/,/^---$/p' "$protocol_md" | sed '1d;$d')"
 
-    for field in name description domain type; do
+    for field in name description domain subdomain subject kind; do
         if ! echo "$frontmatter" | grep -q "^${field}:"; then
             errors+=("$protocol_file: missing frontmatter field '$field'")
         fi
     done
 
-    # --- Check 2: domain and type values are in PROTOCOL_TAXONOMY.md ---
+    # --- Check 2: domain, subdomain, subject, kind values are in PROTOCOL_VOCABULARY.md ---
     domain_val="$(echo "$frontmatter" | grep '^domain:' | sed 's/^domain: *//' | tr -d '"' | tr -d "'" || true)"
-    type_val="$(echo "$frontmatter" | grep '^type:' | sed 's/^type: *//' | tr -d '"' | tr -d "'" || true)"
+    subdomain_val="$(echo "$frontmatter" | grep '^subdomain:' | sed 's/^subdomain: *//' | tr -d '"' | tr -d "'" || true)"
+    subject_val="$(echo "$frontmatter" | grep '^subject:' | sed 's/^subject: *//' | tr -d '"' | tr -d "'" || true)"
+    kind_val="$(echo "$frontmatter" | grep '^kind:' | sed 's/^kind: *//' | tr -d '"' | tr -d "'" || true)"
 
     if [ -n "$domain_val" ]; then
         found=false
@@ -321,20 +420,46 @@ for protocol_file in "${changed_protocol_files[@]+"${changed_protocol_files[@]}"
             fi
         done
         if [ "$found" = false ]; then
-            errors+=("$protocol_file: domain '$domain_val' not found in PROTOCOL_TAXONOMY.md")
+            errors+=("$protocol_file: domain '$domain_val' not found in PROTOCOL_VOCABULARY.md")
         fi
     fi
 
-    if [ -n "$type_val" ]; then
+    if [ -n "$subdomain_val" ]; then
         found=false
-        for t in "${protocol_types[@]}"; do
-            if [ "$t" = "$type_val" ]; then
+        for s in "${protocol_subdomains[@]+"${protocol_subdomains[@]}"}"; do
+            if [ "$s" = "$subdomain_val" ]; then
                 found=true
                 break
             fi
         done
         if [ "$found" = false ]; then
-            errors+=("$protocol_file: type '$type_val' not found in PROTOCOL_TAXONOMY.md")
+            errors+=("$protocol_file: subdomain '$subdomain_val' not found in PROTOCOL_VOCABULARY.md")
+        fi
+    fi
+
+    if [ -n "$subject_val" ]; then
+        found=false
+        for s in "${protocol_subjects[@]+"${protocol_subjects[@]}"}"; do
+            if [ "$s" = "$subject_val" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$protocol_file: subject '$subject_val' not found in PROTOCOL_VOCABULARY.md")
+        fi
+    fi
+
+    if [ -n "$kind_val" ]; then
+        found=false
+        for k in "${protocol_kinds[@]+"${protocol_kinds[@]}"}"; do
+            if [ "$k" = "$kind_val" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$protocol_file: kind '$kind_val' not found in PROTOCOL_VOCABULARY.md")
         fi
     fi
 

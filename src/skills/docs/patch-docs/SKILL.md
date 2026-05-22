@@ -2,7 +2,9 @@
 name: patch-docs
 description: "Use when code has changed and docs need incremental updates — not full regeneration. Triggered by 'patch docs', 'update the docs', 'sync docs with changes', or automatically after coding tasks via CLAUDE.md trigger."
 domain: docs
-intent: improve
+subdomain: general
+scope: doc
+role: patcher
 tags: [incremental, patch, diff-driven, doc-maintenance]
 user-invocable: true
 argument-hint: "[optional: 'staged' | 'HEAD~1' | path-to-diff]"

@@ -1,6 +1,8 @@
 # src/skills
 
-Adopter skill recipes. Framework skill domains (skill, agent, protocol, orchestration, meta/skill-router) live in [`../../synapse/skills/`](../../synapse/skills/).
+Adopter skill recipes. Framework skill domains (synapse-router-*, synapse-skill-*, synapse-meta-*) live in [`../../synapse/skills/`](../../synapse/skills/).
+
+Use `synapse/skills/synapse-router-artifact-creator/` to scaffold new skills into this directory.
 
 | Domain | Description |
 |--------|-------------|

@@ -1,0 +1,70 @@
+---
+name: {{name}}
+description: {{description}}
+domain: {{domain}}
+action: {{action}}
+type: {{type}}
+tags: [{{tags}}]
+---
+
+# {{name}}
+
+{{one-paragraph deterministic contract statement — what this tool accepts, what it produces, and the invariant: same inputs always yield the same outputs}}
+
+## Inputs
+
+| Arg / Env Var | Required | Type | Description |
+|---------------|----------|------|-------------|
+| `--{{arg1}}` | yes | string | {{description}} |
+| `--{{arg2}}` | no | string | {{description}} (default: {{default}}) |
+| `${{ENV_VAR}}` | no | string | {{description}} |
+
+## Outputs
+
+| Output | Type | Description |
+|--------|------|-------------|
+| stdout | text | {{description of stdout content on success}} |
+| stderr | text | Error messages only; empty on success |
+| exit code | integer | See Exit Codes table below |
+| `{{output-file-path}}` | file | {{description of any file written; remove row if none}} |
+
+## Side Effects
+
+{{List every file path pattern written, every external service called, every env var consumed. Be exhaustive. Example:}}
+
+- Writes: `{{path-pattern}}` — {{reason}}
+- Reads: `{{path-pattern}}` — {{reason}}
+- External: `{{service or CLI}}` — {{reason}}
+- Env var: `${{VAR}}` — {{reason}}
+
+{{If genuinely no side effects beyond stdout/stderr: "None beyond stdout/stderr."}}
+
+## Exit Codes
+
+| Code | Name | Meaning | Caller action |
+|------|------|---------|---------------|
+| 0 | `SUCCESS` | Completed successfully | Proceed |
+| 1 | `ERR_USAGE` | Missing or invalid argument | Print usage; do not retry without fixing input |
+| 2 | `ERR_NOT_FOUND` | Required file or resource not found | Check path; do not retry without fixing input |
+| 3 | `ERR_DEPENDENCY` | External dependency (CLI, service) unavailable | Install dependency or check connectivity; retry |
+
+{{Add rows for any additional exit codes the tool uses. Remove unused rows.}}
+
+## Examples
+
+```bash
+# Happy path
+{{name}} --{{arg1}} {{value1}} --{{arg2}} {{value2}}
+# → stdout: {{expected output}}
+# → exit: 0
+
+# Missing required arg
+{{name}} --{{arg2}} {{value2}}
+# → stderr: "Error: --{{arg1}} is required"
+# → exit: 1
+
+# Dependency unavailable
+{{name}} --{{arg1}} {{value1}}
+# → stderr: "Error: {{dependency}} not found in PATH"
+# → exit: 3
+```

@@ -2,7 +2,9 @@
 name: brainstorm
 description: "Use when the user asks to think through, explore, or debate a non-trivial question before committing to execution — phrases like 'help me think through,' 'should I,' 'I'm debating,' 'I have an idea for,' 'I'm not sure how to approach.' Does not fire on factual questions, on requests with a clear direction already, or on skill-design topics."
 domain: meta
-intent: plan
+subdomain: general
+scope: process
+role: brainstormer
 tags: [brainstorm, coaching, ideation, decision-making, mentor]
 user-invocable: true
 argument-hint: "[topic or question to explore]"
@@ -25,7 +27,7 @@ A structured brainstorm protocol for thinking through open questions before comm
 
 ## Wrong-Tool Detection
 
-- **Skill-shaped topic** (mentions "skill," "SKILL.md," slash command, agentic behavior, "make this a skill") → redirect to `/synapse-brainstorm`
+- **Skill-shaped topic** (mentions "skill," "SKILL.md," slash command, agentic behavior, "make this a skill") → redirect to `/synapse-router-artifact-brainstormer`
 - **User has a clear spec/plan/direction already** (nothing left to decide) → redirect to the appropriate implementation skill. *Direction-based, not verb-based: "build a dashboard" with no direction IS a brainstorm; "implement this spec" with a concrete spec is not.*
 - **Factual question with a definite answer** → answer directly; do not brainstorm
 - **Specific concrete bug with a clear failure trace** → debug directly; brainstorm only fires when root cause is architectural

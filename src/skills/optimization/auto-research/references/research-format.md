@@ -122,7 +122,7 @@ Human-readable narrative of what improved and why. Written by the agent at stop 
 ### Filled example — Numerical
 
 ```markdown
-# skill-creator — Research Changelog
+# synapse-router-artifact-creator — Research Changelog
 
 ## Run: 2026-04-07 — autoresearch/apr7
 

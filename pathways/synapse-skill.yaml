@@ -5,19 +5,18 @@ harness: claude
 tags: [skill, meta, creation, ai-synapse]
 ---
 
-# Pipeline (informational): synapse-brainstorm → skill-creator → [improve-skill ↔ auto-research loop] → write-skill-eval → synapse-gatekeeper
+# Pipeline (informational): synapse-router-artifact-brainstormer → synapse-router-artifact-creator → synapse-skill-skill-improver → synapse-router-eval-writer → synapse-router-artifact-gatekeeper
 
 synapses:
   skills:
-    - src/skills/skill/synapse-brainstorm
-    - src/skills/skill/skill-creator
-    - src/skills/skill/improve-skill
-    - src/skills/optimization/auto-research
-    - src/skills/skill/write-skill-eval
-    - src/skills/skill/synapse-gatekeeper
+    - synapse/skills/synapse-router-artifact-brainstormer
+    - synapse/skills/synapse-router-artifact-creator
+    - synapse/skills/synapse-skill-skill-improver
+    - synapse/skills/synapse-router-eval-writer
+    - synapse/skills/synapse-router-artifact-gatekeeper
   agents:
-    - src/agents/skill-eval/skill-eval-auditor
-    - src/agents/skill-eval/skill-eval-judge
-    - src/agents/skill-eval/skill-eval-prompter
+    - synapse/agents/synapse/skill-eval/synapse-skill-eval-auditor
+    - synapse/agents/synapse/skill-eval/synapse-skill-eval-judge
+    - synapse/agents/synapse/skill-eval/synapse-skill-eval-prompter
   protocols: []
   tools: []

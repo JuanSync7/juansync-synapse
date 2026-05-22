@@ -2,7 +2,9 @@
 name: write-postmortem
 description: "Use when asked to write a postmortem, create an incident postmortem, document an outage, or produce a blameless post-incident review."
 domain: docs
-intent: write
+subdomain: post-build
+scope: doc
+role: writer
 tags: [postmortem, incident-response, blameless, sre, reliability]
 user-invocable: true
 argument-hint: "[incident description or log dump]"

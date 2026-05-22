@@ -1,8 +1,10 @@
 ---
 name: write-spec-docs
 description: "Writes or updates a formal requirements specification document for a software system or subsystem. Use when the user needs to define requirements, acceptance criteria, and traceability for a system component. Triggered by requests like 'write a spec', 'create requirements', 'specification document', or 'update this spec'."
-domain: docs.spec
-intent: write
+domain: docs
+subdomain: spec
+scope: doc
+role: writer
 tags: [spec, requirements, FR, NFR, traceability, orchestration]
 user-invocable: true
 argument-hint: "[system/subsystem name] [optional: output path]"

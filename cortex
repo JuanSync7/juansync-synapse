@@ -18,7 +18,7 @@ usage() {
 Usage: ./cortex <command> [args...]
 
 Consumer — load and manage synapses:
-  install <targets...>                Install synapses to Claude Code
+  install [--force] <targets...>      Install synapses to Claude Code
   codex <targets...>                  Install synapses to Codex CLI
   codex-project <targets...>          Install synapses to Codex project
   gemini <targets...>                 Install synapses to Gemini CLI
@@ -28,6 +28,13 @@ Consumer — load and manage synapses:
   available                           Show all available synapses
   pathway <subcommand>                Manage pathways (list, show, install, create, export)
 
+Versioning — pin/unpin/bump/inspect synapse version:
+  pin <tag|latest|main|sha:HEX>       Pin synapse to a specific version
+  unpin                               Reset pin to "latest"
+  bump                                Freeze floating pin to current resolved value
+  status                              Show current pin, resolved SHA, drift summary
+  drift <subcommand>                  Resolve drift (show, stash, restore, adopt, ignore, list-stashes)
+
 Contributor — create and validate artifacts:
   scaffold <type> <domain> <name>     Create a new synapse (skill, agent, protocol, tool)
   validate [<path>]                   Run structural checks without committing
@@ -36,10 +43,23 @@ Contributor — create and validate artifacts:
 Maintainer — repo hygiene and repair:
   sync [--fix]                        Sync registries and READMEs from disk state
   audit                               Companion artifact audit
-  doctor                              Check for broken symlinks
+  doctor [--json|--severity-floor|--skip] Scan installed.lock for 7 finding categories
+  doctor symlinks                     Check for broken symlinks (legacy behavior)
+  doctor all                          Run symlinks check then full scan; combined exit
   clean                               Remove all installed symlinks
   check-links                         Validate relative markdown links
   reorganize <subcommand>             Domain-based artifact reorganization
+
+Clerk — automated external/ submodule bumps (cron-driven):
+  clerk bump-externals [--apply]      Detect upstream tags; dry-run by default
+  clerk status                        Summarize ~/.synapse/clerk_state.toml
+  clerk doctor [--probe-auth]         Clerk-self checks (state, auth, .gitmodules)
+  clerk auth <show|set-mode|probe>    Manage clerk auth (PAT or GitHub App)
+
+Telemetry — emit lifecycle events to file/HTTP/OTLP sinks:
+  telemetry status [--json]           Show config, sinks, file size
+  telemetry rotate                    Gzip events.jsonl and truncate
+  telemetry emit <event> [...]        Emit a single event (used by hooks)
 
 Help:
   help [<command>]                    Show help for a command
@@ -104,6 +124,35 @@ case "${1:-}" in
 
     # --- Consumer: package ---
     zip)            shift; "$SCRIPTS/install.sh" zip "$@" ;;
+
+    # --- Consumer: versioning ---
+    pin)            shift; python3 "$SCRIPTS/lib/pins_cli.py" pin "$@" ;;
+    unpin)          shift; python3 "$SCRIPTS/lib/pins_cli.py" unpin "$@" ;;
+    bump)           shift; python3 "$SCRIPTS/lib/pins_cli.py" bump "$@" ;;
+    status)         shift; python3 "$SCRIPTS/lib/pins_cli.py" status "$@" ;;
+
+    # --- Consumer: drift resolution ---
+    drift)
+        shift
+        sub="${1:-}"
+        if [ -z "$sub" ]; then
+            cat <<'DRIFTUSAGE'
+Usage: ./cortex drift <subcommand> [args...]
+
+  show <artifact>                 Show diff vs source (exit 1 if drift)
+  stash <artifact> [--reason X]   Save local edits, restore canonical
+  restore <stash-id> [--yes]      Restore a stash over its source path
+  list-stashes [--json]           List stashes under ~/.synapse/stash/
+  adopt <artifact> [--slug N] [--reason X]
+                                  Promote drift to a change_request
+  ignore <artifact> [--reason X] [--expires DATE]
+                                  Add a [drift_exceptions] entry to pins.toml
+DRIFTUSAGE
+            exit 0
+        fi
+        shift
+        python3 "$SCRIPTS/lib/drift_cli.py" "$sub" "$@"
+        ;;
 
     # --- Contributor: create ---
     scaffold)
@@ -187,9 +236,76 @@ case "${1:-}" in
 
     # --- Maintainer: inspect ---
     audit)          "$SCRIPTS/audit-artifacts.sh" "${@:2}" ;;
-    doctor)         "$SCRIPTS/install.sh" doctor ;;
+    doctor)
+        shift
+        sub="${1:-}"
+        case "$sub" in
+            symlinks)
+                "$SCRIPTS/install.sh" doctor-symlinks
+                ;;
+            all)
+                shift || true
+                "$SCRIPTS/install.sh" doctor-symlinks
+                rc1=$?
+                python3 "$SCRIPTS/lib/doctor_cli.py" "$@"
+                rc2=$?
+                # Combined exit code: max of the two
+                exit $(( rc1 > rc2 ? rc1 : rc2 ))
+                ;;
+            *)
+                # Default: run the new finding-based doctor with any args/flags
+                python3 "$SCRIPTS/lib/doctor_cli.py" "$@"
+                ;;
+        esac
+        ;;
     check-links)    "$SCRIPTS/check-links.sh" ;;
     reorganize)     shift; "$SCRIPTS/reorganize.sh" "$@" ;;
+
+    # --- Clerk: external submodule bump automation ---
+    clerk)
+        shift
+        sub="${1:-}"
+        if [ -z "$sub" ]; then
+            cat <<'CLERKUSAGE'
+Usage: ./cortex clerk <subcommand> [args...]
+
+  bump-externals [--apply] [--only PATH] [--state PATH] [--json]
+                                  Detect upstream submodule tag bumps; default dry-run
+  status [--state PATH] [--json]  Summarize clerk state file
+  doctor [--state PATH] [--probe-auth]
+                                  Clerk-specific self checks (state, auth, .gitmodules)
+  auth show [--json]              Print clerk auth config (no token values)
+  auth set-mode <pat|app>         Set auth mode; app mode also needs --app-id,
+                                  --installation-id, --private-key-path
+  auth probe                      Exercise the active auth adapter
+CLERKUSAGE
+            exit 0
+        fi
+        shift
+        python3 "$SCRIPTS/lib/clerk_cli.py" "$sub" "$@"
+        ;;
+
+    # --- Telemetry ---
+    telemetry)
+        shift
+        sub="${1:-}"
+        if [ -z "$sub" ]; then
+            cat <<'TELUSAGE'
+Usage: ./cortex telemetry <subcommand> [args...]
+
+  status [--json]                  Show config, sinks, file size
+  rotate                           Gzip events.jsonl and truncate
+  emit <event_type> [--artifact X] [--version V] [--exit-status ok|error]
+                                   [--metadata K=V ...] [--synapse-repo PATH]
+                                   Emit a single event (used by hooks)
+
+Identity guardrail: telemetry emits and rotates. It NEVER reads back events.
+TELUSAGE
+            exit 0
+        fi
+        shift
+        python3 "$SCRIPTS/lib/telemetry_cli.py" "$sub" "$@"
+        ;;
 
     # --- Help ---
     help)           shift; show_help "${1:-}" ;;

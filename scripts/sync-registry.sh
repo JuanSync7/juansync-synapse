@@ -118,12 +118,12 @@ scan_agents() {
         local name
         name=$(extract_field "$f" "name")
         [[ -n "$name" ]] && echo "${name}|${f}" >> "$outfile"
-    done < <(find "$REPO_ROOT/synapse/agents" "$REPO_ROOT/src/agents" -name "*.md" -not -name "README.md" -type f 2>/dev/null || true)
+    done < <(find "$REPO_ROOT/synapse/agents" "$REPO_ROOT/src/agents" -name "*.md" -not -name "README.md" -not -path "*/change_requests/*" -type f 2>/dev/null || true)
     while IFS= read -r f; do
         local name
         name=$(extract_field "$f" "name")
         [[ -n "$name" ]] && echo "${name}|${f}" >> "$outfile"
-    done < <(find "$REPO_ROOT/external" -path "*/agents/*.md" -not -name "README.md" -type f 2>/dev/null || true)
+    done < <(find "$REPO_ROOT/external" -path "*/agents/*.md" -not -name "README.md" -not -path "*/change_requests/*" -type f 2>/dev/null || true)
 }
 
 scan_protocols() {
@@ -133,12 +133,12 @@ scan_protocols() {
         local name
         name=$(extract_field "$f" "name")
         [[ -n "$name" ]] && echo "${name}|${f}" >> "$outfile"
-    done < <(find "$REPO_ROOT/synapse/protocols" "$REPO_ROOT/src/protocols" -name "*.md" -not -name "README.md" -type f 2>/dev/null || true)
+    done < <(find "$REPO_ROOT/synapse/protocols" "$REPO_ROOT/src/protocols" -name "*.md" -not -name "README.md" -not -path "*/change_requests/*" -type f 2>/dev/null || true)
     while IFS= read -r f; do
         local name
         name=$(extract_field "$f" "name")
         [[ -n "$name" ]] && echo "${name}|${f}" >> "$outfile"
-    done < <(find "$REPO_ROOT/external" -path "*/protocols/*.md" -not -name "README.md" -type f 2>/dev/null || true)
+    done < <(find "$REPO_ROOT/external" -path "*/protocols/*.md" -not -name "README.md" -not -path "*/change_requests/*" -type f 2>/dev/null || true)
 }
 
 scan_tools() {
@@ -555,6 +555,189 @@ regen_readmes() {
     rm -f "$scan_tmp"
 }
 
+# --- Shell-comment metadata extraction (for scripts using # @field: value) ---
+
+extract_shell_meta() {
+    local file="$1" field="$2"
+    grep "^# @${field}:" "$file" 2>/dev/null \
+        | head -1 \
+        | sed "s/^# @${field}: *//" \
+        || true
+}
+
+# --- Status extraction with sensible defaults ---
+
+extract_status() {
+    local file="$1"
+    local s
+    s=$(extract_field "$file" "status")
+    if [[ -z "$s" ]]; then
+        # Scripts have no frontmatter status field; treat as stable if shell metadata present
+        if grep -q "^# @name:" "$file" 2>/dev/null; then
+            echo "stable"
+        else
+            echo "draft"
+        fi
+    else
+        echo "$s"
+    fi
+}
+
+# --- Pathway scan (YAML files) ---
+
+scan_pathways() {
+    local outfile="$1"
+    > "$outfile"
+    while IFS= read -r f; do
+        local name
+        name=$(grep "^name:" "$f" 2>/dev/null | head -1 | sed 's/^name: *//' | tr -d '"' | tr -d "'")
+        [[ -z "$name" ]] && name="$(basename "$f" .yaml)"
+        echo "${name}|${f}" >> "$outfile"
+    done < <(find "$REPO_ROOT/pathways" -name "*.yaml" -type f 2>/dev/null || true)
+}
+
+# --- Script scan ---
+
+scan_scripts() {
+    local outfile="$1"
+    > "$outfile"
+    # cortex (repo root, no extension)
+    if [[ -f "$REPO_ROOT/cortex" ]]; then
+        echo "cortex|$REPO_ROOT/cortex" >> "$outfile"
+    fi
+    # scripts/*.sh and scripts/*.ps1 — registry uses filename (no extension) as name
+    while IFS= read -r f; do
+        local name
+        name="$(basename "$f")"
+        name="${name%.sh}"
+        name="${name%.ps1}"
+        echo "${name}|${f}" >> "$outfile"
+    done < <(find "$REPO_ROOT/scripts" -maxdepth 1 \( -name "*.sh" -o -name "*.ps1" \) -type f 2>/dev/null || true)
+}
+
+# --- Description extraction across artifact types ---
+
+extract_description() {
+    local file="$1"
+    local d
+    d=$(extract_field "$file" "description")
+    if [[ -z "$d" ]]; then
+        d=$(extract_shell_meta "$file" "description")
+    fi
+    if [[ -z "$d" ]]; then
+        # YAML pathway: 'description: "..."'
+        d=$(grep "^description:" "$file" 2>/dev/null | head -1 | sed 's/^description: *//' | sed 's/^"//' | sed 's/"$//')
+    fi
+    echo "$d"
+}
+
+# --- Consumer derivation ---
+# Builds a global index of all artifacts, then computes a name -> consumers map
+# by scanning each artifact's primary file for references to other artifact names.
+
+ARTIFACT_INDEX=""
+CONSUMER_MAP=""
+
+build_artifact_index() {
+    ARTIFACT_INDEX=$(mktemp)
+    local tmp; tmp=$(mktemp)
+    scan_skills "$tmp"     && while IFS='|' read -r n p; do [[ -n "$n" ]] && echo "${n}|${p}" >> "$ARTIFACT_INDEX"; done < "$tmp"
+    scan_agents "$tmp"     && while IFS='|' read -r n p; do [[ -n "$n" ]] && echo "${n}|${p}" >> "$ARTIFACT_INDEX"; done < "$tmp"
+    scan_protocols "$tmp"  && while IFS='|' read -r n p; do [[ -n "$n" ]] && echo "${n}|${p}" >> "$ARTIFACT_INDEX"; done < "$tmp"
+    scan_tools "$tmp"      && while IFS='|' read -r n p; do [[ -n "$n" ]] && echo "${n}|${p}" >> "$ARTIFACT_INDEX"; done < "$tmp"
+    scan_pathways "$tmp"   && while IFS='|' read -r n p; do [[ -n "$n" ]] && echo "${n}|${p}" >> "$ARTIFACT_INDEX"; done < "$tmp"
+    scan_scripts "$tmp"    && while IFS='|' read -r n p; do [[ -n "$n" ]] && echo "${n}|${p}" >> "$ARTIFACT_INDEX"; done < "$tmp"
+    rm -f "$tmp"
+}
+
+build_consumer_map() {
+    [[ -n "$ARTIFACT_INDEX" && -f "$ARTIFACT_INDEX" ]] || build_artifact_index
+    CONSUMER_MAP=$(mktemp)
+    > "$CONSUMER_MAP"
+
+    # Read all artifact names (sorted by length descending to match longest first)
+    local -a names=()
+    while IFS='|' read -r n p; do
+        [[ -n "$n" ]] && names+=("$n")
+    done < "$ARTIFACT_INDEX"
+
+    # For each artifact's primary file, find which other artifact names it mentions.
+    # Record: target_name|consumer_name
+    while IFS='|' read -r owner_name owner_path; do
+        [[ -z "$owner_name" ]] && continue
+        [[ -f "$owner_path" ]] || continue
+        for target in "${names[@]}"; do
+            [[ "$target" == "$owner_name" ]] && continue
+            # Word-boundary match (treat hyphens as part of the word so 'skill' doesn't match 'skill-creator')
+            if grep -qE "(^|[^A-Za-z0-9_-])${target}([^A-Za-z0-9_-]|$)" "$owner_path" 2>/dev/null; then
+                echo "${target}|${owner_name}" >> "$CONSUMER_MAP"
+            fi
+        done
+    done < "$ARTIFACT_INDEX"
+}
+
+lookup_consumers() {
+    local name="$1"
+    [[ -n "$CONSUMER_MAP" && -f "$CONSUMER_MAP" ]] || { echo "—"; return; }
+    local list
+    list=$(grep "^${name}|" "$CONSUMER_MAP" 2>/dev/null | cut -d'|' -f2 | sort -u | paste -sd, - | sed 's/,/, /g')
+    if [[ -z "$list" ]]; then
+        echo "—"
+    else
+        echo "$list"
+    fi
+}
+
+# --- Top-level registry regeneration ---
+
+regen_registry() {
+    local type_label="$1" registry_file="$2" scan_fn="$3" name_col="$4"
+
+    echo -e "\n${BOLD}${CYAN}[$type_label]${NC}"
+
+    if [[ ! -f "$registry_file" ]]; then
+        echo -e "  ${YELLOW}SKIP${NC}: registry file not found: $registry_file"
+        return 0
+    fi
+
+    local scan_tmp; scan_tmp=$(mktemp)
+    $scan_fn "$scan_tmp"
+
+    # Preserve the prose header (everything before first table row)
+    local header=""
+    while IFS= read -r line; do
+        if [[ "$line" =~ ^\| ]]; then break; fi
+        header+="${line}"$'\n'
+    done < "$registry_file"
+
+    # Build new table
+    local registry_dir
+    registry_dir="$(dirname "$registry_file")"
+
+    {
+        printf '%s' "$header"
+        echo "| ${name_col} | Description | Status | Consumers |"
+        echo "|------|-------------|--------|-----------|"
+        while IFS='|' read -r name path; do
+            [[ -z "$name" ]] && continue
+            local desc status consumers rel_path
+            desc=$(extract_description "$path")
+            status=$(extract_status "$path")
+            consumers=$(lookup_consumers "$name")
+            rel_path=$(realpath --relative-to="$registry_dir" "$path" 2>/dev/null || echo "$path")
+            echo "| [${name}](${rel_path}) | ${desc} | ${status} | ${consumers} |"
+        done < <(sort "$scan_tmp")
+    } > "${registry_file}.tmp"
+
+    mv "${registry_file}.tmp" "$registry_file"
+
+    local count
+    count=$(wc -l < "$scan_tmp")
+    echo -e "  ${GREEN}REGEN${NC}: $(realpath --relative-to="$REPO_ROOT" "$registry_file") (${count} entries)"
+
+    rm -f "$scan_tmp"
+}
+
 # --- Usage ---
 
 usage() {
@@ -562,9 +745,10 @@ usage() {
 Usage: sync-registry.sh [command]
 
 Commands:
-  status    Show drift between disk and registries/READMEs (default)
-  fix       Auto-repair stale entries, path mismatches, and README tables
-  readme    Regenerate all domain READMEs from disk state
+  status      Show drift between disk and registries/READMEs (default)
+  fix         Auto-repair stale entries, path mismatches, and README tables
+  readme      Regenerate all domain READMEs from disk state
+  registries  Regenerate top-level registry/*.md tables (Status + Consumers from disk)
 
 Options:
   -h, --help    Show this help message
@@ -574,6 +758,7 @@ Examples:
   sync-registry.sh status       # show drift
   sync-registry.sh fix          # auto-repair all drift
   sync-registry.sh readme       # regenerate all domain READMEs
+  sync-registry.sh registries   # regenerate top-level registry tables
 USAGE
 }
 
@@ -621,6 +806,23 @@ case "$CMD" in
         regen_readmes "Protocols" scan_protocols "*.md"
         regen_readmes "Tools" scan_tools "TOOL.md"
 
+        echo ""
+        echo -e "${GREEN}Done.${NC}"
+        ;;
+    registries)
+        echo -e "${BOLD}Regenerating top-level registry tables from disk state...${NC}"
+        echo -e "Building artifact index and deriving consumer graph..."
+        build_artifact_index
+        build_consumer_map
+
+        regen_registry "Skills"    "$REPO_ROOT/registry/SKILL_REGISTRY.md"    scan_skills    "Skill"
+        regen_registry "Agents"    "$REPO_ROOT/registry/AGENTS_REGISTRY.md"   scan_agents    "Agent"
+        regen_registry "Protocols" "$REPO_ROOT/registry/PROTOCOL_REGISTRY.md" scan_protocols "Protocol"
+        regen_registry "Tools"     "$REPO_ROOT/registry/TOOL_REGISTRY.md"     scan_tools     "Tool"
+        regen_registry "Pathways"  "$REPO_ROOT/registry/PATHWAY_REGISTRY.md"  scan_pathways  "Pathway"
+        regen_registry "Scripts"   "$REPO_ROOT/registry/SCRIPT_REGISTRY.md"   scan_scripts   "Script"
+
+        rm -f "$ARTIFACT_INDEX" "$CONSUMER_MAP"
         echo ""
         echo -e "${GREEN}Done.${NC}"
         ;;

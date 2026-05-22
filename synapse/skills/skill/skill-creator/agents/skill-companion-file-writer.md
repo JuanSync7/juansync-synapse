@@ -1,1 +1,0 @@
-../../../../agents/skill/skill-companion-file-writer.md

@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# Tests for {{name}}
+# Run from repo root: bash {{tool_dir}}/test/test-{{name}}.sh
+set -uo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+TOOL_PATH="$SCRIPT_DIR/{{name}}.sh"   # or {{name}}.py for Python tools
+TEST_DIR="$(mktemp -d)"
+PASS=0
+FAIL=0
+
+# ── Cleanup ──────────────────────────────────────────────────────────
+cleanup() { rm -rf "$TEST_DIR"; }
+trap cleanup EXIT
+
+# ── Helpers ──────────────────────────────────────────────────────────
+log_pass() { echo "  PASS  $1"; PASS=$((PASS+1)); }
+log_fail() { echo "  FAIL  $1: $2"; FAIL=$((FAIL+1)); }
+
+# Reset fixture directory between test cases
+setup_case() {
+    rm -rf "$TEST_DIR"
+    TEST_DIR="$(mktemp -d)"
+}
+
+# Assert exact exit code
+assert_exit() {
+    local desc="$1" expected="$2" actual="$3"
+    if [[ "$actual" -eq "$expected" ]]; then
+        log_pass "$desc (exit $actual)"
+    else
+        log_fail "$desc" "expected exit $expected, got $actual"
+    fi
+}
+
+# Assert stdout/stderr contains string
+assert_output_contains() {
+    local desc="$1" needle="$2" haystack="$3"
+    if echo "$haystack" | grep -q "$needle"; then
+        log_pass "$desc"
+    else
+        log_fail "$desc" "expected '$needle' in output"
+    fi
+}
+
+# ════════════════════════════════════════════════════════════════════
+echo "=== {{name}} test suite ==="
+echo ""
+
+# ── Test 1: Missing required arg ─────────────────────────────────────
+echo "--- Test 1: Missing required arg ---"
+setup_case
+output=$("$TOOL_PATH" 2>&1) || exit_code=$?
+assert_exit "missing --{{arg1}} → exit 1" 1 "${exit_code:-0}"
+assert_output_contains "error message on missing arg" "required" "$output"
+
+# ── Test 2: Happy path ───────────────────────────────────────────────
+echo "--- Test 2: Happy path ---"
+setup_case
+# TODO: create necessary fixtures in $TEST_DIR
+# e.g.: echo "fixture content" > "$TEST_DIR/input.txt"
+output=$("$TOOL_PATH" --{{arg1}} "{{valid-value}}" 2>&1); exit_code=$?
+assert_exit "happy path → exit 0" 0 "$exit_code"
+# assert_output_contains "expected output present" "{{expected-string}}" "$output"
+
+# ── Test 3: Required file not found ─────────────────────────────────
+echo "--- Test 3: Required file not found ---"
+setup_case
+output=$("$TOOL_PATH" --{{arg1}} "$TEST_DIR/nonexistent-file.txt" 2>&1) || exit_code=$?
+assert_exit "missing file → exit 2" 2 "${exit_code:-0}"
+assert_output_contains "not-found error message" "not found" "$output"
+
+# ── Test 4: Help flag ────────────────────────────────────────────────
+echo "--- Test 4: Help flag ---"
+setup_case
+output=$("$TOOL_PATH" --help 2>&1) || true
+assert_output_contains "--help shows usage" "Usage" "$output"
+
+# ── Add more test cases above this line ──────────────────────────────
+
+# ════════════════════════════════════════════════════════════════════
+echo ""
+echo "================================"
+echo "Results: $PASS passed, $FAIL failed"
+echo "================================"
+
+[ "$FAIL" -eq 0 ] && exit 0 || exit 1

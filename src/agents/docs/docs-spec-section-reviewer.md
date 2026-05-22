@@ -2,6 +2,8 @@
 name: docs-spec-section-reviewer
 description: "Three-way evaluator for spec sections — compares brief, written section, and writer sidecar. Deviation-with-reasoning is NOT automatic rejection."
 domain: docs
+subdomain: spec
+scope: section
 role: reviewer
 tags: [spec-review, section-quality, three-way-evaluation, deviation-policy]
 model: sonnet

@@ -1,8 +1,10 @@
 ---
 name: test-lint
 description: "run ruff/mypy/bandit/vulture/detect-secrets plus descriptive-test docstring validator over a Python repo; emit LintReport for downstream test-fix; never auto-fix or suppress"
-domain: code.test
-intent: analyze
+domain: code
+subdomain: test
+scope: repo
+role: linter
 tags: [lint, static-analysis, ruff, mypy, bandit, descriptive-tests]
 user-invocable: true
 argument-hint: "[--repo-root PATH] [--output PATH]"

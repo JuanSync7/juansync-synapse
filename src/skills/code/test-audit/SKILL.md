@@ -1,8 +1,10 @@
 ---
 name: test-audit
 description: "audit test coverage gaps, check for gaming patterns, flakiness, dependency vulnerabilities, edge coverage; produce diagnostic report before writing tests"
-domain: code.test
-intent: analyze
+domain: code
+subdomain: test
+scope: module
+role: auditor
 tags: [coverage, audit, gap-analysis, edge-coverage, gaming-detection]
 user-invocable: true
 argument-hint: "[--delta|--absolute] [--max-edges N] [--cadence pr|nightly|on-demand]"

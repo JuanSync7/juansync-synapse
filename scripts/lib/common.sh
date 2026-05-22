@@ -21,6 +21,49 @@ GEMINI_SKILLS_TARGET="$GEMINI_EXT_DIR/skills"
 
 DIST_DIR="$SKILLS_DIR/dist"
 
+# Path to the lockfile CLI. Invoked after symlink ops to record state in
+# installed.lock. Honors SYNAPSE_LOCKFILE_DISABLE for tests/rollback.
+LOCKFILE_CLI="$REPO_ROOT/scripts/lib/lockfile_cli.py"
+
+# Run a lockfile_cli subcommand if not disabled. Failures are non-fatal so a
+# bad lockfile call cannot break installs.
+_lockfile() {
+    [ -n "${SYNAPSE_LOCKFILE_DISABLE:-}" ] && return 0
+    [ -f "$LOCKFILE_CLI" ] || return 0
+    python3 "$LOCKFILE_CLI" "$@" >/dev/null 2>&1 || true
+}
+
+# Record an artifact symlink in installed.lock.
+# Args: <type> <name> <abs-source-dir> <abs-target-symlink>
+_lockfile_record_artifact() {
+    local type="$1" name="$2" src="$3" install="$4"
+    # source_path must be repo-relative for hashing to work cross-machine.
+    local rel="${src#$REPO_ROOT/}"
+    _lockfile upsert-artifact \
+        --key "$type/$name" \
+        --type "$type" \
+        --source-path "$rel" \
+        --install-path "$install"
+}
+
+# Record an external/ submodule. Args: <name>
+_lockfile_record_external() {
+    local name="$1"
+    _lockfile upsert-external \
+        --key "$name" \
+        --submodule-path "external/$name"
+}
+
+# Drop an artifact entry. Args: <type> <name>
+_lockfile_drop_artifact() {
+    local type="$1" name="$2"
+    _lockfile remove --key "$type/$name"
+}
+
+_lockfile_stamp() {
+    _lockfile stamp
+}
+
 usage() {
     echo "Usage: ai-skills <command> [args...]"
     echo ""
@@ -122,9 +165,12 @@ _install_skills_to() {
 
             ln -s "$skill_dir" "$target_dir/$skill_name"
             echo "  add   $skill_name"
+            _lockfile_record_artifact "skill" "$skill_name" "$skill_dir" "$target_dir/$skill_name"
             count=$((count + 1))
         done < <(find "$search_dir" -name "SKILL.md" -type f)
     done
+
+    _lockfile_stamp
 
     echo ""
     echo "Installed $count skill(s) → $target_dir [$label]"

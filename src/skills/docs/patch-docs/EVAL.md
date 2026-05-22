@@ -2,7 +2,7 @@
 
 ## Structural Criteria
 
-(Evaluated by improve-skill's baseline checklist — not duplicated here)
+(Evaluated by synapse-skill-skill-improver's baseline checklist — not duplicated here)
 
 ## Output Criteria
 

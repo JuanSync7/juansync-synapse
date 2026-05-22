@@ -1,8 +1,10 @@
 ---
 name: write-implementation-docs
 description: Use when you have a spec AND a design doc and need to produce the implementation source-of-truth before touching code. Triggered by "write implementation docs", "write-implementation-docs", "impl docs", "create implementation reference", "implementation source of truth".
-domain: docs.impl
-intent: write
+domain: docs
+subdomain: impl
+scope: doc
+role: writer
 tags: [implementation, source-of-truth, handoff]
 user-invocable: true
 argument-hint: "[system name] [spec path] [design doc path] [optional: output path]"

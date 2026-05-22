@@ -25,7 +25,8 @@ case "${1:-}" in
     list)           cmd_list ;;
     available)      cmd_available ;;
     clean)          cmd_clean ;;
-    doctor)         cmd_doctor ;;
+    doctor)         cmd_doctor_symlinks ;;
+    doctor-symlinks) cmd_doctor_symlinks ;;
     zip)            shift; cmd_zip "$@" ;;
     -h|--help|"")   usage ;;
     *)              echo "Unknown command: $1"; usage; exit 1 ;;

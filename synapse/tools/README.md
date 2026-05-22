@@ -1,7 +1,7 @@
-# synapse/tools
+# synapse
 
-Mechanical capabilities used by framework skills — scripts, wrappers, dispatchers.
+Synapse ecosystem tooling — branching, registry sync, validation, and workflow automation.
 
-| Domain | Description |
-|--------|-------------|
-| [synapse/](synapse/) | Synapse-internal tooling (CR dispatcher) |
+| Tool | Action | Description |
+|------|--------|-------------|
+| [synapse-git-dispatch-cr](synapse-git-dispatch-cr/) | dispatch | Creates per-artifact feature branches from change requests |

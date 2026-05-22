@@ -1,9 +1,12 @@
 # synapse
 
-Agents for synapse ecosystem management — README-index maintenance, workflow automation, manifest generation.
+Agents in the `synapse` domain — ecosystem maintenance and subdomain agents for skill, skill-eval, and protocol authoring.
 
-## Agents
+## Subdomains
 
-| Agent | Role | Description |
-|-------|------|-------------|
-| [synapse-readme-maintainer](synapse-readme-maintainer.md) | maintainer | Maintains README-index invariant for the ancestor path of a changed synapse — adds/updates/removes rows; rewrites top-of-file one-liner only on factual drift |
+| Subdomain | Description |
+|-----------|-------------|
+| [meta/](meta/) | Ecosystem-wide maintenance agents — README/index upkeep |
+| [protocol/](protocol/) | Protocol authoring and review agents |
+| [skill/](skill/) | Skill authoring agents — anatomy review, design grading, companion-file generation |
+| [skill-eval/](skill-eval/) | Skill evaluation agents — judges, prompters, auditors |

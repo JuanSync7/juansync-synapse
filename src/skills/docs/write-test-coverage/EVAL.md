@@ -2,7 +2,7 @@
 
 ## Structural Criteria
 
-Delegated to improve-skill baseline checklist (frontmatter validation, wrong-tool detection, companion file references, etc.).
+Delegated to synapse-skill-skill-improver baseline checklist (frontmatter validation, wrong-tool detection, companion file references, etc.).
 
 ## Execution Criteria
 

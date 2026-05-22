@@ -1,8 +1,10 @@
 ---
 name: write-design-docs
 description: Use when you have a spec and need to create a design document with task decomposition and code contracts before implementation. Triggered by "write design docs", "write-design-docs", "design document", "create design", "technical design".
-domain: docs.design
-intent: write
+domain: docs
+subdomain: design
+scope: doc
+role: writer
 tags: [design, task decomposition, contracts]
 user-invocable: true
 argument-hint: "[system name] [spec path] [optional: output path]"

@@ -1,8 +1,10 @@
 ---
 name: write-architecture-docs
 description: "Writes or updates the architecture document for a system — system-level technical decisions, component boundaries, tech stack, and data flow patterns. Use when making technology choices, defining component structure, deciding integration approaches, or when architecture decisions emerge during planning conversations."
-domain: docs.arch
-intent: write
+domain: docs
+subdomain: arch
+scope: doc
+role: writer
 tags: [architecture, tech-stack, components, decisions]
 user-invocable: true
 argument-hint: "[system/subsystem name] [optional: output path]"

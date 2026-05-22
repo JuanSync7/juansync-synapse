@@ -11,6 +11,10 @@ REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 # --- Taxonomy and registry paths ---
 SKILL_TAXONOMY="$REPO_ROOT/taxonomy/SKILL_TAXONOMY.md"
 AGENT_TAXONOMY="$REPO_ROOT/taxonomy/AGENT_TAXONOMY.md"
+SKILL_VOCABULARY="$REPO_ROOT/registry/SKILL_VOCABULARY.md"
+AGENT_VOCABULARY="$REPO_ROOT/registry/AGENT_VOCABULARY.md"
+PROTOCOL_VOCABULARY="$REPO_ROOT/registry/PROTOCOL_VOCABULARY.md"
+TOOL_VOCABULARY="$REPO_ROOT/registry/TOOL_VOCABULARY.md"
 PROTOCOL_TAXONOMY="$REPO_ROOT/taxonomy/PROTOCOL_TAXONOMY.md"
 TOOL_TAXONOMY="$REPO_ROOT/taxonomy/TOOL_TAXONOMY.md"
 SCRIPT_TAXONOMY="$REPO_ROOT/taxonomy/SCRIPT_TAXONOMY.md"
@@ -42,7 +46,7 @@ Options:
 
 Examples:
   validate.sh                                        # validate all artifacts
-  validate.sh synapse/skills/skill/skill-creator     # validate one framework skill
+  validate.sh synapse/skills/synapse-router-artifact-creator   # validate one framework skill
   validate.sh src/skills/docs/write-spec-docs        # validate one adopter skill
   validate.sh synapse/skills/                        # validate framework skills
   validate.sh src/agents/                            # validate adopter agents
@@ -218,7 +222,7 @@ validate_skill() {
   fi
 
   # 2. Required fields
-  for field in name description domain intent; do
+  for field in name description domain subdomain scope role; do
     local val
     val="$(extract_frontmatter_field "$skill_md" "$field")"
     if [ -z "$val" ]; then
@@ -226,22 +230,28 @@ validate_skill() {
     fi
   done
 
-  # 3. domain in taxonomy
+  # 3. domain in vocabulary
   local domain_val
   domain_val="$(extract_frontmatter_field "$skill_md" "domain")"
   if [ -n "$domain_val" ]; then
-    if ! check_taxonomy_value "$SKILL_TAXONOMY" "Domains" "$domain_val"; then
-      report_error "$rel_path" "domain '$domain_val' not found in taxonomy/SKILL_TAXONOMY.md"
+    if ! check_taxonomy_value "$SKILL_VOCABULARY" "Domains" "$domain_val"; then
+      report_error "$rel_path" "domain '$domain_val' not found in registry/SKILL_VOCABULARY.md"
     fi
   fi
 
-  # 4. intent in taxonomy
-  local intent_val
-  intent_val="$(extract_frontmatter_field "$skill_md" "intent")"
-  if [ -n "$intent_val" ]; then
-    if ! check_taxonomy_value "$SKILL_TAXONOMY" "Intents" "$intent_val"; then
-      report_error "$rel_path" "intent '$intent_val' not found in taxonomy/SKILL_TAXONOMY.md"
-    fi
+  # 4. subdomain / scope / role in vocabulary
+  local subdomain_val scope_val role_val
+  subdomain_val="$(extract_frontmatter_field "$skill_md" "subdomain")"
+  scope_val="$(extract_frontmatter_field "$skill_md" "scope")"
+  role_val="$(extract_frontmatter_field "$skill_md" "role")"
+  if [ -n "$subdomain_val" ] && ! check_taxonomy_value "$SKILL_VOCABULARY" "Subdomains" "$subdomain_val"; then
+    report_error "$rel_path" "subdomain '$subdomain_val' not found in registry/SKILL_VOCABULARY.md"
+  fi
+  if [ -n "$scope_val" ] && ! check_taxonomy_value "$SKILL_VOCABULARY" "Scopes" "$scope_val"; then
+    report_error "$rel_path" "scope '$scope_val' not found in registry/SKILL_VOCABULARY.md"
+  fi
+  if [ -n "$role_val" ] && ! check_taxonomy_value "$SKILL_VOCABULARY" "Roles" "$role_val"; then
+    report_error "$rel_path" "role '$role_val' not found in registry/SKILL_VOCABULARY.md"
   fi
 
   # 5. EVAL.md exists (skipped for draft skills — they predate the EVAL requirement)
@@ -291,7 +301,7 @@ validate_agent() {
   fi
 
   # 2. Required fields
-  for field in name description domain role; do
+  for field in name description domain subdomain scope role; do
     local val
     val="$(extract_frontmatter_field "$agent_md" "$field")"
     if [ -z "$val" ]; then
@@ -299,22 +309,23 @@ validate_agent() {
     fi
   done
 
-  # 3. domain in taxonomy
-  local domain_val
+  # 3. domain / subdomain / scope / role in vocabulary
+  local domain_val subdomain_val scope_val role_val
   domain_val="$(extract_frontmatter_field "$agent_md" "domain")"
-  if [ -n "$domain_val" ]; then
-    if ! check_taxonomy_value "$AGENT_TAXONOMY" "Domains" "$domain_val"; then
-      report_error "$rel_path" "domain '$domain_val' not found in taxonomy/AGENT_TAXONOMY.md"
-    fi
-  fi
-
-  # 4. role in taxonomy
-  local role_val
+  subdomain_val="$(extract_frontmatter_field "$agent_md" "subdomain")"
+  scope_val="$(extract_frontmatter_field "$agent_md" "scope")"
   role_val="$(extract_frontmatter_field "$agent_md" "role")"
-  if [ -n "$role_val" ]; then
-    if ! check_taxonomy_value "$AGENT_TAXONOMY" "Roles" "$role_val"; then
-      report_error "$rel_path" "role '$role_val' not found in taxonomy/AGENT_TAXONOMY.md"
-    fi
+  if [ -n "$domain_val" ] && ! check_taxonomy_value "$AGENT_VOCABULARY" "Domains" "$domain_val"; then
+    report_error "$rel_path" "domain '$domain_val' not found in registry/AGENT_VOCABULARY.md"
+  fi
+  if [ -n "$subdomain_val" ] && ! check_taxonomy_value "$AGENT_VOCABULARY" "Subdomains" "$subdomain_val"; then
+    report_error "$rel_path" "subdomain '$subdomain_val' not found in registry/AGENT_VOCABULARY.md"
+  fi
+  if [ -n "$scope_val" ] && ! check_taxonomy_value "$AGENT_VOCABULARY" "Scopes" "$scope_val"; then
+    report_error "$rel_path" "scope '$scope_val' not found in registry/AGENT_VOCABULARY.md"
+  fi
+  if [ -n "$role_val" ] && ! check_taxonomy_value "$AGENT_VOCABULARY" "Roles" "$role_val"; then
+    report_error "$rel_path" "role '$role_val' not found in registry/AGENT_VOCABULARY.md"
   fi
 
   # 5. Listed in AGENTS_REGISTRY.md
@@ -354,7 +365,7 @@ validate_protocol() {
   fi
 
   # 2. Required fields
-  for field in name description domain type; do
+  for field in name description domain subdomain subject kind version; do
     local val
     val="$(extract_frontmatter_field "$protocol_md" "$field")"
     if [ -z "$val" ]; then
@@ -362,22 +373,23 @@ validate_protocol() {
     fi
   done
 
-  # 3. domain in taxonomy
-  local domain_val
+  # 3. domain / subdomain / subject / kind in vocabulary
+  local domain_val subdomain_val subject_val kind_val
   domain_val="$(extract_frontmatter_field "$protocol_md" "domain")"
-  if [ -n "$domain_val" ]; then
-    if ! check_taxonomy_value "$PROTOCOL_TAXONOMY" "Domains" "$domain_val"; then
-      report_error "$rel_path" "domain '$domain_val' not found in taxonomy/PROTOCOL_TAXONOMY.md"
-    fi
+  subdomain_val="$(extract_frontmatter_field "$protocol_md" "subdomain")"
+  subject_val="$(extract_frontmatter_field "$protocol_md" "subject")"
+  kind_val="$(extract_frontmatter_field "$protocol_md" "kind")"
+  if [ -n "$domain_val" ] && ! check_taxonomy_value "$PROTOCOL_VOCABULARY" "Domains" "$domain_val"; then
+    report_error "$rel_path" "domain '$domain_val' not found in registry/PROTOCOL_VOCABULARY.md"
   fi
-
-  # 4. type in taxonomy
-  local type_val
-  type_val="$(extract_frontmatter_field "$protocol_md" "type")"
-  if [ -n "$type_val" ]; then
-    if ! check_taxonomy_value "$PROTOCOL_TAXONOMY" "Types" "$type_val"; then
-      report_error "$rel_path" "type '$type_val' not found in taxonomy/PROTOCOL_TAXONOMY.md"
-    fi
+  if [ -n "$subdomain_val" ] && ! check_taxonomy_value "$PROTOCOL_VOCABULARY" "Subdomains" "$subdomain_val"; then
+    report_error "$rel_path" "subdomain '$subdomain_val' not found in registry/PROTOCOL_VOCABULARY.md"
+  fi
+  if [ -n "$subject_val" ] && ! check_taxonomy_value "$PROTOCOL_VOCABULARY" "Subjects" "$subject_val"; then
+    report_error "$rel_path" "subject '$subject_val' not found in registry/PROTOCOL_VOCABULARY.md"
+  fi
+  if [ -n "$kind_val" ] && ! check_taxonomy_value "$PROTOCOL_VOCABULARY" "Kinds" "$kind_val"; then
+    report_error "$rel_path" "kind '$kind_val' not found in registry/PROTOCOL_VOCABULARY.md"
   fi
 
   # 5. Domain README has a matching row
@@ -410,7 +422,7 @@ validate_tool() {
   fi
 
   # 2. Required fields
-  for field in name description domain action type; do
+  for field in name description domain subdomain action target kind; do
     local val
     val="$(extract_frontmatter_field "$tool_md" "$field")"
     if [ -z "$val" ]; then
@@ -418,30 +430,41 @@ validate_tool() {
     fi
   done
 
-  # 3. domain in taxonomy
-  local domain_val
+  # domain / subdomain / action / target / kind in vocabulary
+  local domain_val subdomain_val action_val target_val kind_val
   domain_val="$(extract_frontmatter_field "$tool_md" "domain")"
-  if [ -n "$domain_val" ]; then
-    if ! check_taxonomy_value "$TOOL_TAXONOMY" "Domains" "$domain_val"; then
-      report_error "$rel_path" "domain '$domain_val' not found in taxonomy/TOOL_TAXONOMY.md"
-    fi
-  fi
-
-  # 4. action in taxonomy
-  local action_val
+  subdomain_val="$(extract_frontmatter_field "$tool_md" "subdomain")"
   action_val="$(extract_frontmatter_field "$tool_md" "action")"
-  if [ -n "$action_val" ]; then
-    if ! check_taxonomy_value "$TOOL_TAXONOMY" "Actions" "$action_val"; then
-      report_error "$rel_path" "action '$action_val' not found in taxonomy/TOOL_TAXONOMY.md"
-    fi
+  target_val="$(extract_frontmatter_field "$tool_md" "target")"
+  kind_val="$(extract_frontmatter_field "$tool_md" "kind")"
+  if [ -n "$domain_val" ] && ! check_taxonomy_value "$TOOL_VOCABULARY" "Domains" "$domain_val"; then
+    report_error "$rel_path" "domain '$domain_val' not found in registry/TOOL_VOCABULARY.md"
+  fi
+  if [ -n "$subdomain_val" ] && ! check_taxonomy_value "$TOOL_VOCABULARY" "Subdomains" "$subdomain_val"; then
+    report_error "$rel_path" "subdomain '$subdomain_val' not found in registry/TOOL_VOCABULARY.md"
+  fi
+  if [ -n "$action_val" ] && ! check_taxonomy_value "$TOOL_VOCABULARY" "Actions" "$action_val"; then
+    report_error "$rel_path" "action '$action_val' not found in registry/TOOL_VOCABULARY.md"
+  fi
+  if [ -n "$target_val" ] && ! check_taxonomy_value "$TOOL_VOCABULARY" "Targets" "$target_val"; then
+    report_error "$rel_path" "target '$target_val' not found in registry/TOOL_VOCABULARY.md"
+  fi
+  if [ -n "$kind_val" ] && ! check_taxonomy_value "$TOOL_VOCABULARY" "Kinds" "$kind_val"; then
+    report_error "$rel_path" "kind '$kind_val' not found in registry/TOOL_VOCABULARY.md"
   fi
 
-  # 5. type in taxonomy
-  local type_val
-  type_val="$(extract_frontmatter_field "$tool_md" "type")"
-  if [ -n "$type_val" ]; then
-    if ! check_taxonomy_value "$TOOL_TAXONOMY" "Types" "$type_val"; then
-      report_error "$rel_path" "type '$type_val' not found in taxonomy/TOOL_TAXONOMY.md"
+  # 7. name = directory name AND matches 4-slot pattern
+  local name_val
+  name_val="$(extract_frontmatter_field "$tool_md" "name")"
+  if [ -n "$name_val" ] && [ "$name_val" != "$tool_name" ]; then
+    report_error "$rel_path" "name '$name_val' does not match directory '$tool_name'"
+  fi
+  if [ -n "$name_val" ] && [ -n "$domain_val" ] && [ -n "$subdomain_val" ] && [ -n "$action_val" ]; then
+    local target_val
+    target_val="$(extract_frontmatter_field "$tool_md" "target")"
+    local expected="${domain_val}-${subdomain_val}-${action_val}-${target_val}"
+    if [ "$name_val" != "$expected" ]; then
+      report_error "$rel_path" "slug '$name_val' does not match {domain}-{subdomain}-{action}-{target} = '$expected'"
     fi
   fi
 
@@ -539,7 +562,7 @@ find_all_skills() {
 
 find_all_agents() {
   for root in "${ART_AGENT_ROOTS[@]}"; do
-    [ -d "$root" ] && find "$root" -name "*.md" -type f ! -name "README.md" 2>/dev/null
+    [ -d "$root" ] && find "$root" -name "*.md" -type f ! -name "README.md" ! -path "*/change_requests/*" 2>/dev/null
   done | sort
 }
 

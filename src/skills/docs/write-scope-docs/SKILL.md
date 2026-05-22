@@ -1,8 +1,10 @@
 ---
 name: write-scope-docs
 description: "Writes or updates the scope document for a system — what to build, what to defer, and how to phase delivery. Use when defining project scope, breaking work into phases, deciding what's in/out, or when scope decisions emerge during planning conversations."
-domain: docs.scope
-intent: write
+domain: docs
+subdomain: scope
+scope: doc
+role: writer
 tags: [scope, phases, planning, decisions]
 user-invocable: true
 argument-hint: "[system/subsystem name] [optional: output path]"

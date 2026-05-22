@@ -1,0 +1,1 @@
+../../../synapse/synapse-creator/references/design-principles-skill.md

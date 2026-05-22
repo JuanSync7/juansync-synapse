@@ -1,8 +1,10 @@
 ---
 name: write-test-coverage
 description: "Use when you need a living test coverage register that maps acceptance criteria to test scenarios and tracks what is covered vs. not. Triggered by 'write test coverage', 'test coverage register', 'what is tested', 'coverage gaps', 'what needs tests'."
-domain: docs.post-build
-intent: write
+domain: docs
+subdomain: post-build
+scope: doc
+role: writer
 tags: [test-coverage, coverage-register, traceability, acceptance-criteria]
 user-invocable: true
 argument-hint: "[spec-or-engguide-path] [test-dir]"

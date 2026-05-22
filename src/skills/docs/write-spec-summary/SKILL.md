@@ -1,8 +1,10 @@
 ---
 name: write-spec-summary
 description: Write or update a concise specification summary document that stays in sync with a companion spec. Use when the user needs to create a spec summary, update a spec summary, sync a summary with its spec, or asks for a "spec summary". Triggered by requests like "write a spec summary", "summarize the spec", "update spec summary", "sync summary with spec".
-domain: docs.spec
-intent: summarize
+domain: docs
+subdomain: spec
+scope: doc
+role: summarizer
 tags: [summary, digest, overview]
 user-invocable: true
 argument-hint: "[path to spec document] [optional: output path for summary]"

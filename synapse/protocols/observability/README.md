@@ -4,7 +4,7 @@ Execution traces, logging conventions, and telemetry schemas for agent observabi
 
 ## Protocols
 
-| Protocol | Type | Description |
+| Protocol | Kind | Description |
 |----------|------|-------------|
-| [execution-trace](execution-trace.md) | trace | Structured self-report trace for subagent observability |
-| [failure-reporting](failure-reporting.md) | schema | Standardized failure tag format for agents and protocols |
+| [synapse-observability-execution-trace](synapse-observability-execution-trace.md) | trace | Structured self-report trace for subagent observability |
+| [synapse-observability-failure-reporting-schema](synapse-observability-failure-reporting-schema.md) | schema | Standardized failure tag format for agents and protocols |

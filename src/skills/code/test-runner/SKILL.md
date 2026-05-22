@@ -1,8 +1,10 @@
 ---
 name: test-runner
 description: Run pytest test suites safely through a validated execution pipeline with structured output and optional fix loop
-domain: code.test
-intent: execute
+domain: code
+subdomain: test
+scope: repo
+role: runner
 tags: [pytest, test execution, fix loop]
 tools: Bash, Read, Grep, Glob, Edit, Agent
 allowed-tools: Bash, Read, Grep, Glob, Edit, Agent

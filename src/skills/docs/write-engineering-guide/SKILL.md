@@ -1,8 +1,10 @@
 ---
 name: write-engineering-guide
 description: "POST-IMPLEMENTATION ONLY. Use when source code already exists and you need to document what was built, why decisions were made, and how components work. A non-skippable existence check refuses to run if the source files don't exist or are stubs. Triggered by 'write an engineering guide', 'document the implementation', 'post-implementation doc', 'engineering guide'."
-domain: docs.post-build
-intent: write
+domain: docs
+subdomain: post-build
+scope: doc
+role: writer
 tags: [engineering guide, maintenance, post-implementation]
 user-invocable: true
 argument-hint: "[system/subsystem name] [optional: source directory path] [optional: output path]"

@@ -2,6 +2,8 @@
 name: docs-spec-coherence-reviewer
 description: "Doc-level coherence review for spec documents — evaluates alignment, flow, cross-reference consistency, and traceability completeness. Does NOT review per-requirement technical quality."
 domain: docs
+subdomain: spec
+scope: coherence
 role: reviewer
 tags: [spec-review, coherence, cross-reference, traceability, doc-level]
 model: sonnet

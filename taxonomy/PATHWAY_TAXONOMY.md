@@ -13,7 +13,7 @@ Controlled vocabulary for pathway metadata. When creating a new pathway, pick `h
 
 ## Naming Conventions
 
-Pathway naming is free-form — choose whatever makes sense for your organization. The following patterns are suggested as guidance, not enforced structurally. The synapse-gatekeeper evaluates naming quality at PR review time.
+Pathway naming is free-form — choose whatever makes sense for your organization. The following patterns are suggested as guidance, not enforced structurally. The synapse-router-artifact-gatekeeper evaluates naming quality at PR review time.
 
 ### Pattern 1: Domain-focused
 `<primary-domain>[-<supporting-domain>...]-<descriptor>.yaml`
@@ -49,4 +49,4 @@ Freeform — no controlled list. Use lowercase, hyphenated multi-word tags (e.g.
 
 ## Enforcement
 
-Naming conventions are guidance for authors — not enforced by pre-commit or structural validation. The synapse-gatekeeper evaluates naming quality during PR review using the patterns above as criteria. Pre-commit validates only structural fields (harness value, synapse paths, inherits target).
+Naming conventions are guidance for authors — not enforced by pre-commit or structural validation. The synapse-router-artifact-gatekeeper evaluates naming quality during PR review using the patterns above as criteria. Pre-commit validates only structural fields (harness value, synapse paths, inherits target).

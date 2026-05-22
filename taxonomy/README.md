@@ -6,9 +6,10 @@ Controlled vocabularies for artifact metadata. When creating a skill, agent, pro
 
 | File | Description |
 |------|-------------|
-| [SKILL_TAXONOMY.md](SKILL_TAXONOMY.md) | Controlled vocabulary for skill `domain` and `intent` fields |
-| [AGENT_TAXONOMY.md](AGENT_TAXONOMY.md) | Controlled vocabulary for agent `domain` and `role` fields |
-| [PROTOCOL_TAXONOMY.md](PROTOCOL_TAXONOMY.md) | Controlled vocabulary for protocol `domain` and `type` fields |
-| [TOOL_TAXONOMY.md](TOOL_TAXONOMY.md) | Controlled vocabulary for tool `domain` and `action` fields |
+| [NAMING_RATIONALE.md](NAMING_RATIONALE.md) | Wiki page — rationale for the four schemas, design principles, and adoption guidance |
+| [SKILL_TAXONOMY.md](SKILL_TAXONOMY.md) | Skill schema `{domain}-{subdomain}-{scope}-{role}` + controlled vocab |
+| [AGENT_TAXONOMY.md](AGENT_TAXONOMY.md) | Agent schema `{domain}-{subdomain}-{scope}-{role}` + controlled vocab |
+| [PROTOCOL_TAXONOMY.md](PROTOCOL_TAXONOMY.md) | Protocol schema `{domain}-{subdomain}-{subject}-{kind}` + controlled vocab |
+| [TOOL_TAXONOMY.md](TOOL_TAXONOMY.md) | Tool schema `{domain}-{subdomain}-{action}-{target}` + controlled vocab |
 | [SCRIPT_TAXONOMY.md](SCRIPT_TAXONOMY.md) | Controlled vocabulary for script `audience`, `action`, and `scope` fields |
 | [PATHWAY_TAXONOMY.md](PATHWAY_TAXONOMY.md) | Controlled vocabulary for pathway `harness` field and naming conventions |

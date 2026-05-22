@@ -2,6 +2,8 @@
 name: docs-spec-section-writer
 description: "Writes one spec section from a planner brief — requirement format, acceptance criteria, and traceability. Two prompt modes: create (empty section) and update (revise existing section)."
 domain: docs
+subdomain: spec
+scope: section
 role: writer
 tags: [spec-writing, section-isolation, requirement-format, context-isolation]
 ---

@@ -1,8 +1,10 @@
 ---
 name: build-plan
 description: "Use when you have implementation docs and need an execution plan that breaks work into independent tasks before writing code. Triggered by 'build plan', 'execution plan', 'create a plan from the implementation docs'."
-domain: code.plan
-intent: plan
+domain: code
+subdomain: plan
+scope: module
+role: planner
 tags: [execution, phases, agent isolation, bias-free]
 user-invocable: true
 argument-hint: "[path to spec] [path to design document]"

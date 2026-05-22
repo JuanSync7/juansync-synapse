@@ -1,6 +1,6 @@
 # Identity
 
-Personal identity files consumed by AI agents across all tools. These define **who you are** — separate from what agents can do (skills) or how they evaluate decisions in a specific pipeline (stakeholder-reviewer skill).
+Personal identity files consumed by AI agents across all tools. These define **who you are** — separate from what agents can do (skills) or how they evaluate decisions in a specific pipeline (the stakeholder review gate).
 
 ## Files
 
@@ -46,7 +46,7 @@ If `~/.claude/stakeholder.md` already exists as a regular file, back it up and r
 | File | Scope | Always loaded? | Purpose |
 |------|-------|----------------|---------|
 | `SOUL.md` | Global identity | Yes (via `~/.claude/CLAUDE.md` reference) | Who you are |
-| `stakeholder.md` | Decision gate | No (loaded by stakeholder-reviewer skill) | How you evaluate decisions |
+| `stakeholder.md` | Decision gate | No (loaded on demand by the stakeholder review gate) | How you evaluate decisions |
 | `CLAUDE.md` (global) | Behavioral instructions | Yes (auto-loaded by Claude Code) | How Claude should interact with you |
 | `MEMORY.md` | Temporal context | Yes (auto-loaded) | What's happening now, recent learnings |
 

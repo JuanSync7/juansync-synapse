@@ -1,0 +1,8 @@
+# references/
+
+Companion files for `{{name}}`. Each file is loaded at a specific decision point in the flow —
+not always-on. See `Load:` declarations in `SKILL.md` for the exact loading points.
+
+| File | Loaded at | Purpose |
+|------|-----------|---------|
+| <!-- filename.md --> | <!-- [NODE] --> | <!-- One-line description of what this file provides at that node --> |

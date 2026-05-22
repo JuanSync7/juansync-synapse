@@ -1,10 +1,10 @@
 # brainstorm — Evaluation Criteria
 
-> **Execution scope:** This file is ignored during skill execution — it is read only by `/improve-skill` and evaluation workflows.
+> **Execution scope:** This file is ignored during skill execution — it is read only by `/synapse-skill-skill-improver` and evaluation workflows.
 
 ## Structural Criteria
 
-Covered by `/improve-skill` baseline checklist — not duplicated here. Structural checks include: frontmatter validity, domain/intent in TAXONOMY, companion file presence, SKILL.md length under 500 lines, Wrong-Tool Detection section, Execution Scope fence.
+Covered by `/synapse-skill-skill-improver` baseline checklist — not duplicated here. Structural checks include: frontmatter validity, domain/intent in TAXONOMY, companion file presence, SKILL.md length under 500 lines, Wrong-Tool Detection section, Execution Scope fence.
 
 ## Output Criteria
 
@@ -59,8 +59,8 @@ Binary pass/fail criteria catching the specific failure modes this skill is desi
 **Rationale:** Catches wrong-tool false positive where the skill fires on inputs that should never enter the brainstorm protocol.
 
 ### EVAL-O09
-**Criterion:** When the input is a skill-shaped topic (mentions "skill," "SKILL.md," slash command, or agentic behavior), the coach redirects to `/synapse-brainstorm` without running the brainstorm protocol.
-**Pass:** The response contains a redirect to `/synapse-brainstorm` and no Phase A work is performed.
+**Criterion:** When the input is a skill-shaped topic (mentions "skill," "SKILL.md," slash command, or agentic behavior), the coach redirects to `/synapse-router-artifact-brainstormer` without running the brainstorm protocol.
+**Pass:** The response contains a redirect to `/synapse-router-artifact-brainstormer` and no Phase A work is performed.
 **Fail:** The coach runs Phase A on a skill-shaped topic instead of redirecting.
 **Rationale:** Catches wrong-tool false positive on skill-design inputs that belong to a sibling skill.
 
@@ -150,9 +150,9 @@ Binary pass/fail criteria catching the specific failure modes this skill is desi
 - "I've decided we're going with Kubernetes — now help me set up the cluster" — expected: direct execution (direction already committed)
 
 ### Wrong-tool (should redirect to specific sibling)
-- "I have an idea for a skill that helps developers write better commit messages — I'm not sure if it should be one skill or two, or what the phases would look like" — expected: `/synapse-brainstorm`
+- "I have an idea for a skill that helps developers write better commit messages — I'm not sure if it should be one skill or two, or what the phases would look like" — expected: `/synapse-router-artifact-brainstormer`
 - "I want to build a feature end-to-end — from figuring out the approach all the way through specs, design, and implementation. help me think through the whole pipeline" — expected: `/autonomous-orchestrator`
-- "should I add a wrong-tool detection section to this skill I'm writing, or is the description enough to prevent misfires?" — expected: `/synapse-brainstorm`
+- "should I add a wrong-tool detection section to this skill I'm writing, or is the description enough to prevent misfires?" — expected: `/synapse-router-artifact-brainstormer`
 
 ## Skill Classification
 

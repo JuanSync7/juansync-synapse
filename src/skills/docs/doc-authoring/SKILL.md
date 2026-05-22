@@ -2,7 +2,9 @@
 name: doc-authoring
 description: "Use when asked to write documentation and you're unsure whether it should be a spec, summary, design doc, implementation doc, engineering guide, or test plan. Also use for doc placement, naming, and cross-referencing questions."
 domain: docs
-intent: route
+subdomain: general
+scope: doc
+role: router
 tags: [router, documentation, layer]
 user-invocable: true
 argument-hint: "[describe what you want to document]"
@@ -15,7 +17,7 @@ This is the entry point when a user needs documentation but hasn't specified the
 ## Wrong-Tool Detection
 
 - **User wants to write code** → not a doc skill; proceed to implementation directly
-- **User wants to improve an existing skill** → redirect to `/improve-skill`
+- **User wants to improve an existing skill** → redirect to `/synapse-skill-skill-improver`
 - **User already knows which doc type** → invoke that skill directly (`write-spec-docs`, `write-design-docs`, etc.)
 
 ## Two-Dimensional Routing

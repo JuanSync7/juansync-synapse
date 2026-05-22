@@ -1,4 +1,4 @@
-<!-- Decoupled from skill-creator/references/program-format.md to add auto-research-specific patterns (partial-file immutability, loop-attached requirements, scorer-validates-correctness). Skill-creator retains the generic spec. -->
+<!-- Decoupled from synapse-router-artifact-creator/references/program-format.md to add auto-research-specific patterns (partial-file immutability, loop-attached requirements, scorer-validates-correctness). Skill-creator retains the generic spec. -->
 
 # PROGRAM.md — Format Specification
 

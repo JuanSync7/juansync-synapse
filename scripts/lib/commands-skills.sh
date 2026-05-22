@@ -3,7 +3,89 @@
 # Depends on: common.sh (TARGET, CODEX_GLOBAL_TARGET, _install_skills_to, usage)
 
 cmd_install() {
-    _install_skills_to "$TARGET" "claude" "$@"
+    # Strip --force flag and apply pre-install git restore on source paths.
+    # Drift-resolution UX (T4): `cortex install --force [<artifact>]` discards
+    # local edits to the source tree before re-installing.
+    local force=0
+    local args=()
+    for a in "$@"; do
+        if [ "$a" = "--force" ]; then
+            force=1
+        else
+            args+=("$a")
+        fi
+    done
+
+    if [ "$force" = "1" ]; then
+        _force_restore_sources "${args[@]}"
+    fi
+
+    _install_skills_to "$TARGET" "claude" "${args[@]}"
+}
+
+# Discard local edits in source paths before reinstall. If no args (or 'all'),
+# restore every artifact path recorded in the lockfile that lives under the
+# repo. With explicit args, restore only matching source paths.
+# Resolves <artifact> against the lockfile via lockfile_cli.
+_force_restore_sources() {
+    if [ ! -d "$REPO_ROOT/.git" ] && [ ! -f "$REPO_ROOT/.git" ]; then
+        echo "  WARN  --force requested but $REPO_ROOT is not a git repo; skipping restore"
+        return 0
+    fi
+
+    local targets=("$@")
+
+    export REPO_ROOT
+    if [ "${#targets[@]}" -eq 0 ] || [ "${targets[0]}" = "all" ]; then
+        # Restore all source paths in lockfile.
+        local paths
+        paths="$(python3 - <<'PY'
+import os, sys, pathlib
+sys.path.insert(0, os.environ['REPO_ROOT'] + '/scripts/lib')
+import synapse_paths, lockfile as lf_mod
+lf = lf_mod.load(synapse_paths.lockfile_path())
+for a in lf.artifacts.values():
+    print(a.source_path)
+PY
+)"
+        for p in $paths; do
+            git -C "$REPO_ROOT" checkout -- "$p" 2>/dev/null || true
+            git -C "$REPO_ROOT" clean -fd -- "$p" 2>/dev/null || true
+            echo "  force restored $p"
+        done
+        return 0
+    fi
+
+    # Treat each arg as a path or as an artifact key.
+    for t in "${targets[@]}"; do
+        if [ -d "$REPO_ROOT/$t" ]; then
+            git -C "$REPO_ROOT" checkout -- "$t" 2>/dev/null || true
+            git -C "$REPO_ROOT" clean -fd -- "$t" 2>/dev/null || true
+            echo "  force restored $t"
+        else
+            # Try to resolve as artifact key via lockfile.
+            local resolved
+            resolved="$(python3 - "$t" <<'PY' 2>/dev/null
+import os, sys, pathlib
+sys.path.insert(0, os.environ['REPO_ROOT'] + '/scripts/lib')
+import synapse_paths, lockfile as lf_mod, drift_resolve as dr
+lf = lf_mod.load(synapse_paths.lockfile_path())
+try:
+    key = dr.resolve_key(sys.argv[1], lf)
+except Exception:
+    sys.exit(1)
+print(lf.artifacts[key].source_path)
+PY
+)"
+            if [ -n "$resolved" ]; then
+                git -C "$REPO_ROOT" checkout -- "$resolved" 2>/dev/null || true
+                git -C "$REPO_ROOT" clean -fd -- "$resolved" 2>/dev/null || true
+                echo "  force restored $resolved (from $t)"
+            else
+                echo "  WARN  --force: cannot resolve $t to a source path; skipping"
+            fi
+        fi
+    done
 }
 
 cmd_install_codex() {

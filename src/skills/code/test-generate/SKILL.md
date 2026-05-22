@@ -1,8 +1,10 @@
 ---
 name: test-generate
 description: "consume an AuditGapReport from test-audit and generate descriptive-docstring tests gap-by-gap with branch mapping, Hypothesis where invariants exist, green-run + per-gap mutation + assertion-quality gates, then HARD-GATE on a descriptive-intent PR before any commit"
-domain: code.test
-intent: implement
+domain: code
+subdomain: test
+scope: module
+role: generator
 tags: [test, generate, pytest, hypothesis, mutation, descriptive-test, hard-gate]
 user-invocable: true
 argument-hint: "[--audit-report PATH] [--max-gaps N] [--mutation-threshold all|N] [--no-pr]"

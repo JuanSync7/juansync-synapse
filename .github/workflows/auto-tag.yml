@@ -1,0 +1,87 @@
+name: auto-tag
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # We need a token that can push tags; the default GITHUB_TOKEN works
+          # for repo-internal pushes when contents: write is granted.
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Resolve merged PR labels
+        id: labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Find the PR associated with this merge commit. Fall back to "patch"
+          # if the push was a direct commit to main with no PR (e.g. hotfix).
+          pr_number="$(gh pr list \
+              --state merged \
+              --search "${{ github.sha }}" \
+              --json number \
+              --jq '.[0].number // empty')"
+
+          if [ -z "$pr_number" ]; then
+              echo "No PR found for ${{ github.sha }} — treating as patch."
+              echo "bump=patch" >> "$GITHUB_OUTPUT"
+              exit 0
+          fi
+
+          labels_json="$(gh pr view "$pr_number" --json labels --jq '.labels[].name')"
+          bump="patch"
+          for l in bump:major bump:minor bump:patch; do
+              if printf '%s\n' "$labels_json" | grep -qx "$l"; then
+                  bump="${l#bump:}"
+                  break
+              fi
+          done
+          echo "Detected bump=$bump for PR #$pr_number"
+          echo "bump=$bump" >> "$GITHUB_OUTPUT"
+
+      - name: Compute and create pre-tag
+        env:
+          BUMP: ${{ steps.labels.outputs.bump }}
+        run: |
+          set -euo pipefail
+          # Find latest stable tag (v<X>.<Y>.<Z> with no suffix)
+          latest_stable="$(git tag --list 'v[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname \
+              | grep -v -- '-' | head -n1 || true)"
+          if [ -z "$latest_stable" ]; then
+              maj=0; min=0; pat=0
+          else
+              IFS='.' read -r maj min pat <<< "${latest_stable#v}"
+          fi
+
+          case "$BUMP" in
+              major) maj=$((maj+1)); min=0; pat=0 ;;
+              minor) min=$((min+1)); pat=0 ;;
+              patch) pat=$((pat+1)) ;;
+              *) echo "Unknown bump: $BUMP" >&2; exit 1 ;;
+          esac
+
+          base="v${maj}.${min}.${pat}"
+          highest_n="$(git tag --list "${base}-pre.*" \
+              | sed -n "s/^${base}-pre\.\([0-9][0-9]*\)\$/\1/p" \
+              | sort -n | tail -n1)"
+          next_n=$(( ${highest_n:-0} + 1 ))
+          new_tag="${base}-pre.${next_n}"
+
+          echo "Creating $new_tag at ${{ github.sha }}"
+          git tag "$new_tag" "${{ github.sha }}"
+          git push origin "$new_tag"

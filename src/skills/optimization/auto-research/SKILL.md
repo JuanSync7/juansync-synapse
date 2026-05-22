@@ -2,7 +2,9 @@
 name: auto-research
 description: "Use when asked to autonomously improve a skill or artifact through repeated experimentation, or to set up an automated improvement loop. Triggered by 'auto-research', 'optimize this overnight', 'run autonomous improvement'."
 domain: optimization
-intent: improve
+subdomain: general
+scope: process
+role: researcher
 tags: [auto-research, experiment-loop, optimization]
 user-invocable: true
 argument-hint: "setup [target path] | run [path to PROGRAM.md]"
@@ -22,9 +24,9 @@ The current loop is not random — it's **under-scaffolded**. A single-context l
 
 Reframe by **task shape**, not whether the target is a skill:
 
-- **User wants a one-shot structural pass on an existing skill** (not an iterative loop) → redirect to `/improve-skill`
-- **User wants to build a new skill from scratch** → redirect to `/skill-creator`
-- **User wants to generate an EVAL.md for an existing skill** → redirect to `/write-skill-eval`
+- **User wants a one-shot structural pass on an existing skill** (not an iterative loop) → redirect to `/synapse-skill-skill-improver`
+- **User wants to build a new skill from scratch** → redirect to `/synapse-router-artifact-creator`
+- **User wants to generate an EVAL.md for an existing skill** → redirect to `/synapse-router-eval-writer`
 - **User wants to find a root cause or fix a specific bug** → this is debugging, not optimization; auto-research is the wrong shape
 - **User has no scorable metric and no way to compare "better"** → auto-research can't help; try to surface a dimension with them, or route them elsewhere
 
@@ -55,8 +57,8 @@ Mark each task `in_progress` when starting, `completed` when done.
 ## Scope boundaries
 
 Auto-research handles autonomous iterative improvement with a measurable metric or A/B-judgeable dimension. It does NOT handle:
-- **One-shot structural fixes on a skill** — use `/improve-skill`
-- **Greenfield creation** — use `/skill-creator`
+- **One-shot structural fixes on a skill** — use `/synapse-skill-skill-improver`
+- **Greenfield creation** — use `/synapse-router-artifact-creator`
 - **Debugging / root-cause analysis** — optimization is the wrong shape
 - **Targets with no scorable metric and no comparison dimensions** — if you can't measure or compare "better," the loop has no signal
 
@@ -136,7 +138,7 @@ The metric needs something that runs it. Treat these as **equally-valid mechanis
 
 | Mechanism | When it fits | Example |
 |---|---|---|
-| **EVAL.md + blind tester** | Target is a skill with an existing EVAL.md | `/write-skill-eval` output |
+| **EVAL.md + blind tester** | Target is a skill with an existing EVAL.md | `/synapse-router-eval-writer` output |
 | **Test suite** | Target has existing tests with a countable pass/fail | `pytest -q \| grep passed` |
 | **Benchmark script** | Target has a timing, size, or measured-dimension metric | `./score.sh` that runs `hyperfine`, `docker image inspect`, or a `curl \| jq` probe |
 | **LLM judge (comparative)** | Target needs A/B comparison on defined dimensions | Judge prompt with randomized ordering, run inside the agent |
@@ -364,8 +366,8 @@ Routes are by task shape, not whether the target is a skill:
 
 | Task shape | Route to |
 |------|----------|
-| One-shot structural pass on an existing skill | `/improve-skill [path]` |
-| Generate EVAL.md for an existing skill | `/write-skill-eval [path]` |
-| Build a new skill from scratch | `/skill-creator [description]` |
+| One-shot structural pass on an existing skill | `/synapse-skill-skill-improver [path]` |
+| Generate EVAL.md for an existing skill | `/synapse-router-eval-writer [path]` |
+| Build a new skill from scratch | `/synapse-router-artifact-creator [description]` |
 | No scorer exists yet for this target | **Step 3b above** (conversational scorer-building fallback) |
 | Debugging / root-cause analysis | Not auto-research — use normal debugging tools |

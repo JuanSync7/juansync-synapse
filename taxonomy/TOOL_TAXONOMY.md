@@ -1,39 +1,47 @@
 # Tool Taxonomy
 
-Controlled vocabulary for tool metadata. When creating a new tool, pick `domain` and `action` from the tables below. If nothing fits, propose an addition to this file — do not invent ad hoc values.
+Naming and metadata rules for tools. The controlled vocabulary for each slug slot (and the frontmatter-only `kind` field) lives in [`registry/TOOL_VOCABULARY.md`](../registry/TOOL_VOCABULARY.md). The inventory of tools currently in the repo lives in [`registry/TOOL_REGISTRY.md`](../registry/TOOL_REGISTRY.md). This file defines the *shape*; vocabulary holds the *values*; registry holds the *inventory*.
 
-Tools follow the `{domain}-{subdomain?}-{action?}-{name}` naming convention.
+## Naming convention
 
-## Domains
+`{domain}-{subdomain}-{action}-{target}` — lowercase-hyphenated. All four slots required.
 
-| Domain | Description |
-|--------|-------------|
-| `testing` | Test generation, scoring, coverage analysis |
-| `build` | Build configuration, artifact generation |
-| `validation` | Input/output validation, schema checking |
-| `analysis` | Code analysis, metric computation |
-| `integration` | External service interaction tooling |
-| `synapse` | Synapse ecosystem tooling — branching, registry sync, validation |
+- **`domain`** — ecosystem (e.g., `synapse`, `architecture`).
+- **`subdomain`** — category within the domain (e.g., `git`, `registry`).
+- **`action`** — imperative verb naming what the tool does (e.g., `dispatch`, `validate`, `sync`).
+- **`target`** — noun naming what the action operates on (e.g. `frontmatter`, `skills`).
 
-## Actions
+## Examples
 
-| Action | Description |
-|--------|-------------|
-| `scorer` | Computes numeric scores or rankings |
-| `generator` | Produces artifacts from inputs or templates |
-| `validator` | Checks conformance against rules or schemas |
-| `parser` | Extracts structured data from unstructured input |
-| `transformer` | Converts between formats |
-| `reporter` | Aggregates and formats results for consumption |
-| `automator` | Runs a sequence of mechanical operations (git, file, CI) |
-
-## Types
-
-| Type | Description |
+| Slug | Description |
 |------|-------------|
-| `external` | Code lives elsewhere (MCP servers, CLI wrappers, npm/pip packages) |
-| `internal` | Ships code — the tool IS the script or program |
-| `wrapper` | Shell or Python wrapper around an external CLI |
+| `synapse-git-dispatch-cr` | Dispatches change requests onto worktree branches |
+| `synapse-taxonomy-lint-frontmatter` | Lints artifact frontmatter against the controlled vocabulary |
+
+**Anti-patterns:**
+
+| Slug | Why it's wrong |
+|------|----------------|
+| `synapse-git-cr-dispatch` | Slot order reversed — reads "the CR dispatch" (noun phrase). Tools take action-first; should be `dispatch-cr`. |
+| `synapse-taxonomy-frontmatter-validator` | `validator` is a role noun, not an action. Tools are mechanical commands, not personas — use `lint-frontmatter` or `validate-frontmatter`. |
+
+## Tool kind (frontmatter, not slug)
+
+Tool implementation kind is metadata — it does NOT appear in the slug. The set of valid `kind` values lives in [`registry/TOOL_VOCABULARY.md`](../registry/TOOL_VOCABULARY.md).
+
+## Frontmatter
+
+Required fields on every `TOOL.md` file:
+
+```yaml
+name: <slug>           # must equal directory name AND match {domain}-{subdomain}-{action}-{target}
+domain: <value>
+subdomain: <value>
+action: <verb>         # what the tool does
+target: <noun>         # what the action operates on
+kind: <value>          # external | internal | wrapper
+description: <text>    # one-line routing/usage hint
+```
 
 ## Tags
 

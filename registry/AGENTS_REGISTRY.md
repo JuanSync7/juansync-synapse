@@ -1,14 +1,25 @@
 # Agents Registry
 
-Internal recipes dispatched by skills, not user-invocable. Before creating a new agent, check if one already covers the capability you need.
+Internal recipes dispatched by skills, not typically user-invocable. Before creating a new agent, check if one already covers the capability you need.
 
-| Agent | Description | Consumers |
-|-------|-------------|-----------|
-| [skill-eval-judge](synapse/agents/skill-eval/skill-eval-judge.md) | Impartial judge — binary output quality criteria (EVAL-Oxx) from SKILL.md | skill-creator, write-skill-eval, improve-skill |
-| [skill-eval-prompter](synapse/agents/skill-eval/skill-eval-prompter.md) | Blind test prompt generation across 4 personas | skill-creator, write-skill-eval |
-| [skill-eval-auditor](synapse/agents/skill-eval/skill-eval-auditor.md) | Execution criteria for orchestration patterns (EVAL-Exx) | skill-creator, write-skill-eval |
-| [protocol-eval-reviewer](synapse/agents/protocol-eval/protocol-eval-reviewer.md) | Signal-strength reviewer for protocol instructions | protocol-creator, write-protocol-eval |
-| [docs-spec-section-writer](src/agents/docs/docs-spec-section-writer.md) | Writes one spec section from a planner brief — requirement format, acceptance criteria, traceability | write-spec-docs |
-| [docs-spec-section-reviewer](src/agents/docs/docs-spec-section-reviewer.md) | Three-way evaluator — brief alignment, section quality, deviation justification | write-spec-docs |
-| [docs-spec-coherence-reviewer](src/agents/docs/docs-spec-coherence-reviewer.md) | Doc-level coherence review — alignment, flow, cross-references, traceability | write-spec-docs |
-| [skill-companion-file-writer](synapse/agents/skill/skill-companion-file-writer.md) | Writes a single companion file (reference or template) for a skill | skill-creator, improve-skill |
+Schema: see [registry/README.md](README.md).
+
+| Agent | Description | Status | Consumers |
+|------|-------------|--------|-----------|
+| [synapse-protocol-signal-reviewer](../synapse/agents/synapse/protocol/synapse-protocol-signal-reviewer.md) | Signal-strength reviewer — validates protocol instructions use commitment language, named trigger moments, and follow universal anatomy | draft | — |
+| [synapse-meta-readme-maintainer](../synapse/agents/synapse/meta/synapse-meta-readme-maintainer.md) | Maintains README-index invariant for the ancestor path of a changed synapse — adds/updates/removes rows; rewrites top-of-file one-liner only on factual drift. Dispatched by *-creator skills and synapse-skill-skill-improver at end of flow. | draft | — |
+| [synapse-skill-anatomy-reviewer](../synapse/agents/synapse/skill/synapse-skill-anatomy-reviewer.md) | Binary anatomy gate — checks SKILL.md structural anatomy (frontmatter, routing contract, required sections) before eval generation | draft | synapse-skill-companion-auditor, synapse-skill-design-grader, synapse-skill-signal-orchestrator |
+| [synapse-skill-companion-auditor](../synapse/agents/synapse/skill/synapse-skill-companion-auditor.md) | Audits references/ and templates/ companion files for a skill — checks load triggers, no duplication with SKILL.md body, size-fit-purpose, template concreteness, and reference modularity | draft | synapse-skill-anatomy-reviewer, synapse-skill-design-grader, synapse-skill-signal-orchestrator |
+| [synapse-skill-companion-writer](../synapse/agents/synapse/skill/synapse-skill-companion-writer.md) | Writes a single companion file for a Claude Code skill | draft | synapse-skill-companion-auditor, synapse-skill-skill-improver |
+| [synapse-skill-design-grader](../synapse/agents/synapse/skill/synapse-skill-design-grader.md) | Graded design-quality grader — scores a SKILL.md on six design-principle dimensions (1-5) and emits fix suggestions for dimensions below threshold | draft | synapse-skill-signal-orchestrator |
+| [synapse-skill-eval-auditor](../synapse/agents/synapse/skill-eval/synapse-skill-eval-auditor.md) | Execution criteria for orchestration patterns (EVAL-Exx) | draft | synapse-skill |
+| [synapse-skill-eval-judge](../synapse/agents/synapse/skill-eval/synapse-skill-eval-judge.md) | Impartial judge — binary output quality criteria (EVAL-Oxx) from SKILL.md | draft | synapse-router-eval-writer, synapse-skill |
+| [synapse-skill-eval-prompter](../synapse/agents/synapse/skill-eval/synapse-skill-eval-prompter.md) | Blind test prompt generation across 4 personas | draft | synapse-skill |
+| [synapse-skill-signal-orchestrator](../synapse/agents/synapse/skill/synapse-skill-signal-orchestrator.md) | Signal-strength orchestrator — dispatches anatomy/design/companion sub-agents in parallel and aggregates their verdicts into a unified APPROVE/REVISE/ESCALATE before eval generation | draft | — |
+| [docs-claim-doc-classifier](../src/agents/docs/docs-claim-doc-classifier.md) | Read-only entry-gate classifier for the docs-claim-doc-shrinker workflow. Returns structural genre (claim-based, narrative, reference, tutorial, template, mixed), claim sub-type, and confidence. | stable | docs-claim-doc-shrinker |
+| [docs-claim-doc-extractor](../src/agents/docs/docs-claim-doc-extractor.md) | Extracts atomic claims from a claim-based markdown doc. Returns a list of claim objects anchored by source heading, plus auto-flagged contradictions and redundancies. Read-only. | stable | docs-claim-doc-shrinker |
+| [docs-claim-claim-judge](../src/agents/docs/docs-claim-claim-judge.md) | Judges whether a single claim is semantically preserved in a rewritten document. Returns entailed \| partial \| dropped with evidence span. Designed for batch dispatch (one call per claim). | stable | docs-claim-doc-shrinker |
+| [docs-claim-doc-writer](../src/agents/docs/docs-claim-doc-writer.md) | Rewrites a claim-based doc compressed against a fixed kept-claim set. Does NOT generate from scratch. Does NOT introduce claims outside the input set. Preserves section headings. For style-sub-type docs, preserves cadence via voice anchors. | stable | docs-claim-doc-shrinker |
+| [docs-spec-section-writer](../src/agents/docs/docs-spec-section-writer.md) | Writes one spec section from a planner brief — requirement format, acceptance criteria, traceability | draft | write-spec-docs |
+| [docs-spec-section-reviewer](../src/agents/docs/docs-spec-section-reviewer.md) | Three-way evaluator — brief alignment, section quality, deviation justification | draft | write-spec-docs |
+| [docs-spec-coherence-reviewer](../src/agents/docs/docs-spec-coherence-reviewer.md) | Doc-level coherence review — alignment, flow, cross-references, traceability | draft | write-spec-docs |

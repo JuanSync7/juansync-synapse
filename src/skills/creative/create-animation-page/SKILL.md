@@ -2,7 +2,9 @@
 name: create-animation-page
 description: "Creates a single-page interactive animation visualization as one HTML file with embedded CSS and JavaScript. Triggered by: 'create animation page', 'single page animation', 'interactive visualization', 'animated explainer'."
 domain: creative
-intent: write
+subdomain: general
+scope: page
+role: animator
 tags: [animation, HTML, visualization]
 user-invocable: true
 argument-hint: "[topic/concept to visualize]"

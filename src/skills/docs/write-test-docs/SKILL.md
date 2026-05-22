@@ -1,8 +1,10 @@
 ---
 name: write-test-docs
 description: "Use when you need a test planning document that defines what to test for each module. Triggered by 'write test docs', 'test planning document', 'test specification', 'plan the tests'."
-domain: docs.post-build
-intent: write
+domain: docs
+subdomain: post-build
+scope: doc
+role: writer
 tags: [test planning, test spec, integration tests]
 user-invocable: true
 argument-hint: "[system/subsystem name] [optional: engineering guide path] [optional: output path]"
