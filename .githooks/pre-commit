@@ -229,8 +229,10 @@ for skill_dir in "${changed_skill_dirs[@]}"; do
         fi
     fi
 
-    # --- Check 3: Domain README.md has a matching row ---
-    domain_dir="$(echo "$skill_dir" | cut -d/ -f1-3)"
+    # --- Check 3: Parent README.md has a matching row ---
+    # Use dirname so this works for both nested (src/skills/<domain>/<skill>/)
+    # and flat (synapse/skills/<skill>/) layouts.
+    domain_dir="$(dirname "$skill_dir")"
     domain_readme="$REPO_ROOT/$domain_dir/README.md"
 
     if [ -f "$domain_readme" ]; then
