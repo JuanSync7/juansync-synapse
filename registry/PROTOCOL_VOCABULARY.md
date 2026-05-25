@@ -11,6 +11,7 @@ When creating a new protocol, pick values from the tables below. If nothing fits
 | Domain | Description |
 |--------|-------------|
 | `synapse` | Framework-internal protocols shipped by ai-synapse |
+| `delivery` | Plan-to-code execution — contracts governing slices, TDD discipline, closeouts, dispatch, and replan |
 
 ## Subdomains
 
@@ -18,6 +19,8 @@ When creating a new protocol, pick values from the tables below. If nothing fits
 |-----------|-------------|
 | `observability` | Execution traces, failure tags, telemetry schemas |
 | `memory` | Working memory, state externalization, compaction-safe storage |
+| `execution` | Worker-side contracts — what a single subagent does inside one dispatch |
+| `orchestration` | Manager-side contracts — coordination, dispatch, closeout ingestion, plan mutation |
 
 ## Subjects
 
@@ -26,6 +29,7 @@ When creating a new protocol, pick values from the tables below. If nothing fits
 | `execution` | Subagent dispatch and execution flow |
 | `external-memory` | File-based working memory that survives compaction |
 | `failure-reporting` | Standardized failure tag emission |
+| `dispatch` | Pre-dispatch checks and prompt assembly for sequential subagent dispatch |
 
 ## Kinds
 
