@@ -93,11 +93,13 @@ This contract's shape (8-slot table + sequential gate + model mandate) is intent
 
 ## Failure Reporting
 
-Violations of this protocol use the `synapse-observability-failure-reporting-schema` format:
+When a violation of this protocol is detected, the main agent MUST immediately emit the following tag using the `synapse-observability-failure-reporting-schema` format, then halt or escalate per the response column in the Violation Signatures table:
 
 ```
 PROTOCOL FAILURE: delivery-orchestration-dispatch-contract <slice_id> [violation_id reason]
 ```
+
+Where `violation_id` is the letter from the Violation Signatures table (a–e) and `reason` is a one-line description of the unmet condition.
 
 ## Injection
 
