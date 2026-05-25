@@ -39,3 +39,4 @@ Schema: see [registry/README.md](README.md).
 | [langgraph-architect](../src/skills/framework/langgraph-architect/SKILL.md) | Design, review, or code-review LangGraph workflow graphs | stable | — |
 | [create-animation-page](../src/skills/creative/create-animation-page/SKILL.md) | Single-page interactive animation as one HTML file with embedded CSS/JS | draft | — |
 | [jira-reporter](../external/jira-suite/skills/jira-reporter/SKILL.md) | JIRA updates as observability/HITL layer during agent workflows | stable | — |
+| [delivery-orchestration-plan-executor](../src/skills/delivery/delivery-orchestration-plan-executor/SKILL.md) | Use when the user signals start building, /build, execute the plan, ship this, or asks to deliver a multi-slice plan end-to-end. Not for single-task edits, research loops, or throughput-only parallel dispatch. | draft | — |

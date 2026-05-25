@@ -13,3 +13,4 @@ Use `synapse/skills/synapse-router-artifact-creator/` to scaffold new skills int
 | [integration/](integration/) | External service integrations (submoduled suites) |
 | [meta/](meta/) | Adopter meta-utilities (e.g. brainstorm) |
 | [optimization/](optimization/) | Iterative improvement loops |
+| [delivery/](delivery/) | Plan-to-code execution via sequential subagent orchestration |
