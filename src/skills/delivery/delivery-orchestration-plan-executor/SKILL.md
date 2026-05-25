@@ -16,7 +16,6 @@ argument-hint: "[plan-source or empty for ambient context]"
 You become the manager. The main agent holds the outer loop — decompose plan into slices, dispatch one subagent per slice with TDD discipline injected, ingest the closeout, mutate the plan, repeat. Subagents do the inner Ralph loop and emit a structured closeout; they never write to plan or lessons. The filesystem holds the rolling state (`.delivery/`) so a compaction or interrupt cannot lose progress — any next session resumes by reading the closeout trail.
 
 ## MUST (every turn)
-- Record position: `Position: [node-id] — <context>` — without it, a compaction or interrupt cannot resume mid-loop without re-reading the closeout trail to guess.
 - Sequential dispatch only — one subagent in flight at a time, unless escape-hatch conditions hold (see `references/slice-decomposition-heuristics.md`). Concurrent dispatch is the leading cause of plan-divergence in this loop.
 - Inject `delivery-execution-slice-contract`, `delivery-execution-tdd-contract`, and `delivery-orchestration-closeout-schema` into every subagent prompt by reference name. Without these, the subagent has no test-first discipline, no iteration obligation, and no closeout shape.
 - After each closeout, route through `delivery-orchestration-replan-contract` before picking the next slice. Skipping replan means lessons and plan drift compound silently.
