@@ -18,6 +18,7 @@ When creating a new skill, pick values from the tables below. If nothing fits, p
 | `meta` | Cross-cutting meta-utilities (brainstorming, routing) |
 | `optimization` | Iterative measure-and-improve loops |
 | `integration` | External-service integration skills |
+| `delivery` | Plan-to-code execution — orchestrating subagents to deliver work against a plan |
 
 ## Subdomains
 
@@ -36,6 +37,8 @@ When creating a new skill, pick values from the tables below. If nothing fits, p
 | `plan` | Build/implementation planning skills |
 | `harness` | AI harness / orchestration framework skills (LangGraph, etc.) |
 | `general` | Catch-all for skills with no narrower subdomain |
+| `orchestration` | Manager-side coordination of subagents, closeouts, and plan mutation |
+| `execution` | Worker-side concern — what one subagent does inside a single dispatch |
 
 ## Scopes
 
@@ -51,6 +54,7 @@ When creating a new skill, pick values from the tables below. If nothing fits, p
 | `page` | Operates on a single web page artifact |
 | `workflow` | Operates on a workflow / state graph |
 | `process` | Operates on a development process (research loop, brainstorm session) |
+| `plan` | Operates on a plan-shaped artifact (work-package list, slice graph) |
 
 ## Roles
 
@@ -77,3 +81,4 @@ When creating a new skill, pick values from the tables below. If nothing fits, p
 | `designer` | Designs an artifact's structure before implementation |
 | `animator` | Builds animated interactive page artifacts |
 | `researcher` | Runs an autonomous measure-and-keep improvement loop |
+| `executor` | Drives end-to-end execution of a plan through sequential subagent dispatch |
