@@ -29,6 +29,10 @@ When creating a new protocol, pick values from the tables below. If nothing fits
 | `execution` | Subagent dispatch and execution flow |
 | `external-memory` | File-based working memory that survives compaction |
 | `failure-reporting` | Standardized failure tag emission |
+| `slice` | The dispatchable leaf unit of work — one validable outcome, one subagent, one closeout |
+| `tdd` | Test-driven development discipline collapsed with Ralph loop and validable-end-goal |
+| `closeout` | Per-dispatch subagent report — validation result, files touched, lessons, next moves |
+| `dispatch` | Pre-dispatch checks and prompt assembly for sequential subagent dispatch |
 | `replan` | Closeout-driven plan-surface mutation — allowed/forbidden mutations, audit trail, escalation bound |
 
 ## Kinds
