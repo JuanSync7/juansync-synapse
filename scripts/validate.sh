@@ -221,8 +221,18 @@ validate_skill() {
     return
   fi
 
-  # 2. Required fields
-  for field in name description domain subdomain scope role; do
+  # Persona / mode skills: separate class, no scope-role signature
+  if echo "$skill_dir" | grep -q '/persona/' || grep -qE '^class: *persona' "$skill_md"; then
+    for field in name description; do
+      [ -z "$(extract_frontmatter_field "$skill_md" "$field")" ] && \
+        report_error "$rel_path" "missing or empty frontmatter field '$field'"
+    done
+    case "$skill_name" in persona-*) : ;; *) report_error "$rel_path" "persona skill name must start with 'persona-'" ;; esac
+    return
+  fi
+
+  # 2. Required fields (subdomain is OPTIONAL under the variable-head grammar)
+  for field in name description domain scope role; do
     local val
     val="$(extract_frontmatter_field "$skill_md" "$field")"
     if [ -z "$val" ]; then
@@ -252,6 +262,16 @@ validate_skill() {
   fi
   if [ -n "$role_val" ] && ! check_taxonomy_value "$SKILL_VOCABULARY" "Roles" "$role_val"; then
     report_error "$rel_path" "role '$role_val' not found in registry/SKILL_VOCABULARY.md"
+  fi
+
+  # 4b. name's last two tokens must equal scope-role (fixed-tail grammar)
+  local name_val
+  name_val="$(extract_frontmatter_field "$skill_md" "name")"
+  if [ -n "$name_val" ] && [ -n "$scope_val" ] && [ -n "$role_val" ]; then
+    case "$name_val" in
+      *-"$scope_val-$role_val") : ;;
+      *) report_error "$rel_path" "name '$name_val' must end with the scope-role tail '$scope_val-$role_val'" ;;
+    esac
   fi
 
   # 5. EVAL.md exists (skipped for draft skills — they predate the EVAL requirement)
