@@ -40,7 +40,7 @@ A tool that wraps `grep | sort | uniq` is a shell pipeline, not a tool.
 
 Can multiple skills or workflows use this tool?
 
-- **Multiple consumers:** A scoring tool used by synapse-skill-skill-improver, synapse-router-artifact-gatekeeper, and synapse-router-eval-writer. A validation tool used by pre-commit hooks and CI. These justify tool status.
+- **Multiple consumers:** A scoring tool used by synapse-skill-improver, synapse-router-artifact-gatekeeper, and synapse-router-eval-writer. A validation tool used by pre-commit hooks and CI. These justify tool status.
 - **Single consumer:** A parser that only one skill ever calls. Inline the logic in that skill's workflow — the abstraction isn't earning its keep.
 
 Exception: If the single-consumer logic is complex enough to warrant its own test suite, it may still deserve tool status for testability.

@@ -1,6 +1,6 @@
 # Coaching Policy
 
-This file governs coaching behavior across the entire brainstorm session. Load it at the start of every session.
+This file governs coaching behavior across the entire meta-process-brainstormer session. Load it at the start of every session.
 
 ## Default Mode: Diagnostic Questions
 
@@ -56,7 +56,7 @@ After each turn, ask: "Does this belong to a specific artifact, or is it truly c
 
 ## Session-Level Process Section
 
-The session-level process section is the brainstorm's "thinking" — lens observations, coaching pushback reasoning, discarded alternatives, dead-end rationale. This section captures why decisions were made, not what was decided.
+The session-level process section is the meta-process-brainstormer's "thinking" — lens observations, coaching pushback reasoning, discarded alternatives, dead-end rationale. This section captures why decisions were made, not what was decided.
 
 This content does NOT transfer to memos. Memos capture decisions and their rationale; the process section captures the exploratory path that led there. When producing output at [O], the process section is read for context but never copied into the deliverable.
 

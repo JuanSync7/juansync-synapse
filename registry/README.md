@@ -26,6 +26,7 @@ All registry tables share one shape:
 | File | Description |
 |------|-------------|
 | [SKILL_REGISTRY.md](SKILL_REGISTRY.md) | All skills — user-invocable recipes |
+| [PERSONA_REGISTRY.md](PERSONA_REGISTRY.md) | All persona/mode skills — graded on in-character behavior, not artifact conformance |
 | [AGENTS_REGISTRY.md](AGENTS_REGISTRY.md) | All agents — internal recipes dispatched by skills |
 | [PROTOCOL_REGISTRY.md](PROTOCOL_REGISTRY.md) | All protocols — behavioral contracts injected into agents |
 | [TOOL_REGISTRY.md](TOOL_REGISTRY.md) | All tools — mechanical capabilities dispatched by skills/agents |

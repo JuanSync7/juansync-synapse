@@ -54,4 +54,4 @@ SOUL.md and stakeholder.md are **independent** — they overlap in values but se
 
 ## Multi-Agent Use (Future)
 
-In multi-agent brainstorm rooms, each agent reads only its own person's SOUL.md — preserving diversity. Agents can swap between Job 1 (emulate) and Job 2 (compensate) mid-session based on what the task needs.
+In multi-agent meta-process-brainstormer rooms, each agent reads only its own person's SOUL.md — preserving diversity. Agents can swap between Job 1 (emulate) and Job 2 (compensate) mid-session based on what the task needs.

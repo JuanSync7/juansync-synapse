@@ -11,7 +11,7 @@ tags: [entailment, verification, claim, judge, read-only]
 
 # docs-claim-claim-judge
 
-Read-only entailment-verification agent for the `docs-claim-doc-shrinker` workflow. Dispatched once per kept claim after the writer produces a rewritten doc; aggregated verdicts feed the shrinker's coverage gate. Operates on one claim at a time so each verdict is independently cacheable, traceable, and re-runnable. Does not suggest rewrites and does not modify any file — the judge is a verifier, not an editor.
+Read-only entailment-verification agent for the `docs-claim-shrinker` workflow. Dispatched once per kept claim after the writer produces a rewritten doc; aggregated verdicts feed the shrinker's coverage gate. Operates on one claim at a time so each verdict is independently cacheable, traceable, and re-runnable. Does not suggest rewrites and does not modify any file — the judge is a verifier, not an editor.
 
 ## Input Contract
 

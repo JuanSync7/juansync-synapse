@@ -1,4 +1,4 @@
-<!-- Copy this template to .brainstorms/<YYYY-MM-DD>-<slug>/notes.md when starting a new brainstorm. -->
+<!-- Copy this template to .brainstorms/<YYYY-MM-DD>-<slug>/notes.md when starting a new meta-process-brainstormer. -->
 
 # Brainstorm Notes — <topic>
 
@@ -20,7 +20,7 @@
 
 ## Process
 <!-- Lens progress, coaching observations, discarded alternatives, reasoning.
-     This is the brainstorm's "thinking" — does NOT transfer to memos.
+     This is the meta-process-brainstormer's "thinking" — does NOT transfer to memos.
      Stays as the "why did we decide X" record.
      Append freely during all phases. -->
 

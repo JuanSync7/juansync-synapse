@@ -6,7 +6,7 @@
 
 ## What I want
 
-A single-claim entailment judge agent that answers one question per call: is this claim semantically preserved in this rewritten document? Returns a structured verdict (`entailed | partial | dropped`) with an evidence span and a confidence score. Designed for batch dispatch — one call per kept claim during the compress phase of `docs-claim-doc-shrinker`. The judge is the highest-reuse agent in this suite; its (claim, text) → verdict interface is deliberately clean so it can be lifted into test-coverage verification, doc-vs-code sync, and RAG eval workflows later.
+A single-claim entailment judge agent that answers one question per call: is this claim semantically preserved in this rewritten document? Returns a structured verdict (`entailed | partial | dropped`) with an evidence span and a confidence score. Designed for batch dispatch — one call per kept claim during the compress phase of `docs-claim-shrinker`. The judge is the highest-reuse agent in this suite; its (claim, text) → verdict interface is deliberately clean so it can be lifted into test-coverage verification, doc-vs-code sync, and RAG eval workflows later.
 
 ---
 
@@ -125,7 +125,7 @@ This is the highest-reuse agent in the suite. Its interface is deliberately pure
 
 | Artifact | Direction | Contract |
 |---|---|---|
-| `docs-claim-doc-shrinker` | consumed by | Compress phase calls judge once per kept claim; aborts write if `failed / total > coverage_abort_pct (0.20)` |
+| `docs-claim-shrinker` | consumed by | Compress phase calls judge once per kept claim; aborts write if `failed / total > coverage_abort_pct (0.20)` |
 | `Claim` schema (Cross-cutting) | consumes | Input `claim` must conform to the `Claim` object schema; `claim_id` is echoed in `judge_verdict.claim_id` |
 | `judge_verdict` schema (Cross-cutting) | produces | Output must conform exactly; schema versioning required; consumers reject unknown schema versions loudly |
 | `references/thresholds.yaml` | consumes | Reads `judge_confidence_floor: 0.6` at runtime; threshold is not hard-coded in prompt |

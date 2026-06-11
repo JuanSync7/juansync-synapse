@@ -17,7 +17,7 @@ analyzer: never modifies source, never executes user code.
 
 ## When to use
 
-- `/test-generate` — primary consumer. Uses the per-function branch
+- `/code-test-generator` — primary consumer. Uses the per-function branch
   contract to drive generation of tests that cover every path (true/false
   legs of every `if`, every `except` handler, every loop entry, both arms
   of every ternary, every short-circuit point of every `and`/`or`).

@@ -11,7 +11,7 @@ tags: [execution-trace, self-reported, subagent-observability]
 
 # Execution Trace Protocol
 
-A structured self-report appended by a subagent to its response when an observer requests execution observability. Zero overhead in normal runs — only injected when someone is watching. An **observer** (synapse-skill-skill-improver grading EVAL-E, auto-research optimizing, user debugging) injects this protocol's capture instructions into a subagent's prompt; the subagent executes the skill normally, then appends a trace block describing what it did. The skill itself never references this protocol — it is injected externally.
+A structured self-report appended by a subagent to its response when an observer requests execution observability. Zero overhead in normal runs — only injected when someone is watching. An **observer** (synapse-skill-improver grading EVAL-E, optimization-process-researcher optimizing, user debugging) injects this protocol's capture instructions into a subagent's prompt; the subagent executes the skill normally, then appends a trace block describing what it did. The skill itself never references this protocol — it is injected externally.
 
 ## Contract
 

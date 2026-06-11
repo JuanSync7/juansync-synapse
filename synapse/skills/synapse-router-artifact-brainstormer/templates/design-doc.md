@@ -107,7 +107,7 @@
 ## N. What Changed From Original
 
 <!-- Include only for change_requests — numbered changes with rationale.
-     Documents post-memo resolutions from the brainstorm continuation. -->
+     Documents post-memo resolutions from the meta-process-brainstormer continuation. -->
 
 | # | Change | Rationale |
 |---|---|---|

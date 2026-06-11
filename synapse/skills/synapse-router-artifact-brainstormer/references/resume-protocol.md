@@ -1,6 +1,6 @@
 # Resume Protocol
 
-Loaded at [RESUME] when re-entering a paused brainstorm session. The goal is to reconstruct context from persistent state without assuming anything survived from the previous conversation.
+Loaded at [RESUME] when re-entering a paused meta-process-brainstormer session. The goal is to reconstruct context from persistent state without assuming anything survived from the previous conversation.
 
 ---
 

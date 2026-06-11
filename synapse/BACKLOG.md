@@ -17,7 +17,7 @@ Non-binding backlog of framework-level ideas surfaced during alpha cleanup. Item
 | Tier 1 (structural) | GitHub Action that runs `.githooks/pre-commit` on changed files | No |
 | Tier 2 (quality) | GitHub Action that, on changed-artifact PRs, dispatches a configurable LLM CLI (`claude --headless`, `codex`, `gemini`, etc.) to run `/synapse-router-artifact-gatekeeper` and posts the verdict as a PR comment | Yes — but CLI is swappable |
 
-**Open design questions** (need brainstorm before building):
+**Open design questions** (need meta-process-brainstormer before building):
 1. Which CI providers to support out-of-box? (GitHub Actions only is the realistic v1; GitLab/CircleCI as templates only)
 2. What's the LLM CLI contract? Define a minimal interface (input: artifact path; output: verdict text) and let adopters plug in their preferred CLI.
 3. How is the gatekeeper verdict transported? PR comment vs check-run vs gate-required-status.

@@ -5,7 +5,7 @@ Canonical structure of a SKILL.md file. This is the **structural** spec — what
 This file is loaded by:
 - `synapse-router-artifact-creator/references/flow-skill.md` at `[W]` — to know what to draft
 - `synapse-skill-anatomy-reviewer` at runtime — to grade structural presence (binary checks)
-- `/synapse-skill-skill-improver` — for structural pre-checks
+- `/synapse-skill-improver` — for structural pre-checks
 - `/synapse-router-artifact-gatekeeper` — for promotion certification
 
 Single source of truth. If anatomy evolves, edit this file and every consumer picks up the change.
@@ -138,7 +138,7 @@ Companions live in `references/`, `templates/`, `agents/`, or `change_requests/`
 - `templates/` — output skeletons used at write nodes
 - `agents/` — symlinks to internal agent recipes
 - `examples/` — worked examples (rare; usually a sign instructions need rewriting)
-- `change_requests/` — historical records of brainstorm-driven changes (frozen)
+- `change_requests/` — historical records of meta-process-brainstormer-driven changes (frozen)
 - `research/`, `test-inputs/`, `PROGRAM.md`, `SCOPE.md`, `EVAL.md` — improvement/migration scaffolding (out of scope for anatomy review)
 
 ---

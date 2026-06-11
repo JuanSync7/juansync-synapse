@@ -15,8 +15,8 @@ Two-mode analyzer for the test coverage engine. Default mode reports which funct
 
 | Mode | Used by | When |
 |------|---------|------|
-| Default | `test-audit` | After running pytest with `--cov`; identifies coverage gaps to feed into `test-generate` |
-| `--edges` | `test-integrate` at [EDGE-FEEDBACK] | After a real integration test is merged; detects whether it exercises new cross-package edges |
+| Default | `code-test-auditor` | After running pytest with `--cov`; identifies coverage gaps to feed into `code-test-generator` |
+| `--edges` | `code-test-integrator` at [EDGE-FEEDBACK] | After a real integration test is merged; detects whether it exercises new cross-package edges |
 
 ## Input
 
@@ -135,7 +135,7 @@ Both modes output a single JSON object to stdout.
 
 ## Constraints
 
-- **Edge mode is advisory.** Zero `new_edges` never causes a non-zero exit or blocks any workflow. The `test-integrate` skill posts an advisory PR comment when `new_edges` is empty; it does not revert or block.
+- **Edge mode is advisory.** Zero `new_edges` never causes a non-zero exit or blocks any workflow. The `code-test-integrator` skill posts an advisory PR comment when `new_edges` is empty; it does not revert or block.
 - **Default mode requires `.coverage`.** The tool does not run pytest itself; it reads an existing `.coverage` data file.
 - **Edge detection is static AST only.** Dynamic dispatch and runtime-constructed calls are not detected. The edge set is a conservative undercount — false negatives are possible, false positives are not.
 - **Cross-package definition.** An edge exists when `caller_module.split('.')[0] != callee_module.split('.')[0]`. Same top-level package calls are not edges.

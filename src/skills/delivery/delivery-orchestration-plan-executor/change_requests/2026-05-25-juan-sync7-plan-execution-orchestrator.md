@@ -175,13 +175,13 @@ Exit: pass → [PICK-NEXT-SLICE]; fail → halt with specific diagnostic.
 | `synapse-observability-execution-trace` | consumes (via closeout-schema) | Base schema that closeout-schema extends — do not fork |
 | `write-story` | consumes upstream output | Produces FR-NNN ticket directories; plan-executor reads them as authoritative WP list when present |
 | `parallel-agents-dispatch` | retirement relationship | This skill is the canonical sequential replacement; parallel-agents-dispatch retained only for explicit throughput-over-discipline use cases |
-| `build-plan`, `write-implementation-docs` | upstream producers | May produce plan-shaped artifacts consumed at [INGEST-PLAN] |
+| `code-build-planner`, `docs-implementation-writer` | upstream producers | May produce plan-shaped artifacts consumed at [INGEST-PLAN] |
 
 ---
 
 ## Open questions
 
-Two items from the brainstorm Open section were not resolved to decisions (held as "Bet:" — unconfirmed):
+Two items from the meta-process-brainstormer Open section were not resolved to decisions (held as "Bet:" — unconfirmed):
 
 1. **Progress notification granularity:** Does the skill emit `TaskCreate` per WP (status `in_progress` at dispatch, `completed` at green closeout), or stay silent until terminal summary? Bet: TaskCreate per WP. Creator should implement the bet and note it as an empirically-revisable default.
 

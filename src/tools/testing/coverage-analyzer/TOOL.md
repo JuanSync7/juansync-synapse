@@ -25,7 +25,7 @@ function is a public boundary entry-point.
 
 Output schema: **CoverageReport**
 
-Used by: `test-audit` skill.
+Used by: `code-test-auditor` skill.
 
 ### `--edges` mode — cross-package call graph
 
@@ -39,7 +39,7 @@ causes this tool to exit non-zero.
 
 Output schema: **EdgeCoverageReport**
 
-Used by: `test-integrate` skill at the `[EDGE-FEEDBACK]` step to detect whether a newly merged
+Used by: `code-test-integrator` skill at the `[EDGE-FEEDBACK]` step to detect whether a newly merged
 integration test exercises at least one new `(caller_module, callee_module)` edge.
 
 ---
@@ -161,7 +161,7 @@ A non-zero exit is only possible for hard precondition failures (missing `source
 - **Python 3.11+, Pydantic v2.**  Default mode additionally requires the `coverage` package.
 - **`--edges` mode uses `stdlib ast` only** — no third-party dependencies.
 - **Edge mode is strictly advisory.**  Zero `new_edges` never blocks any pipeline step.  The
-  downstream `test-integrate` consumer posts an advisory PR comment but does not fail the check.
+  downstream `code-test-integrator` consumer posts an advisory PR comment but does not fail the check.
 - **No paths are hardcoded.**  The tool operates on whatever `source_root` is passed; it has no
   knowledge of the project layout.
 - **Output is always written to stdout as JSON.**  Warnings and errors go to stderr.

@@ -15,7 +15,7 @@ The runner is **project-agnostic**. Inputs and outputs flow on the command line;
 
 ## When to use
 
-- **Per coverage gap, from `test-generate`** — invoked with a tight line budget (≤20 mutated lines) on the function being newly tested. Surviving mutants tell the generator which assertions need strengthening.
+- **Per coverage gap, from `code-test-generator`** — invoked with a tight line budget (≤20 mutated lines) on the function being newly tested. Surviving mutants tell the generator which assertions need strengthening.
 - **Nightly job** — run across all hot files in the repo to track mutation-kill rate as a quality signal. A drop in kill rate signals new tests are weaker than what they replaced.
 - **Ad-hoc debugging** — when a code path "feels" untested but coverage looks green, mutate it and watch tests pass.
 
@@ -73,7 +73,7 @@ See `schemas.py` for the pydantic v2 contracts: `Mutant`, `MutationResult`, `Mut
 ## Constraints
 
 - **Single-file scope.** The tool mutates exactly one `.py` file per invocation. Cross-file mutations are out of scope.
-- **Line-budget enforcement.** `--max-lines` caps the number of *distinct* mutated lines. Once the budget is hit, further new lines are skipped (existing mutated lines still accumulate ordinals). This keeps `test-generate` invocations bounded.
+- **Line-budget enforcement.** `--max-lines` caps the number of *distinct* mutated lines. Once the budget is hit, further new lines are skipped (existing mutated lines still accumulate ordinals). This keeps `code-test-generator` invocations bounded.
 - **Project-agnostic.** No hardcoded paths, test commands, or framework assumptions. The caller supplies the test command.
 - **Stdlib + pydantic only.** `ast`, `subprocess`, `tempfile`, `shutil`, `signal`, `os` plus pydantic v2. Python 3.11+.
 - **Timeout semantics.** A subprocess timeout counts as a kill (the test environment is degraded — that *is* a detected fault). The timeout count is reported separately so callers can distinguish.

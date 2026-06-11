@@ -27,7 +27,7 @@ Two layers of validation apply. Layer 1 is automatic; Layer 2 is on you.
 | Change | Run |
 |--------|-----|
 | New skill or external import | `/synapse-router-artifact-creator skill` (full pipeline) → `/synapse-router-artifact-gatekeeper` |
-| Modified existing skill (SKILL.md, references/, templates/) | `/synapse-skill-skill-improver` (score-fix loop against existing EVAL.md) |
+| Modified existing skill (SKILL.md, references/, templates/) | `/synapse-skill-improver` (score-fix loop against existing EVAL.md) |
 | New or modified agent / protocol / tool / pathway | `/synapse-router-artifact-gatekeeper <artifact-path>` |
 | Trivial changes (typos, formatting-only) | Layer 1 is sufficient |
 

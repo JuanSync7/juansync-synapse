@@ -13,8 +13,8 @@ Runs four Python linters (`ruff`, `mypy`, `bandit`, `vulture`) as subprocesses a
 
 ## When to use
 
-- `/test-lint` — entry-stage of the test coverage engine pipeline; produces the `LintReport` consumed by downstream stages.
-- `/test-fix` — re-runs the reporter after auto-fix passes to verify resolution and surface residuals.
+- `/code-test-linter` — entry-stage of the test coverage engine pipeline; produces the `LintReport` consumed by downstream stages.
+- `/code-test-fixer` — re-runs the reporter after auto-fix passes to verify resolution and surface residuals.
 - Standalone forensic check — point at any source root to get one structured roll-up of code-quality signals.
 
 ## Input / output contract
@@ -123,7 +123,7 @@ Severity drives the `total_errors` count and the exit code: only `error`-level i
 
 ## Out of scope
 
-- Fixing or rewriting source code — that is the job of `/test-fix` and the underlying tools' own `--fix` modes, not this reporter.
+- Fixing or rewriting source code — that is the job of `/code-test-fixer` and the underlying tools' own `--fix` modes, not this reporter.
 - Quality judgment about *which* findings matter — that is downstream policy.
 - Non-Python linters (eslint, shellcheck, etc.) — out of scope for this tool's first cut.
 

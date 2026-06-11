@@ -26,7 +26,7 @@ This is **breadth-first and structural-only**. It does not run LLM-graded qualit
 |-------------------------|-------------|
 | Validate ONE artifact (skill / agent / protocol / tool / pathway) | `/synapse-router-artifact-gatekeeper <artifact-path>` |
 | Build a new artifact from scratch | `/synapse-router-artifact-creator` |
-| Improve an existing artifact's quality score | `/synapse-skill-skill-improver` |
+| Improve an existing artifact's quality score | `/synapse-skill-improver` |
 | Generate an EVAL.md for an artifact | `/synapse-router-eval-writer` |
 | Validate an in-tree (`src/` or `synapse/`) artifact | `/synapse-router-artifact-gatekeeper` — this skill is specifically for submodule suites |
 

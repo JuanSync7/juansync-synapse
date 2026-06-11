@@ -9,14 +9,14 @@ tags: [testing, flakiness, pytest, integration, stability]
 
 # flakiness-checker
 
-A CLI validator that runs a single pytest test node at least 10 times in isolation and computes a **fail rate**. Used by the `test-integrate` skill at the **[FLAKE-CHECK]** node to confirm a new real-integration test is stable before opening a PR.
+A CLI validator that runs a single pytest test node at least 10 times in isolation and computes a **fail rate**. Used by the `code-test-integrator` skill at the **[FLAKE-CHECK]** node to confirm a new real-integration test is stable before opening a PR.
 
 ---
 
 ## When to Use
 
 - A new real-integration test has been written and is about to be merged.
-- The `test-integrate` skill reaches the [FLAKE-CHECK] gate and needs a stability verdict.
+- The `code-test-integrator` skill reaches the [FLAKE-CHECK] gate and needs a stability verdict.
 - Any time you suspect a test may be environment-sensitive or timing-dependent.
 
 Do **not** use this tool as a substitute for fixing a known-broken test. If a test is deterministically failing, fix it first.

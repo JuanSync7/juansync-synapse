@@ -24,7 +24,7 @@
   - **Test:** `wc -l SKILL.md` returns ≤ 300.
   - **Fail signal:** Line count exceeds 300 — body has bloated; push detail to `references/`.
 
-- [ ] **EVAL-S04:** Wrong-Tool Detection table is complete — names `/synapse-router-artifact-gatekeeper`, `/synapse-router-artifact-creator`, `/synapse-skill-skill-improver`, `/synapse-router-eval-writer`, AND a row distinguishing in-tree artifact validation.
+- [ ] **EVAL-S04:** Wrong-Tool Detection table is complete — names `/synapse-router-artifact-gatekeeper`, `/synapse-router-artifact-creator`, `/synapse-skill-improver`, `/synapse-router-eval-writer`, AND a row distinguishing in-tree artifact validation.
   - **Test:** Table contains rows referencing all five sibling skills/redirects.
   - **Fail signal:** Any sibling missing; table generic or stub.
 
@@ -180,7 +180,7 @@ Check whether external/jira-tools/ is ready to be added to ai-synapse.
 - Structural sweep runs first; Quality section appears AFTER it succeeds.
 - Quality section has one bullet per artifact with a gatekeeper verdict.
 - If any escalated artifact is REVISE → suite verdict downgrades to REVISE.
-- Recommendation names the specific artifact(s) needing follow-up and the action (e.g., "run /synapse-skill-skill-improver on …").
+- Recommendation names the specific artifact(s) needing follow-up and the action (e.g., "run /synapse-skill-improver on …").
 
 ---
 

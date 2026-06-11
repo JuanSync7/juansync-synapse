@@ -13,7 +13,7 @@ AST-based analyzer for pytest suites. Scores every `test_*` function by assertio
 
 ## When to use
 
-Called by the `test-audit` skill when reviewing a test suite for behavior coverage (as opposed to line coverage). Surfaces tests that pass through the test runner but assert nothing meaningful.
+Called by the `code-test-auditor` skill when reviewing a test suite for behavior coverage (as opposed to line coverage). Surfaces tests that pass through the test runner but assert nothing meaningful.
 
 ## Input / output contract
 

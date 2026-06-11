@@ -19,7 +19,7 @@ pre-flight through eval handoff. Wrong-tool detection already ran in the router 
 - Write EVAL.md before SKILL.md is complete — post-hoc bias
 - Proceed from `[U]` with an underspecified goal
 - Skip `[B]` when no memo is present ("the skill is simple" is not an exemption)
-- Skip `/synapse-skill-skill-improver` at `[V]` ("the skill looks correct" is not validation)
+- Skip `/synapse-skill-improver` at `[V]` ("the skill looks correct" is not validation)
 
 ---
 
@@ -43,7 +43,7 @@ Exit:
 ### [U] — understand goal
 Brief: Self-loops until all gate conditions pass. If a decision memo from `/synapse-router-artifact-brainstormer` exists, evaluate against gates — fill gaps only; do not re-derive what the memo already decided.
 Do:
-  1. If memo provided with VERBATIM blocks (flow graphs, node specs), use as starting point — pressure-tested during brainstorm
+  1. If memo provided with VERBATIM blocks (flow graphs, node specs), use as starting point — pressure-tested during meta-process-brainstormer
   2. Identify trigger conditions (routing contract for `description:`)
   3. Define primary output artifact and its format
   4. Check SKILL_REGISTRY.md for sibling skills with overlapping scope
@@ -126,15 +126,15 @@ Exit:
 ---
 
 ### [V] — validate
-Brief: Hand off to `/synapse-skill-skill-improver` for single-pass validation. Do not reimplement its logic inline.
+Brief: Hand off to `/synapse-skill-improver` for single-pass validation. Do not reimplement its logic inline.
 Do:
-  1. Invoke `/synapse-skill-skill-improver $artifact_path` as a skill invocation, not inline steps
-  2. Report synapse-skill-skill-improver verdict to user
+  1. Invoke `/synapse-skill-improver $artifact_path` as a skill invocation, not inline steps
+  2. Report synapse-skill-improver verdict to user
 Don't:
   - Perform scoring or fix-loop steps directly
   - Skip this step ("the skill looks correct" is not validation)
 Exit:
-  → `[END]` : validate complete (synapse-skill-skill-improver may flag issues for the user to decide)
+  → `[END]` : validate complete (synapse-skill-improver may flag issues for the user to decide)
 
 ---
 
@@ -142,7 +142,7 @@ Exit:
 Do:
   1. Print verbatim what was created: file list, registry row added, README row added, EVAL.md status
   2. Remind user: artifact is `status: draft` — run `/synapse-router-artifact-gatekeeper $artifact_path` before promoting
-  3. If synapse-skill-skill-improver flagged issues, surface them — do not auto-fix
+  3. If synapse-skill-improver flagged issues, surface them — do not auto-fix
 Don't:
   - End without full output summary
   - Auto-route to next skill — suggest, do not dispatch

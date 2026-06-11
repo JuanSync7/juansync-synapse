@@ -11,11 +11,11 @@
 ## Structural Criteria
 
 <!-- Binary checks against the SKILL.md document and skill directory layout. -->
-<!-- Evaluated by synapse-skill-skill-improver WITHOUT running the skill. -->
+<!-- Evaluated by synapse-skill-improver WITHOUT running the skill. -->
 
 - [ ] **EVAL-S01:** SKILL.md has valid YAML frontmatter with all required fields (`name`, `description`, `domain`, `intent`, `tags`, `user-invocable`, `argument-hint`)
 - [ ] **EVAL-S02:** `domain: synapse` and `intent: write` exist in `taxonomy/SKILL_TAXONOMY.md`
-- [ ] **EVAL-S03:** Wrong-Tool Detection section exists and names specific sibling skills (`/synapse-skill-skill-improver`, `/synapse-router-artifact-brainstormer`, `/synapse-router-artifact-gatekeeper`)
+- [ ] **EVAL-S03:** Wrong-Tool Detection section exists and names specific sibling skills (`/synapse-skill-improver`, `/synapse-router-artifact-brainstormer`, `/synapse-router-artifact-gatekeeper`)
 - [ ] **EVAL-S04:** SKILL.md is under 100 lines (router stays thin)
 - [ ] **EVAL-S05:** Every `Load:` path in SKILL.md resolves to a file in the skill directory
 - [ ] **EVAL-S06:** Skill has a row in `registry/SKILL_REGISTRY.md` with `synapse-router-artifact-creator` matching the path
@@ -52,7 +52,7 @@
   - **Fail signal:** Any file written inside the target directory after a pre-flight failure.
 
 - [ ] **EVAL-E05:** Wrong-Tool Redirect Honored — does not proceed when user intent mismatches
-  - **Test:** When the user asks to modify an existing skill, trace shows a redirect message to `/synapse-skill-skill-improver` and termination, NOT a `[ROUTE]` entry.
+  - **Test:** When the user asks to modify an existing skill, trace shows a redirect message to `/synapse-skill-improver` and termination, NOT a `[ROUTE]` entry.
   - **Fail signal:** Skill proceeds to `[ROUTE]` after a wrong-tool match.
 
 - [ ] **EVAL-E06:** Concurrency Contract — single artifact per invocation
@@ -70,7 +70,7 @@
 <!-- Binary checks against each `references/flow-<type>.md` companion file. -->
 <!-- Flow files are not standalone skills (no frontmatter, no registry row), but they ARE flow graphs. -->
 <!-- These checks apply the flow-graph-pattern subset of the structural checklist to each flow file. -->
-<!-- Evaluated by synapse-skill-skill-improver WITHOUT running the skill. -->
+<!-- Evaluated by synapse-skill-improver WITHOUT running the skill. -->
 
 Apply each `EVAL-Fxx` check independently to all four files: `flow-skill.md`, `flow-protocol.md`, `flow-agent.md`, `flow-tool.md`. A criterion passes only if it passes for ALL four files.
 
@@ -151,7 +151,7 @@ Acceptance checks:
 The following criteria are explicitly NOT evaluated here. They are evaluated by downstream tools:
 
 - **Body quality of the produced artifact** — does the SKILL.md / PROTOCOL.md / agent / TOOL.md represent good design? → `write-{type}-eval` + `/synapse-router-artifact-gatekeeper`
-- **Score ≥ 80** for the produced artifact — `/synapse-skill-skill-improver` runs against produced skills
+- **Score ≥ 80** for the produced artifact — `/synapse-skill-improver` runs against produced skills
 - **Promotion readiness** of the produced artifact — `/synapse-router-artifact-gatekeeper`
 
 synapse-router-artifact-creator is accountable for the scaffold being mechanically correct. Quality judgment lives downstream.

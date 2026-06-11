@@ -18,7 +18,7 @@
 
 <!-- Motivation — what broke, what's missing, or what new requirement emerged.
      Concrete failure mode preferred over aspirational improvement language.
-     If this came from a brainstorm, reference the brainstorm slug. -->
+     If this came from a meta-process-brainstormer, reference the meta-process-brainstormer slug. -->
 
 ---
 

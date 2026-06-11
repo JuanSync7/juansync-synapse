@@ -2,20 +2,20 @@
 
 ## Structural Criteria
 
-(From synapse-skill-skill-improver's baseline checklist — no need to duplicate here)
+(From synapse-skill-improver's baseline checklist — no need to duplicate here)
 
 ## Execution Criteria
 
 - [ ] **EVAL-E01:** Design-doc-producer dispatched with model: sonnet
-  - **Test:** Trace contains an Agent() dispatch for `brainstorm-design-doc-producer` with `model: sonnet` explicitly set.
+  - **Test:** Trace contains an Agent() dispatch for `meta-process-brainstormer-design-doc-producer` with `model: sonnet` explicitly set.
   - **Fail signal:** Dispatch record omits the `model:` field, or specifies a model other than sonnet.
 
 - [ ] **EVAL-E02:** Memo-producer dispatched N times — one instance per artifact
-  - **Test:** Trace contains one Agent() dispatch of `brainstorm-memo-producer` per artifact discovered during the session; artifact count in notepad matches dispatch count.
+  - **Test:** Trace contains one Agent() dispatch of `meta-process-brainstormer-memo-producer` per artifact discovered during the session; artifact count in notepad matches dispatch count.
   - **Fail signal:** Fewer dispatches than artifacts in the notepad, or a single dispatch covering multiple artifacts.
 
 - [ ] **EVAL-E03:** Memo-producer dispatches carry model: sonnet
-  - **Test:** Every `brainstorm-memo-producer` dispatch record in the trace includes `model: sonnet`.
+  - **Test:** Every `meta-process-brainstormer-memo-producer` dispatch record in the trace includes `model: sonnet`.
   - **Fail signal:** Any memo-producer dispatch omits `model:` or uses a different model.
 
 - [ ] **EVAL-E04:** All [O] dispatches fire in parallel
@@ -43,7 +43,7 @@
   - **Fail signal:** All lens reference files appear as a batch read at the start of [B], or a lens is applied in the trace without a preceding load of its reference file.
 
 - [ ] **EVAL-E10:** Wrong-tool check fires at [NEW] entry before [A] begins
-  - **Test:** Trace records a wrong-tool evaluation step (redirect check for synapse-router-artifact-creator / synapse-skill-skill-improver / synapse-router-artifact-gatekeeper) after notepad initialization and before the first [A] turn.
+  - **Test:** Trace records a wrong-tool evaluation step (redirect check for synapse-router-artifact-creator / synapse-skill-improver / synapse-router-artifact-gatekeeper) after notepad initialization and before the first [A] turn.
   - **Fail signal:** [A] discovery begins with no wrong-tool check recorded in the trace, or wrong-tool check appears after the first [A] exchange.
 
 ## Output Criteria
@@ -89,7 +89,7 @@
   - **Fail signal:** Section consists only of aspirational language with no description of a specific observable failure in Claude's current output.
 
 - [ ] **EVAL-O11:** Design document produced and path referenced in the [END] summary
-  - **Test:** Confirm a design doc file exists in the brainstorm directory. Confirm the [END] summary message names this path explicitly.
+  - **Test:** Confirm a design doc file exists in the meta-process-brainstormer directory. Confirm the [END] summary message names this path explicitly.
   - **Fail signal:** No design document file exists in the directory, or the [END] summary omits the design doc path.
 
 - [ ] **EVAL-O12:** Design document contains Problem Statement, Design Principles, and Architecture sections with non-placeholder content
@@ -105,14 +105,14 @@
   - **Fail signal:** The [END] message omits the design doc path, omits any memo path, or omits the memo type for any artifact.
 
 - [ ] **EVAL-O15:** meta.yaml status field is set to done at session end
-  - **Test:** Open the `meta.yaml` file in the brainstorm directory after the [END] phase completes. The `status` field must equal `done`.
+  - **Test:** Open the `meta.yaml` file in the meta-process-brainstormer directory after the [END] phase completes. The `status` field must equal `done`.
   - **Fail signal:** `status` field is absent, retains a non-`done` value, or the file does not exist.
 
 ## Test Prompts
 
 ### EVAL-T01 — Naive User: "I have a skill idea"
 
-**Prompt:** "I want to brainstorm a skill for summarizing meetings. Can you help me think through it?"
+**Prompt:** "I want to meta-process-brainstormer a skill for summarizing meetings. Can you help me think through it?"
 
 **Why this tests the skill:** Tests whether the skill elicits enough context to be useful or proceeds with surface-level output given minimal framing.
 
@@ -136,7 +136,7 @@
 
 ### EVAL-T05 — Experienced User: Reworking an existing agent with known failure modes
 
-**Prompt:** "I have a synapse-skill-eval-judge agent that consistently hallucinates passing scores when the test prompt is ambiguous. I've already tried tightening the scoring rubric — it didn't help. Before I redesign the agent, I want to brainstorm whether this is a prompt design problem, an architecture problem (maybe the judge needs a challenger agent), or a signal problem (the EVAL.md criteria are too vague to adjudicate). Help me think through the design space."
+**Prompt:** "I have a synapse-skill-eval-judge agent that consistently hallucinates passing scores when the test prompt is ambiguous. I've already tried tightening the scoring rubric — it didn't help. Before I redesign the agent, I want to meta-process-brainstormer whether this is a prompt design problem, an architecture problem (maybe the judge needs a challenger agent), or a signal problem (the EVAL.md criteria are too vague to adjudicate). Help me think through the design space."
 
 **Why this tests the skill:** Tests whether the skill can handle a constrained rework session where one solution path has already been ruled out, requiring it to reason across architectural options.
 
@@ -148,13 +148,13 @@
 
 ### EVAL-T07 — Adversarial: Everything at once
 
-**Prompt:** "I want to brainstorm a skill that is also an agent, implements a protocol, routes itself through the pipeline system, evaluates itself after every run, and supports both Codex and Claude. It needs to be simple enough for naive users but powerful enough for advanced ones. I want to explore all possible design directions before deciding anything."
+**Prompt:** "I want to meta-process-brainstormer a skill that is also an agent, implements a protocol, routes itself through the pipeline system, evaluates itself after every run, and supports both Codex and Claude. It needs to be simple enough for naive users but powerful enough for advanced ones. I want to explore all possible design directions before deciding anything."
 
 **Why this tests the skill:** Tests whether the skill recognizes an over-scoped request and narrows focus rather than producing an unfocused sprawl of ideas.
 
 ### EVAL-T08 — Adversarial: Contradictory constraints
 
-**Prompt:** "Help me rework my code-review skill. It needs to be completely opinionated — enforce our internal standards, never ask the user questions — but also totally flexible so any team can use it without modification. I want the brainstorm to end with a single definitive design."
+**Prompt:** "Help me rework my code-review skill. It needs to be completely opinionated — enforce our internal standards, never ask the user questions — but also totally flexible so any team can use it without modification. I want the meta-process-brainstormer to end with a single definitive design."
 
 **Why this tests the skill:** Tests whether the skill surfaces the contradiction (opinionated vs. flexible, single design vs. exploration) rather than synthesizing a false resolution.
 
@@ -162,10 +162,10 @@
 
 **Prompt:** "I've already decided I'm building a changelog-generator skill. I have the design finalized — just write me the SKILL.md."
 
-**Why this tests the skill:** Tests whether the skill recognizes the user is past the exploration phase and redirects to /synapse-router-artifact-creator rather than forcing an unwanted brainstorm.
+**Why this tests the skill:** Tests whether the skill recognizes the user is past the exploration phase and redirects to /synapse-router-artifact-creator rather than forcing an unwanted meta-process-brainstormer.
 
 ### EVAL-T10 — Wrong Tool: Evaluating an existing skill, not exploring
 
-**Prompt:** "My synapse-skill-skill-improver skill keeps failing on the scoring phase. Can you brainstorm what's wrong with it?"
+**Prompt:** "My synapse-skill-improver skill keeps failing on the scoring phase. Can you meta-process-brainstormer what's wrong with it?"
 
-**Why this tests the skill:** Tests whether the skill distinguishes between exploring a design space (its job) and diagnosing a runtime failure in a live artifact (belongs to /synapse-skill-skill-improver or debugging).
+**Why this tests the skill:** Tests whether the skill distinguishes between exploring a design space (its job) and diagnosing a runtime failure in a live artifact (belongs to /synapse-skill-improver or debugging).

@@ -47,7 +47,7 @@ Options:
 Examples:
   validate.sh                                        # validate all artifacts
   validate.sh synapse/skills/synapse-router-artifact-creator   # validate one framework skill
-  validate.sh src/skills/docs/write-spec-docs        # validate one adopter skill
+  validate.sh src/skills/docs/docs-spec-writer        # validate one adopter skill
   validate.sh synapse/skills/                        # validate framework skills
   validate.sh src/agents/                            # validate adopter agents
   validate.sh scripts/install.sh                     # validate one script

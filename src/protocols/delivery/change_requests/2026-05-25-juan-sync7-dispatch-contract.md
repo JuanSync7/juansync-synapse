@@ -125,9 +125,9 @@ Relevance scoring at read-time requires judgment the main agent shouldn't spend 
 
 Escape hatch preserved for the rare case of truly independent work packages.
 
-### Structural decision #1 (auto-research reuse)
+### Structural decision #1 (optimization-process-researcher reuse)
 
-This protocol's shape (dispatch contract with explicit slot table + sequential gate + model mandate) is intentionally extracted so the `auto-research` skill can adopt it later. auto-research differs in intent (optimize-same-target vs. build-forward) but shares the same dispatch safety requirements. The protocol is authored as a reusable contract, not a plan-executor-specific bespoke rule.
+This protocol's shape (dispatch contract with explicit slot table + sequential gate + model mandate) is intentionally extracted so the `optimization-process-researcher` skill can adopt it later. optimization-process-researcher differs in intent (optimize-same-target vs. build-forward) but shares the same dispatch safety requirements. The protocol is authored as a reusable contract, not a plan-executor-specific bespoke rule.
 
 ### Subdomain: orchestration
 

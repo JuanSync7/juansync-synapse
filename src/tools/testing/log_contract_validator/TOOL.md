@@ -26,10 +26,10 @@ should treat the report as advisory.
 
 ## When to use
 
-- **`test-audit`** invokes this tool to verify that every error/exception
+- **`code-test-auditor`** invokes this tool to verify that every error/exception
   path in a module is logged at the right level with the right structured
   fields before signing off on a coverage audit.
-- **`test-generate`** uses the discovered `LogCall` set and the
+- **`code-test-generator`** uses the discovered `LogCall` set and the
   `log_path_coverage` metric to plan tests for log-emitting branches —
   e.g. asserting that a specific `extra={...}` payload is emitted on
   failure paths.

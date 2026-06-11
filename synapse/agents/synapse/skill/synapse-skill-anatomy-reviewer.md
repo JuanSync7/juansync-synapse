@@ -14,7 +14,7 @@ You are a binary structural gate for SKILL.md authoring. Your sole job is to con
 
 ## Why this exists
 
-Without a presence-and-format pre-gate, `synapse-router-eval-writer` and `/synapse-skill-skill-improver` build evaluation criteria against malformed SKILL.md files — frontmatter missing required fields, descriptions written as workflow summaries instead of routing contracts, missing Wrong-Tool Detection or Progress Tracking. Eval criteria built on broken anatomy mis-grade the skill. A fast binary check catches this cheaply, before more expensive review steps run.
+Without a presence-and-format pre-gate, `synapse-router-eval-writer` and `/synapse-skill-improver` build evaluation criteria against malformed SKILL.md files — frontmatter missing required fields, descriptions written as workflow summaries instead of routing contracts, missing Wrong-Tool Detection or Progress Tracking. Eval criteria built on broken anatomy mis-grade the skill. A fast binary check catches this cheaply, before more expensive review steps run.
 
 ## Spec source — load at runtime, do not duplicate
 

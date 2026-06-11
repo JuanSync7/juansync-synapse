@@ -7,7 +7,7 @@ Schema: see [registry/README.md](README.md).
 | Script | Description | Status | Consumers |
 |------|-------------|--------|-----------|
 | [audit-artifacts](../scripts/audit-artifacts.sh) | Inventory and promotion-signal audit for companion artifacts | stable | cortex |
-| [check-links](../scripts/check-links.sh) | Validate relative markdown links in src/ for broken targets | stable | cortex, synapse-skill-skill-improver |
+| [check-links](../scripts/check-links.sh) | Validate relative markdown links in src/ for broken targets | stable | cortex, synapse-skill-improver |
 | [cortex](../cortex) | Top-level dispatcher for ai-synapse — routes to scripts by subcommand | stable | scaffold, sync-registry |
 | [install](../scripts/install.sh) | CLI entry point for installing and managing skill symlinks | stable | cortex, pathway, validate |
 | [pathway](../scripts/pathway.sh) | Manage pathway bundles — list, show, install, create, export | stable | cortex, synapse-router-artifact-gatekeeper, synapse-router-eval-writer, synapse-router-suite-validator, sync-registry |

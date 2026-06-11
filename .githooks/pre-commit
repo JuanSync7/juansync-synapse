@@ -2,10 +2,12 @@
 set -euo pipefail
 
 # Pre-commit hook: structural validation for changed skills, agents, and protocols.
-# Skills: frontmatter fields, SKILL_VOCABULARY.md values (domain/subdomain/scope/role), domain README rows, EVAL.md existence.
+# Skills: frontmatter fields, SKILL_VOCABULARY.md values, name's scope-role tail, domain README rows, EVAL.md existence.
+#   - domain/scope/role required; subdomain OPTIONAL (validated only if present).
+#   - name must end with the scope-role tail (fixed-tail grammar).
+#   - persona/mode skills (under persona/ or `class: persona`) are exempt from scope/role; need `persona-` prefix + PERSONA_REGISTRY row.
 # Agents: frontmatter fields (name/domain/subdomain/scope/role), AGENT_VOCABULARY.md values, AGENTS_REGISTRY.md listing.
-# Protocols: frontmatter fields (name/domain/subdomain/scope/role), PROTOCOL_VOCABULARY.md values.
-# All slug slots (domain/subdomain/scope/role) must be present and validate against the corresponding vocabulary file.
+# Protocols: frontmatter fields (name/domain/subdomain/subject/kind), PROTOCOL_VOCABULARY.md values.
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 SKILL_VOCABULARY="$REPO_ROOT/registry/SKILL_VOCABULARY.md"
@@ -161,15 +163,49 @@ fi
 for skill_dir in "${changed_skill_dirs[@]}"; do
     skill_md="$REPO_ROOT/$skill_dir/SKILL.md"
     skill_name="$(basename "$skill_dir")"
-
-    # --- Check 1: Frontmatter fields exist ---
     frontmatter="$(sed -n '/^---$/,/^---$/p' "$skill_md" | sed '1d;$d')"
 
-    for field in name description domain subdomain scope role; do
+    # --- Persona / mode skills: separate class, no scope-role signature ---
+    # Identified by living under a persona/ directory OR declaring `class: persona`.
+    if echo "$skill_dir" | grep -q '/persona/' || echo "$frontmatter" | grep -qE '^class: *persona'; then
+        for field in name description; do
+            if ! echo "$frontmatter" | grep -q "^${field}:"; then
+                errors+=("$skill_dir: SKILL.md missing frontmatter field '$field'")
+            fi
+        done
+        name_val="$(echo "$frontmatter" | grep '^name:' | sed 's/^name: *//' | tr -d '"' | tr -d "'" || true)"
+        if [ "$name_val" != "$skill_name" ]; then
+            errors+=("$skill_dir: name '$name_val' must equal directory name '$skill_name'")
+        fi
+        case "$skill_name" in
+            persona-*) : ;;
+            *) errors+=("$skill_dir: persona skill name must start with 'persona-'") ;;
+        esac
+        # Persona registry + README rows
+        persona_registry="$REPO_ROOT/registry/PERSONA_REGISTRY.md"
+        if [ -f "$persona_registry" ] && ! grep -qF "$skill_name" "$persona_registry"; then
+            errors+=("$skill_dir: no row for '$skill_name' in registry/PERSONA_REGISTRY.md")
+        fi
+        continue
+    fi
+
+    # --- Check 1: Frontmatter fields exist (subdomain is OPTIONAL) ---
+    for field in name description domain scope role; do
         if ! echo "$frontmatter" | grep -q "^${field}:"; then
             errors+=("$skill_dir: SKILL.md missing frontmatter field '$field'")
         fi
     done
+
+    # --- Check 1b: name's last two tokens must equal scope-role (fixed tail) ---
+    name_val="$(echo "$frontmatter" | grep '^name:' | sed 's/^name: *//' | tr -d '"' | tr -d "'" || true)"
+    fm_scope="$(echo "$frontmatter" | grep '^scope:' | sed 's/^scope: *//' | tr -d '"' | tr -d "'" || true)"
+    fm_role="$(echo "$frontmatter" | grep '^role:' | sed 's/^role: *//' | tr -d '"' | tr -d "'" || true)"
+    if [ -n "$name_val" ] && [ -n "$fm_scope" ] && [ -n "$fm_role" ]; then
+        case "$name_val" in
+            *-"$fm_scope-$fm_role") : ;;  # namespace…-scope-role  ✓
+            *) errors+=("$skill_dir: name '$name_val' must end with the scope-role tail '$fm_scope-$fm_role'") ;;
+        esac
+    fi
 
     # --- Check 2: domain, subdomain, scope, role values are in SKILL_VOCABULARY.md ---
     domain_val="$(echo "$frontmatter" | grep '^domain:' | sed 's/^domain: *//' | tr -d '"' | tr -d "'" || true)"

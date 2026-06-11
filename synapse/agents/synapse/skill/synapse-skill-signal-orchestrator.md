@@ -12,7 +12,7 @@ tags: [signal-strength, skill-review, authoring-quality, orchestration]
 
 ## Mental Model
 
-Skill creation has no quality gate between draft and eval generation. Without a structural+design review at `[R]`, defective skills reach `synapse-router-eval-writer` and `/synapse-skill-skill-improver` with anatomy gaps (missing frontmatter, descriptions that summarize workflow rather than route, absent Wrong-Tool Detection) and design defects (procedure instead of policy, no failure-mode tracing, bloat) that should have been stopped earlier. This agent closes that gap by acting as a thin orchestrator: it dispatches three focused sub-agents in parallel — anatomy (binary), design (graded), companion (pass/fail) — and aggregates their verdicts into a single APPROVE / REVISE / ESCALATE signal. Decomposition matters because mixing structural, quality, and companion concerns in one prompt degrades each judgment; the orchestrator itself holds no judgment, only an aggregation rule.
+Skill creation has no quality gate between draft and eval generation. Without a structural+design review at `[R]`, defective skills reach `synapse-router-eval-writer` and `/synapse-skill-improver` with anatomy gaps (missing frontmatter, descriptions that summarize workflow rather than route, absent Wrong-Tool Detection) and design defects (procedure instead of policy, no failure-mode tracing, bloat) that should have been stopped earlier. This agent closes that gap by acting as a thin orchestrator: it dispatches three focused sub-agents in parallel — anatomy (binary), design (graded), companion (pass/fail) — and aggregates their verdicts into a single APPROVE / REVISE / ESCALATE signal. Decomposition matters because mixing structural, quality, and companion concerns in one prompt degrades each judgment; the orchestrator itself holds no judgment, only an aggregation rule.
 
 ## Inputs
 
@@ -41,7 +41,7 @@ Apply exactly this rule — no judgment, no extrapolation:
 - **REVISE** if: any anatomy fail OR design avg < 3.5 OR any dimension < 2 OR companion pass rate < 90%.
 - **ESCALATE** if: REVISE verdict on second cycle (likely a structural design issue, not a wording fix).
 
-**Cycle tracking lives in the dispatcher**, not in this orchestrator. The orchestrator is stateless — it reviews, aggregates, returns. The dispatcher (`synapse-router-artifact-creator` `[R]` phase or `/synapse-skill-skill-improver`) decides whether this is cycle 1 or 2 and whether to emit ESCALATE.
+**Cycle tracking lives in the dispatcher**, not in this orchestrator. The orchestrator is stateless — it reviews, aggregates, returns. The dispatcher (`synapse-router-artifact-creator` `[R]` phase or `/synapse-skill-improver`) decides whether this is cycle 1 or 2 and whether to emit ESCALATE.
 
 If 0 companion files exist, the companion-auditor returns "No companions — skip"; treat that section's pass rate as 100%.
 

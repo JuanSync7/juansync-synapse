@@ -31,7 +31,7 @@ Ignore any files named `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, or `tes
 
 | If the user wants to... | Redirect to |
 |-------------------------|-------------|
-| Fix gaps identified in a verdict | Issue the verdict first, then redirect to `/synapse-skill-skill-improver` |
+| Fix gaps identified in a verdict | Issue the verdict first, then redirect to `/synapse-skill-improver` |
 | Build a skill, agent, protocol, or tool from scratch | `/synapse-router-artifact-creator` |
 | Evaluate or rewrite an EVAL.md only | `/synapse-router-eval-writer` (unified router for skill/agent/protocol/tool) |
 
@@ -55,7 +55,7 @@ TaskCreate "Phase 6 — Record verdict (skill flow, APPROVE only)"
 | Input | Required | Description |
 |-------|----------|-------------|
 | `<artifact-path>` | Yes | Path to the artifact: skill directory (containing SKILL.md), agent `.md` file in `src/agents/`, protocol `.md` file in `src/protocols/`, tool directory (containing TOOL.md) in `src/tools/`, or pathway `.yaml` file in `pathways/` |
-| `--score <0-100>` | No | Eval score from a prior `/synapse-skill-skill-improver` or auto-research run (skills only) |
+| `--score <0-100>` | No | Eval score from a prior `/synapse-skill-improver` or optimization-process-researcher run (skills only) |
 
 ---
 
@@ -90,7 +90,7 @@ TaskCreate "Phase 6 — Record verdict (skill flow, APPROVE only)"
 - The pathway `.yaml` file itself
 - > **Read [`../../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../../taxonomy/PATHWAY_TAXONOMY.md)** for harness values and naming conventions
 
-**Score precondition check (skill flow only):** If `--score` is not provided, ask before proceeding: "Do you have an eval score from `/synapse-skill-skill-improver` or `/auto-research`? A missing score caps the verdict at REVISE." DO NOT run all phases only to report this at the end.
+**Score precondition check (skill flow only):** If `--score` is not provided, ask before proceeding: "Do you have an eval score from `/synapse-skill-improver` or `/optimization-process-researcher`? A missing score caps the verdict at REVISE." DO NOT run all phases only to report this at the end.
 
 **Early exits (skill flow only):**
 - If `SKILL.md` is absent → emit `VERDICT: REJECT` immediately. Do not proceed.

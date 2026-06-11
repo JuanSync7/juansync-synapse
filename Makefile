@@ -17,7 +17,7 @@ all:
 	@echo "  make install docs code    install multiple domains"
 	@echo "  make agents               install agent definitions only"
 	@echo "  make zip                  package all skills as .zip for Claude Desktop"
-	@echo "  make zip docs/patch-docs  package one skill"
+	@echo "  make zip docs/docs-doc-patcher  package one skill"
 	@echo "  make clean                remove all installed symlinks (all harnesses)"
 	@echo ""
 	@echo "Codex CLI:"
@@ -89,7 +89,7 @@ clean:
 	./scripts/install.sh clean
 
 # make zip                  → zip all skills
-# make zip docs/patch-docs  → zip one skill
+# make zip docs/docs-doc-patcher  → zip one skill
 _ZIP_TARGETS := $(filter-out zip, $(MAKECMDGOALS))
 zip:
 	@if [ -z "$(_ZIP_TARGETS)" ]; then \

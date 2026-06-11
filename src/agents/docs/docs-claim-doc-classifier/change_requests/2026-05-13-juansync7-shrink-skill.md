@@ -106,7 +106,7 @@ Mixed rule: if any non-claim region > 30% of doc length → `category=mixed`, `s
 classifier_confidence_floor: 0.6  # below this, skill refuses with low-confidence message
 ```
 
-Full threshold set lives in `src/skills/docs/docs-claim-doc-shrinker/references/thresholds.yaml`.
+Full threshold set lives in `src/skills/docs/docs-claim-shrinker/references/thresholds.yaml`.
 
 ---
 
@@ -130,7 +130,7 @@ Full threshold set lives in `src/skills/docs/docs-claim-doc-shrinker/references/
 
 | Artifact | Direction | Contract |
 |---|---|---|
-| `docs-claim-doc-shrinker` (skill) | produces for | Shrinker calls classifier at `audit` entry; result gates all downstream work. Category + sub_type + confidence passed forward. |
+| `docs-claim-shrinker` (skill) | produces for | Shrinker calls classifier at `audit` entry; result gates all downstream work. Category + sub_type + confidence passed forward. |
 | `docs-claim-doc-extractor` (agent) | produces for (indirectly) | Extractor only runs after classifier returns `claim-based`; sub_type passed through shrinker dispatch. |
 | `docs-claim-doc-writer` (agent) | produces for (indirectly) | Writer receives voice-anchor instruction only when sub_type = `style`; determined by classifier output. |
 | `docs-claim-claim-judge` (agent) | produces for (indirectly) | Judge runs only after claim-based classification; no direct input from classifier, but gates whether judge is invoked at all. |
@@ -169,4 +169,4 @@ Full threshold set lives in `src/skills/docs/docs-claim-doc-shrinker/references/
 
 ## Open questions
 
-None — all threads resolved during brainstorm lens rotation.
+None — all threads resolved during meta-process-brainstormer lens rotation.

@@ -1,13 +1,13 @@
 ---
-name: brainstorm-design-doc-producer
-description: Produces a frozen design document from a brainstorm notepad
+name: meta-process-brainstormer-design-doc-producer
+description: Produces a frozen design document from a meta-process-brainstormer notepad
 domain: synapse
 role: writer
 ---
 
 # Brainstorm Design Doc Producer
 
-You produce a frozen design document from a completed brainstorm notepad. The design doc is the "why was it designed this way" record — immutable after production, self-contained for any reader who never sees the notepad.
+You produce a frozen design document from a completed meta-process-brainstormer notepad. The design doc is the "why was it designed this way" record — immutable after production, self-contained for any reader who never sees the notepad.
 
 ## Input Contract
 
@@ -16,7 +16,7 @@ You receive these inputs from the dispatching agent:
 | Input | Description |
 |-------|-------------|
 | `notepad` | Full notepad content (both zones — session-level + per-artifact sections). Never trimmed. |
-| `slug` | Brainstorm slug for output path (e.g., `2026-04-22-brainstorm-multi-artifact-output`) |
+| `slug` | Brainstorm slug for output path (e.g., `2026-04-22-meta-process-brainstormer-multi-artifact-output`) |
 | `design_doc_template` | Full `templates/design-doc.md` content — defines the output structure |
 
 ## Behavior
@@ -24,7 +24,7 @@ You receive these inputs from the dispatching agent:
 1. Read the full notepad — both session-level (Zone 1) and per-artifact sections (Zone 2).
 2. Produce the design doc at `.brainstorms/<slug>/design.md`.
 3. Follow the design-doc.md template section structure:
-   1. **Problem Statement** — distill from the brainstorm's motivating problem
+   1. **Problem Statement** — distill from the meta-process-brainstormer's motivating problem
    2. **Design Principles** — extract load-bearing decisions from Process section, each with an Implication line
    3. **Architecture** — flow graph + node specs from per-artifact Memo-ready blocks + entry gates
    4. **Domain-specific sections** as applicable (notepad architecture, naming conventions, companion model, etc.)
@@ -59,7 +59,7 @@ ALL blocks prefixed with `<!-- VERBATIM -->` in the notepad MUST be copied as-is
 If the notepad is insufficient to produce a quality design doc:
 
 ```
-AGENT FAILURE: brainstorm-design-doc-producer
+AGENT FAILURE: meta-process-brainstormer-design-doc-producer
 File: .brainstorms/<slug>/design.md
 Gap: <specific information missing — what's needed to complete this section>
 ```

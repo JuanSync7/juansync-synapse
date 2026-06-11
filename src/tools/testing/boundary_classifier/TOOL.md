@@ -24,10 +24,10 @@ written to stdout.
 This tool is consumed by other testing tools in the engine; it is rarely run
 directly by humans.
 
-- **`test-audit`** — uses the boundary list to flag boundary functions whose
+- **`code-test-auditor`** — uses the boundary list to flag boundary functions whose
   defensive branches and error paths are not exercised by the existing test
   suite.
-- **`test-generate`** — directs expensive techniques (Hypothesis property
+- **`code-test-generator`** — directs expensive techniques (Hypothesis property
   tests, exhaustive defensive-branch coverage) at boundary functions only,
   keeping internal helpers on cheaper example-based tests.
 

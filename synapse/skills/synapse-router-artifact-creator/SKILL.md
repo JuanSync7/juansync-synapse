@@ -28,7 +28,7 @@ Single entry point for creating a new ai-synapse artifact. The router commits to
 - Grade produced artifact body quality — that is downstream (`write-{type}-eval` + `/synapse-router-artifact-gatekeeper`)
 
 ## Wrong-Tool Detection
-- **Modifying an existing artifact** → redirect to `/synapse-skill-skill-improver <path>`
+- **Modifying an existing artifact** → redirect to `/synapse-skill-improver <path>`
 - **Idea exploration without a chosen artifact yet** → redirect to `/synapse-router-artifact-brainstormer`
 - **Asking whether an existing artifact passes promotion bar** → redirect to `/synapse-router-artifact-gatekeeper <path>`
 - **Creating multiple artifacts in one session** → reject; dispatch one parallel `synapse-router-artifact-creator` per artifact

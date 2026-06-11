@@ -22,9 +22,9 @@
 
 **Prompt:**
 ```
-/synapse-router-artifact-gatekeeper src/skills/docs/write-scope-docs
+/synapse-router-artifact-gatekeeper src/skills/docs/docs-scope-writer
 ```
-*(Assume write-scope-docs has a SKILL.md but no EVAL.md in this test scenario)*
+*(Assume docs-scope-writer has a SKILL.md but no EVAL.md in this test scenario)*
 
 **Expected behavior:**
 - Verdict is REJECT
@@ -61,7 +61,7 @@
 - Structural tier passes (`✓`)
 - Quality tier shows `✗` with eval score check unchecked `[ ]`
 - Registry tier passes (skill is not pipeline-routable, absence of pipeline block is correct)
-- Gaps section identifies score below 80 and instructs running `/synapse-skill-skill-improver` to raise it
+- Gaps section identifies score below 80 and instructs running `/synapse-skill-improver` to raise it
 
 ---
 
@@ -94,4 +94,4 @@
 - Structural tier passes (`✓`)
 - Quality tier is marked `unverified` (no score available)
 - Registry tier is evaluated and passes
-- Gaps section instructs providing a score via `/synapse-skill-skill-improver` or auto-research before APPROVE can be issued
+- Gaps section instructs providing a score via `/synapse-skill-improver` or optimization-process-researcher before APPROVE can be issued

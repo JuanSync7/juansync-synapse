@@ -10,7 +10,7 @@ version: 2
 # Only stage_name and output_type are required — input_type is absent (no predecessor).
 # Listed here so the dependency resolver can find them when walking requires chains.
 built_ins:
-  - stage_name: brainstorm
+  - stage_name: meta-process-brainstormer
     output_type: design_sketch
 
 registry:
@@ -23,15 +23,15 @@ registry:
           - name: requirements
             summary: "Capture and formalize what the system must do"
             skills:
-              - name: write-spec-docs
+              - name: docs-spec-writer
                 pipeline:
                   stage_name: spec
                   input_type: design_sketch
                   output_type: formal_spec
                   context_type: spec_review
-                  requires_all: [brainstorm]
+                  requires_all: [meta-process-brainstormer]
                   skippable: true
-              - name: write-spec-summary
+              - name: docs-spec-summarizer
                 pipeline:
                   stage_name: spec-summary
                   input_type: formal_spec
@@ -42,7 +42,7 @@ registry:
           - name: design
             summary: "Decompose requirements into tasks, contracts, and implementation plans"
             skills:
-              - name: write-design-docs
+              - name: docs-design-writer
                 pipeline:
                   stage_name: design
                   input_type: formal_spec
@@ -50,7 +50,7 @@ registry:
                   context_type: design_approval
                   requires_all: [spec]
                   skippable: true
-              - name: write-implementation-docs
+              - name: docs-implementation-writer
                 pipeline:
                   stage_name: impl
                   input_type: technical_design
@@ -74,7 +74,7 @@ registry:
       - name: documentation
         summary: "Document what was built: engineering guides"
         skills:
-          - name: write-engineering-guide
+          - name: docs-engineering-guide-writer
             pipeline:
               stage_name: eng-guide
               input_type: source_code | spec_digest
@@ -82,9 +82,9 @@ registry:
               context_type: doc_review
               requires_any: [code, spec-summary]   # code in normal flow; spec-summary in docs-only
               skippable: true
-          - name: patch-docs
+          - name: docs-doc-patcher
             pipeline:
-              stage_name: patch-docs
+              stage_name: docs-doc-patcher
               input_type: source_code | review_output
               output_type: patched_docs
               context_type: doc_review
@@ -97,7 +97,7 @@ registry:
       - name: testing
         summary: "Write and implement tests from engineering artifacts"
         skills:
-          - name: write-test-docs
+          - name: docs-test-plan-writer
             pipeline:
               stage_name: test-docs
               input_type: engineering_guide
@@ -105,7 +105,7 @@ registry:
               context_type: doc_review
               requires_all: [eng-guide]
               skippable: true
-          - name: write-module-tests
+          - name: code-test-writer
             pipeline:
               stage_name: tests
               input_type: test_plan
@@ -113,7 +113,7 @@ registry:
               context_type: code_review
               requires_all: [test-docs]
               skippable: true
-          - name: write-test-coverage
+          - name: docs-coverage-writer
             pipeline:
               stage_name: test-coverage
               input_type: engineering_guide | formal_spec
@@ -127,10 +127,10 @@ presets:
   # and type validation. This allows presets to intentionally skip stages whose
   # requires chain would otherwise force inclusion (e.g., bugfix skips spec despite
   # design.requires_all: [spec]).
-  full:     [brainstorm, spec, spec-summary, design, impl, code, eng-guide, test-docs, tests]
-  feature:  [brainstorm, spec, design, impl, code, eng-guide, test-docs, tests]
-  bugfix:   [brainstorm, design, code]
+  full:     [meta-process-brainstormer, spec, spec-summary, design, impl, code, eng-guide, test-docs, tests]
+  feature:  [meta-process-brainstormer, spec, design, impl, code, eng-guide, test-docs, tests]
+  bugfix:   [meta-process-brainstormer, design, code]
   # bugfix drops tests vs v1 — inline tests produced by the code stage suffice for scoped fixes.
   # test-docs requires eng-guide which is not in bugfix scope.
-  docs-only: [brainstorm, spec, spec-summary, eng-guide]
+  docs-only: [meta-process-brainstormer, spec, spec-summary, eng-guide]
   # docs-only intentionally excludes test-docs — produces no test artifacts.

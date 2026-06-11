@@ -6,4 +6,4 @@ Standalone creative and visual skills.
 
 | Skill | Intent | Description |
 |-------|--------|-------------|
-| [create-animation-page](create-animation-page/) | write | Single-page interactive animation as one HTML file |
+| [creative-page-animator](creative-page-animator/) | write | Single-page interactive animation as one HTML file |

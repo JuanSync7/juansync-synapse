@@ -1,7 +1,7 @@
 # @summary
 # Pydantic v2 schemas for the branch-mapper tool.
 # Defines the contract for per-function branch enumeration consumed by the
-# test-generate skill to produce branch-coverage-aware tests.
+# code-test-generator skill to produce branch-coverage-aware tests.
 # Exports: Branch, FunctionBranchMap, BranchMap
 # Deps: pydantic
 # @end-summary

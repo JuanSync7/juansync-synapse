@@ -10,7 +10,7 @@
 
 The generator inspects function type hints via :mod:`ast` and emits ready-to-use
 Hypothesis ``@given`` decorators for each parameter. These models form the
-public schema consumed by the ``test-generate`` skill and any downstream
+public schema consumed by the ``code-test-generator`` skill and any downstream
 property-based test scaffolding.
 """
 

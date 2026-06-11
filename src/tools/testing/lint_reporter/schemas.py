@@ -9,7 +9,7 @@
 
 The lint-reporter aggregates output from four Python linters (``ruff``,
 ``mypy``, ``bandit``, ``vulture``) into a single :class:`LintReport`.
-These models form the public schema consumed by the ``test-lint`` skill
+These models form the public schema consumed by the ``code-test-linter`` skill
 and any downstream tooling.
 """
 

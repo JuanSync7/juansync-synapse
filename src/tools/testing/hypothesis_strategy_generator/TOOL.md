@@ -13,7 +13,7 @@ Reads a function's type hints via :mod:`ast` and emits a ready-to-use Hypothesis
 
 ## When to use
 
-- `/test-generate` — when scaffolding property-based tests for a *boundary function* (a pure or near-pure function whose inputs are well-typed and whose contract you want to exercise across a wide value space).
+- `/code-test-generator` — when scaffolding property-based tests for a *boundary function* (a pure or near-pure function whose inputs are well-typed and whose contract you want to exercise across a wide value space).
 - Standalone inspection — point at any source root to see which functions are amenable to property-based testing and which need handwritten strategies.
 
 Not the right tool when:

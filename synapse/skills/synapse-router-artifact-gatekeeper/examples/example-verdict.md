@@ -78,14 +78,14 @@ VERDICT: REVISE
 
 ## Gaps
 
-1. **Eval score below threshold (76/80):** Run `/synapse-skill-skill-improver synapse/skills/synapse-router-eval-writer` to identify and fix quality gaps. Re-run `/synapse-router-artifact-gatekeeper` with the updated score once it reaches ≥ 80.
+1. **Eval score below threshold (76/80):** Run `/synapse-skill-improver synapse/skills/synapse-router-eval-writer` to identify and fix quality gaps. Re-run `/synapse-router-artifact-gatekeeper` with the updated score once it reaches ≥ 80.
 ```
 
 ---
 
 ## Example 3 — REJECT
 
-**Input:** `/synapse-router-artifact-gatekeeper src/skills/docs/write-scope-docs`
+**Input:** `/synapse-router-artifact-gatekeeper src/skills/docs/docs-scope-writer`
 
 *(EVAL.md is absent in this scenario)*
 
@@ -94,7 +94,7 @@ VERDICT: REVISE
 ```
 VERDICT: REJECT
 
-## Certification Report — write-scope-docs
+## Certification Report — docs-scope-writer
 
 ### Structural                    ✗
 - [x] SKILL.md exists
@@ -105,7 +105,7 @@ VERDICT: REJECT
 - [x] tags well-formed
 - [x] user-invocable: true
 - [x] argument-hint present
-- [x] Domain README has row for write-scope-docs
+- [x] Domain README has row for docs-scope-writer
 - [x] Name globally unique
 
 ### Quality                       — skipped (EVAL.md absent)
@@ -114,7 +114,7 @@ VERDICT: REJECT
 
 ## Gaps
 
-1. **EVAL.md missing:** No certification is possible without an EVAL.md. Run `/synapse-router-eval-writer skill src/skills/docs/write-scope-docs` to generate one, then re-run `/synapse-router-artifact-gatekeeper` with a measured eval score.
+1. **EVAL.md missing:** No certification is possible without an EVAL.md. Run `/synapse-router-eval-writer skill src/skills/docs/docs-scope-writer` to generate one, then re-run `/synapse-router-artifact-gatekeeper` with a measured eval score.
 ```
 
 ---
@@ -145,7 +145,7 @@ VERDICT: APPROVE
 - [x] Clear persona ("impartial judge" mindset in opening paragraph)
 - [x] Instructions trace to failure modes
 - [x] Under 300 lines (98 lines)
-- [x] Consumer skills identified (synapse-router-artifact-creator, synapse-router-eval-writer, synapse-skill-skill-improver)
+- [x] Consumer skills identified (synapse-router-artifact-creator, synapse-router-eval-writer, synapse-skill-improver)
 - [x] No user-facing language
 
 ### Registry                      N/A

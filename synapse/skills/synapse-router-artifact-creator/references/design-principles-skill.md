@@ -72,7 +72,7 @@ description: "Use when asked to create a new skill, build a skill for X, or writ
 **Bad:**
 ```yaml
 description: "Creates skills by understanding intent, building SKILL.md with
-companion files, generating EVAL.md, and running synapse-skill-skill-improver validation loops."
+companion files, generating EVAL.md, and running synapse-skill-improver validation loops."
 ```
 *This IS the workflow. The agent can follow this without reading the body.*
 
@@ -118,7 +118,7 @@ to find the most recent completed stage's output.
 
 **Bad:**
 ```markdown
-If spec is skipped, pass brainstorm output to design.
+If spec is skipped, pass meta-process-brainstormer output to design.
 If design is skipped, pass spec output to impl.
 If impl is skipped, pass design output to code.
 ```
@@ -155,13 +155,13 @@ Always write clean, well-organized YAML files with proper indentation.
 
 **Good:**
 ```markdown
-> **Read [`brainstorm-phase.md`](brainstorm-phase.md)** when entering the
+> **Read [`meta-process-brainstormer-phase.md`](meta-process-brainstormer-phase.md)** when entering the
 brainstorming stage.
 ```
 *Brainstorm details loaded only when needed. SKILL.md stays focused on orchestration.*
 
 **Bad:**
-A 400-line SKILL.md that inlines the full brainstorm protocol, stakeholder review
+A 400-line SKILL.md that inlines the full meta-process-brainstormer protocol, stakeholder review
 protocol, and escalation handler — all always loaded even when the agent is in
 Phase 0 initialization.
 

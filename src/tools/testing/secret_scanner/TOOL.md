@@ -13,10 +13,10 @@ Scans any text file for leaked secrets and emits a structured `SecretScanResult`
 The tool is project-agnostic — no paths are hardcoded.  It is designed to integrate into
 two pipeline steps:
 
-- **`test-integrate` [CONVERT]** — called immediately after recording a vcrpy cassette.
+- **`code-test-integrator` [CONVERT]** — called immediately after recording a vcrpy cassette.
   If any finding is detected the cassette is deleted and the conversion is aborted with
   the error code `cassette-secret-leak`.
-- **`test-lint`** — called on source files to catch accidentally committed credentials.
+- **`code-test-linter`** — called on source files to catch accidentally committed credentials.
 
 ---
 
@@ -93,7 +93,7 @@ Human-readable table written to stdout, suitable for terminal review.
 | `1` | One or more secrets detected. |
 | `2` | Tool error — unreadable file, missing argument, or import failure. |
 
-In the `test-integrate` pipeline: exit code `1` triggers cassette deletion and aborts
+In the `code-test-integrator` pipeline: exit code `1` triggers cassette deletion and aborts
 conversion with `cassette-secret-leak`.
 
 ---

@@ -6,4 +6,4 @@ Schema: see [registry/README.md](README.md).
 
 | Pathway | Description | Status | Consumers |
 |------|-------------|--------|-----------|
-| [synapse-skill](../pathways/synapse-skill.yaml) | Full skill-creation pipeline — brainstorm through certification | draft | — |
+| [synapse-skill](../pathways/synapse-skill.yaml) | Full skill-creation pipeline — meta-process-brainstormer through certification | draft | — |

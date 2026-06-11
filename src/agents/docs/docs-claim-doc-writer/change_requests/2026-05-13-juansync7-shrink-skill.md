@@ -8,7 +8,7 @@
 
 Rewrites a claim-based markdown doc compressed against a fixed kept-claim set. Does NOT generate docs from scratch. Does NOT introduce claims outside the input set. Preserves every section heading present in the original. For style-sub-type docs, preserves cadence and diction via voice anchors sampled from the source.
 
-This agent is invoked by the `docs-claim-doc-shrinker` compress phase after the user has edited the audit checklist. It produces the rewritten document that the judge then verifies claim-by-claim.
+This agent is invoked by the `docs-claim-shrinker` compress phase after the user has edited the audit checklist. It produces the rewritten document that the judge then verifies claim-by-claim.
 
 ---
 
@@ -109,7 +109,7 @@ This agent is the compress-phase rewriter only. It does not:
 - Decide which claims to keep or cut (that is the user's job via the audit checklist)
 - Self-verify entailment (that is the judge's job)
 
-Caller: `docs-claim-doc-shrinker` compress phase exclusively.
+Caller: `docs-claim-shrinker` compress phase exclusively.
 
 ---
 
@@ -130,7 +130,7 @@ Caller: `docs-claim-doc-shrinker` compress phase exclusively.
 
 | Artifact | Direction | Contract |
 |---|---|---|
-| `docs-claim-doc-shrinker` | consumes from (caller) | Dispatches writer in compress phase after audit-checklist parse; passes `kept_claims`, `original_doc`, `voice_anchors` |
+| `docs-claim-shrinker` | consumes from (caller) | Dispatches writer in compress phase after audit-checklist parse; passes `kept_claims`, `original_doc`, `voice_anchors` |
 | `docs-claim-doc-extractor` | consumes from (indirect) | Writer's `kept_claims` input is a subset of extractor's claim list; claim schema must be identical |
 | `docs-claim-claim-judge` | produces for | Judge receives `rewritten_doc` + each `kept_claim`; verifies entailment claim-by-claim; writer is informed of this contract but does not self-verify |
 

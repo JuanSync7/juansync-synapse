@@ -1,4 +1,4 @@
-# Design Document — docs-claim-doc-shrinker (Skill + 4 Agents)
+# Design Document — docs-claim-shrinker (Skill + 4 Agents)
 
 > Brainstorm slug: `2026-05-13-shrink-skill`
 > Status: **complete** | Artifact: multi-artifact — 1 skill + 4 agents (creation) | Target: `juansync-synapse`, PR → `develop`
@@ -117,7 +117,7 @@ compress <path>
 
 ### 3.2 Node Specifications
 
-#### docs-claim-doc-shrinker (skill orchestrator)
+#### docs-claim-shrinker (skill orchestrator)
 
 Load: `references/thresholds.yaml`, `references/wrong-tool-redirect.md`, `.shrink/<path>.audit.md` (compress phase)
 
@@ -310,7 +310,7 @@ voice_anchor_count_min: 3
 voice_anchor_count_max: 5
 ```
 
-Stored at: `src/skills/docs/docs-claim-doc-shrinker/references/thresholds.yaml`
+Stored at: `src/skills/docs/docs-claim-shrinker/references/thresholds.yaml`
 
 ---
 
@@ -318,7 +318,7 @@ Stored at: `src/skills/docs/docs-claim-doc-shrinker/references/thresholds.yaml`
 
 <!-- VERBATIM -->
 ```
-src/skills/docs/docs-claim-doc-shrinker/
+src/skills/docs/docs-claim-shrinker/
 ├── SKILL.md
 ├── EVAL.md
 └── references/
@@ -344,12 +344,12 @@ Working files (gitignored by default):
 
 ## 7. Artifact Frontmatter
 
-### docs-claim-doc-shrinker
+### docs-claim-shrinker
 
 <!-- VERBATIM -->
 ```yaml
 ---
-name: docs-claim-doc-shrinker
+name: docs-claim-shrinker
 description: Audit and compress claim-based markdown (identity, style, principle, decision docs). Run `audit` to produce a per-claim keep/cut/merge checklist; edit it; run `compress` to rewrite the doc preserving every kept claim. Triggers: "shrink this doc", "densify", "tighten this", "compress markdown".
 domain: docs
 subdomain: claim
@@ -421,7 +421,7 @@ role: writer
 <!-- VERBATIM -->
 ```markdown
 ## Wrong-Tool Detection
-- Target is a **SKILL.md** → use `synapse-skill-skill-improver`
+- Target is a **SKILL.md** → use `synapse-skill-improver`
 - Target is **narrative prose** (essays, blog posts, articles) → manual rewrite; claim-coverage destroys voice
 - Target is **reference doc** (API, glossary) → completeness is the goal, not density
 - Target is a **template** → already structural

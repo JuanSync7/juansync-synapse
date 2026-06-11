@@ -13,7 +13,7 @@ User-invocable recipes organized by domain.
 | [docs/](skills/docs/) | Documentation authoring pipeline |
 | [framework/](skills/framework/) | Technology-specific skills |
 | [integration/](skills/integration/) | External service integrations (submoduled suites) |
-| [meta/](skills/meta/) | Adopter meta-utilities (e.g. brainstorm) |
+| [meta/](skills/meta/) | Adopter meta-utilities (e.g. meta-process-brainstormer) |
 | [optimization/](skills/optimization/) | Iterative improvement loops |
 
 ## [agents/](agents/)

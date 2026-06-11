@@ -11,7 +11,7 @@ tags: [extractor, docs, claim, read-only]
 
 # docs-claim-doc-extractor
 
-Read-only structured-extraction agent for the `docs-claim-doc-shrinker` workflow. Dispatched at the shrinker's `audit` entry after the classifier admits the document, and again on every `compress` invocation for the idempotency-delta computation. Given a markdown file's full content and path, the agent splits it into atomic claims (one assertion per claim), anchors each claim to its source heading or line range, assigns a deterministic SHA-256-based ID, and auto-flags contradictions and redundancies it detects within the extracted set. It never decides which claims to keep or cut — that is the human auditor's job — and it never modifies the source document.
+Read-only structured-extraction agent for the `docs-claim-shrinker` workflow. Dispatched at the shrinker's `audit` entry after the classifier admits the document, and again on every `compress` invocation for the idempotency-delta computation. Given a markdown file's full content and path, the agent splits it into atomic claims (one assertion per claim), anchors each claim to its source heading or line range, assigns a deterministic SHA-256-based ID, and auto-flags contradictions and redundancies it detects within the extracted set. It never decides which claims to keep or cut — that is the human auditor's job — and it never modifies the source document.
 
 ## Input Contract
 
@@ -62,7 +62,7 @@ Field semantics:
 - `contradictions` — possibly empty. One entry per unique mutually-exclusive pair.
 - `redundancies` — possibly empty. One entry per unique near-duplicate pair.
 
-The `Claim` schema is shared verbatim with `docs-claim-doc-shrinker`, `docs-claim-doc-writer`, and `docs-claim-claim-judge`; see `src/skills/docs/docs-claim-doc-shrinker/references/claim-schema.md` for the canonical source. No `confidence`, no `importance`, no `keep` field on `Claim` — extraction is binary.
+The `Claim` schema is shared verbatim with `docs-claim-shrinker`, `docs-claim-doc-writer`, and `docs-claim-claim-judge`; see `src/skills/docs/docs-claim-shrinker/references/claim-schema.md` for the canonical source. No `confidence`, no `importance`, no `keep` field on `Claim` — extraction is binary.
 
 ## Failure Reporting
 
@@ -93,7 +93,7 @@ A clear failure report is more valuable than a partial or ambiguous claim list. 
 
 ## Dispatching Skill
 
-Dispatched by `docs-claim-doc-shrinker` at two points:
+Dispatched by `docs-claim-shrinker` at two points:
 
 1. **`audit` phase** — after `docs-claim-doc-classifier` admits the document, the shrinker passes `file_content` and `file_path` and consumes `claims`, `contradictions`, and `redundancies` to write `.shrink/<path>.audit.md`.
 2. **`compress` phase** — the shrinker re-runs extraction on the (possibly updated) source to compute the idempotency-delta against the prior audit's claim set. The delta-floor gate (`idempotency_delta_floor_pct`, default 5%) lives in the shrinker, not in this agent.

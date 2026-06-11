@@ -1,6 +1,6 @@
 ---
 name: synapse-meta-readme-maintainer
-description: "Maintains README-index invariant for the ancestor path of a changed synapse — adds/updates/removes rows; rewrites top-of-file one-liner only on factual drift. Dispatched by *-creator skills and synapse-skill-skill-improver at end of flow."
+description: "Maintains README-index invariant for the ancestor path of a changed synapse — adds/updates/removes rows; rewrites top-of-file one-liner only on factual drift. Dispatched by *-creator skills and synapse-skill-improver at end of flow."
 domain: synapse
 subdomain: meta
 scope: readme

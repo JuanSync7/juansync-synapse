@@ -29,7 +29,7 @@ We did not start with this schema. It emerged from iterative pressure-testing ag
 
 Original convention: `{domain}-{subdomain?}-{intent?}-{name}` for skills. Subdomain and intent included "when they aid disambiguation"; otherwise omitted. Sounds reasonable.
 
-**What broke:** Contributors couldn't agree on when to include optional slots. We ended up with `synapse-eval-writer` (intent in the name slot, no subdomain), `synapse-router-artifact-creator` (no intent, no subdomain), `synapse-skill-skill-improver` (no domain), and `write-postmortem` (no domain, no subdomain). All four parsed differently. No tooling could enforce a rule because there wasn't one — just judgment.
+**What broke:** Contributors couldn't agree on when to include optional slots. We ended up with `synapse-eval-writer` (intent in the name slot, no subdomain), `synapse-router-artifact-creator` (no intent, no subdomain), `synapse-skill-improver` (no domain), and `docs-postmortem-writer` (no domain, no subdomain). All four parsed differently. No tooling could enforce a rule because there wasn't one — just judgment.
 
 **Lesson:** optional slots devolve into "everyone picks differently" at any meaningful scale.
 
@@ -37,7 +37,7 @@ Original convention: `{domain}-{subdomain?}-{intent?}-{name}` for skills. Subdom
 
 Locked all four slots required: `{domain}-{subdomain}-{action}-{scope}`. `action` was a verb (write, improve, validate); `scope` was a noun (postmortem, skill, eval).
 
-**What broke:** Skills whose identity is a *role* (gatekeeper, architect, orchestrator, router) didn't fit verb-form naturally. "To gatekeep" is awkward; "the gatekeeper" is the actual identity. Forcing them into action-shape (`synapse-router-validate-artifact`) lost the persona — which is what made those skills memorable. Meanwhile, atomic action skills (`write-postmortem`) fit verb-shape perfectly.
+**What broke:** Skills whose identity is a *role* (gatekeeper, architect, orchestrator, router) didn't fit verb-form naturally. "To gatekeep" is awkward; "the gatekeeper" is the actual identity. Forcing them into action-shape (`synapse-router-validate-artifact`) lost the persona — which is what made those skills memorable. Meanwhile, atomic action skills (`docs-postmortem-writer`) fit verb-shape perfectly.
 
 **Lesson:** atomic skills and orchestrator/router skills have different grammar needs. Forcing one shape on both costs catchiness for half the corpus.
 
@@ -45,7 +45,7 @@ Locked all four slots required: `{domain}-{subdomain}-{action}-{scope}`. `action
 
 Locked all four slots, replaced action with role: `{domain}-{subdomain}-{scope}-{role}`. Role is a controlled noun vocab (writer, improver, gatekeeper, validator, etc.). Scope is the noun the role operates on.
 
-**Why this won:** every skill is now read as "the {scope} {role}" — a noun phrase describing what the skill IS. `docs-incident-postmortem-writer` = "the postmortem writer." `synapse-router-artifact-gatekeeper` = "the artifact gatekeeper." `synapse-skill-skill-improver` = "the skill improver." Single grammar pattern, atomic and orchestrator skills both fit.
+**Why this won:** every skill is now read as "the {scope} {role}" — a noun phrase describing what the skill IS. `docs-incident-postmortem-writer` = "the postmortem writer." `synapse-router-artifact-gatekeeper` = "the artifact gatekeeper." `synapse-skill-improver` = "the skill improver." Single grammar pattern, atomic and orchestrator skills both fit.
 
 **Cost paid:** some -er forms feel forced (`improver`, `summarizer`, `brainstormer`). Familiarity smooths it. Imperative reading (write the postmortem!) is lost — replaced by descriptive (the postmortem writer). Worth it for grammatical consistency.
 
@@ -97,7 +97,7 @@ We initially tried to use scope+role for all four artifact types. Pushback came 
 
 **Tooling demands parseability.** Pre-commit hooks, registry generators, dependency graphs, batch migrations, audits — every piece of automation needs to parse slugs. Each optional slot is a special case in every tool. Locked schema = single regex.
 
-**Redundancy is acceptable price.** `synapse-skill-skill-improver` repeats "skill" twice. That's fine. The clarity of "always four slots in this order from these vocabs" beats the clarity of "compress when redundant." Compression invites judgment; mechanical rules don't.
+**Redundancy is acceptable price.** `synapse-skill-improver` repeats "skill" twice. That's fine. The clarity of "always four slots in this order from these vocabs" beats the clarity of "compress when redundant." Compression invites judgment; mechanical rules don't.
 
 ---
 

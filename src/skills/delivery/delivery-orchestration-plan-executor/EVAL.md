@@ -89,9 +89,9 @@
   - **Test:** When a slice reaches N=2 failed/blocked attempts, the trace shows the slice marked blocked and an escalation event — no further dispatch for that slice follows. When M=3 replan cycles accumulate on one slice, the trace shows a hard halt with the "plan likely fundamentally misframed" reason surfaced to the user.
   - **Fail signal:** A third dispatch attempt occurs for a slice after two non-passing closeouts; or a fourth replan cycle on one slice proceeds without a halt event.
 
-- [ ] **EVAL-E11:** `write-story` tickets are never re-decomposed — used as authoritative WP list by path-reference only
-  - **Test:** When FR-NNN ticket directories are discovered at [INGEST-PLAN], the trace shows those directories used as-is for INDEX.md construction (path references, not content copies). No [DECOMPOSE] step reframes or splits ticket boundaries.
-  - **Fail signal:** A ticket's content is copied into `.delivery/plan/wp-<id>.md`; or [DECOMPOSE] rewrites or merges FR-NNN boundaries when ticket directories are present.
+- [ ] **EVAL-E11:** `delivery-plan-writer` stories are never re-decomposed — used as authoritative WP list by path-reference only
+  - **Test:** When `.delivery/stories/TAG-NNN-*.md` story files + `STORIES.md` manifest are discovered at [INGEST-PLAN], the trace shows those files used as-is for INDEX.md construction (path references, not content copies). No [DECOMPOSE] step reframes or splits story boundaries.
+  - **Fail signal:** A story's content is copied into `.delivery/plan/wp-<id>.md`; or [DECOMPOSE] rewrites or merges TAG-NNN boundaries when story files are present.
 
 - [ ] **EVAL-E12:** [PICK-NEXT-SLICE] respects dependency order and does not dispatch slices with in-flight or failed dependencies
   - **Test:** Each dispatch is preceded by a visible dependency-eligibility check on the candidate slice. The selected slice's `depends_on` entries are all in a green/closed state before dispatch. If no slice is eligible because dependencies are blocked, the trace shows an escalation event rather than a dispatch.
@@ -139,9 +139,9 @@
   - **Test:** Verify that at N=2 failed/blocked attempts on one slice the slice is marked blocked and escalation occurs; verify that at M=3 replan cycles on one slice the session halts with the message "plan likely fundamentally misframed" and does not auto-dispatch a 4th attempt.
   - **Fail signal:** Dispatch continues past N=2 attempts without escalation, or a 4th replan cycle on one slice begins without halting.
 
-- [ ] **EVAL-O10:** `write-story` FR-NNN tickets are used as-is and never re-decomposed
-  - **Test:** When `write-story` FR-NNN directories are present, verify `INDEX.md` references those directories by path and no new slice files are created by splitting or re-interpreting the ticket content.
-  - **Fail signal:** New `wp-<id>.md` files are materialized that duplicate or split FR-NNN ticket content, or ticket bodies are copied into `.delivery/`.
+- [ ] **EVAL-O10:** `delivery-plan-writer` TAG-NNN stories are used as-is and never re-decomposed
+  - **Test:** When `.delivery/stories/TAG-NNN-*.md` story files + `STORIES.md` manifest are present, verify `INDEX.md` references those files by path and no new slice files are created by splitting or re-interpreting story content.
+  - **Fail signal:** New `wp-<id>.md` files are materialized that duplicate or split TAG-NNN story content, or story bodies are copied into `.delivery/plan/`.
 
 - [ ] **EVAL-O11:** The final summary conforms to the required verbatim shape from `final-summary-format.md`
   - **Test:** At `[TERMINATION]`, verify the output contains all required sections in order: `## Run summary` header with ISO date and plan-source pointer; `**Exit reason:**` with exactly one value from the four-value enum; `### Slice rollup` table with status rows summing to `total`; `### Slice detail` table with a row for every slice including undispatched ones; `### Lessons tail` with 5–10 verbatim lesson strings (if `lessons.md` is non-empty); `### Pointers` with all four static paths; `### Next move` with exactly one sentence.

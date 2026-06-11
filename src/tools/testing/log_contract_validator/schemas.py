@@ -12,7 +12,7 @@ These models define the contract surface for log archetype validation:
 - ``LogCall``: a single logging call discovered in source.
 - ``LogContractViolation``: a single rule infraction tied to a source location.
 - ``LogContractReport``: the aggregated audit result, including the
-  ``log_path_coverage`` metric used by ``test-audit`` and ``test-generate``.
+  ``log_path_coverage`` metric used by ``code-test-auditor`` and ``code-test-generator``.
 
 The schemas are intentionally project-agnostic — paths, modules, and policy
 locations are passed by the caller.

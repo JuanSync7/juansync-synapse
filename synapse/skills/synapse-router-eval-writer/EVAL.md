@@ -14,7 +14,7 @@
 
 - [ ] **EVAL-S01:** SKILL.md has valid YAML frontmatter with all required fields (`name`, `description`, `domain`, `intent`, `tags`, `user-invocable`, `argument-hint`)
 - [ ] **EVAL-S02:** `domain: skill` and `intent: write` exist in `taxonomy/SKILL_TAXONOMY.md`
-- [ ] **EVAL-S03:** Wrong-Tool Detection section exists and names specific sibling skills (`/synapse-skill-skill-improver`, `/synapse-router-artifact-gatekeeper`, `/synapse-router-artifact-brainstormer`)
+- [ ] **EVAL-S03:** Wrong-Tool Detection section exists and names specific sibling skills (`/synapse-skill-improver`, `/synapse-router-artifact-gatekeeper`, `/synapse-router-artifact-brainstormer`)
 - [ ] **EVAL-S04:** SKILL.md is under 120 lines (router stays thin — slightly higher cap than synapse-router-artifact-creator's 100 because the existing-EVAL guard belongs at `[ROUTE]`)
 - [ ] **EVAL-S05:** Every `Load:` path in SKILL.md resolves to a file in the skill directory
 - [ ] **EVAL-S06:** Skill has a row in `registry/SKILL_REGISTRY.md` matching the path
@@ -42,7 +42,7 @@
   - **Fail signal:** Count is 0 (no flow loaded) or > 1.
 
 - [ ] **EVAL-E03:** Existing-EVAL guard — refuses to overwrite without `--force`
-  - **Test:** Pre-place a non-empty file at the resolved `$EVAL_PATH`. Trace shows failure with redirect to `/synapse-skill-skill-improver` BEFORE any flow body executes.
+  - **Test:** Pre-place a non-empty file at the resolved `$EVAL_PATH`. Trace shows failure with redirect to `/synapse-skill-improver` BEFORE any flow body executes.
   - **Fail signal:** EVAL.md silently overwritten, OR redirect message missing.
 
 - [ ] **EVAL-E04:** Atomic write — single Write call against `$EVAL_PATH`
@@ -50,7 +50,7 @@
   - **Fail signal:** Multiple writes against `$EVAL_PATH`, OR any write against the source `SKILL.md`/`TOOL.md`/agent/protocol `.md`.
 
 - [ ] **EVAL-E05:** Wrong-Tool Redirect Honored — does not proceed when user intent mismatches
-  - **Test:** When the user asks to grade or improve, trace shows redirect to `/synapse-router-artifact-gatekeeper` or `/synapse-skill-skill-improver` and termination, NOT a `[ROUTE]` entry.
+  - **Test:** When the user asks to grade or improve, trace shows redirect to `/synapse-router-artifact-gatekeeper` or `/synapse-skill-improver` and termination, NOT a `[ROUTE]` entry.
   - **Fail signal:** Skill proceeds to `[ROUTE]` after a wrong-tool match.
 
 - [ ] **EVAL-E06:** Concurrency Contract — single artifact per invocation
@@ -141,8 +141,8 @@ Acceptance checks:
 
 The following criteria are explicitly NOT evaluated here:
 
-- **Quality of the criteria written into the produced EVAL.md** — that is judged when the EVAL.md is consumed by `/synapse-router-artifact-gatekeeper` or `/synapse-skill-skill-improver` against a real artifact.
+- **Quality of the criteria written into the produced EVAL.md** — that is judged when the EVAL.md is consumed by `/synapse-router-artifact-gatekeeper` or `/synapse-skill-improver` against a real artifact.
 - **Source artifact promotion readiness** — `/synapse-router-artifact-gatekeeper`'s job.
-- **Score ≥ 80** for the source artifact — `/synapse-skill-skill-improver` runs against the source.
+- **Score ≥ 80** for the source artifact — `/synapse-skill-improver` runs against the source.
 
 synapse-router-eval-writer is accountable for producing a mechanically correct EVAL.md that matches the canonical checklist (transcription flows) or the agent dispatch contract (skill flow). Judgment about whether those criteria are *good enough* lives downstream.

@@ -61,7 +61,7 @@ Loaded at `[TERMINATION]`. Defines the structure of the inline summary the skill
 |---|---|
 | `all_slices_green` | "Review the diff and merge — all slices closed green." |
 | `escalated_blocked` | "Inspect the blocked slice(s) in INDEX.md and the last closeout; decide whether to re-frame the slice or unblock the dependency." |
-| `escalated_replan_cap` | "Plan likely misframed — return to `/write-story` or `/build-plan` to re-shape before re-running." |
+| `escalated_replan_cap` | "Plan likely misframed — return to `/delivery-plan-writer` or `/code-build-planner` to re-shape before re-running." |
 | `user_interrupt` | "Resume by invoking this skill again — the closeout trail will pick up at the next un-closed slice." |
 
 ## What NOT to do in the final summary
