@@ -1,5 +1,6 @@
 ---
 name: docs-doc-patcher
+aliases: [patch-docs]
 description: "Use when code has changed and docs need incremental updates — not full regeneration. Triggered by 'patch docs', 'update the docs', 'sync docs with changes', or automatically after coding tasks via CLAUDE.md trigger."
 domain: docs
 scope: doc

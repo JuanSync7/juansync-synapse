@@ -207,6 +207,31 @@ for skill_dir in "${changed_skill_dirs[@]}"; do
         esac
     fi
 
+    # --- Check 1c: aliases must be unique across every skill name + alias in the repo ---
+    # Aliases are install-time convenience handles (taxonomy/SKILL_TAXONOMY.md "Aliases");
+    # they share one uniqueness pool with names so an alias can never shadow a skill.
+    alias_line="$(echo "$frontmatter" | grep '^aliases:' | sed 's/^aliases: *//' | tr -d '[]"' | tr -d "'" || true)"
+    if [ -n "$alias_line" ]; then
+        IFS=',' read -ra alias_arr <<< "$alias_line"
+        for alias in "${alias_arr[@]}"; do
+            alias="$(echo "$alias" | xargs)"
+            [ -z "$alias" ] && continue
+            while IFS= read -r other_md; do
+                other_dir="$(dirname "$other_md")"
+                [ "$other_dir" = "$REPO_ROOT/$skill_dir" ] && continue
+                other_fm="$(sed -n '/^---$/,/^---$/p' "$other_md" | sed '1d;$d')"
+                other_name="$(echo "$other_fm" | grep '^name:' | sed 's/^name: *//' | tr -d '"' | tr -d "'" || true)"
+                if [ "$other_name" = "$alias" ]; then
+                    errors+=("$skill_dir: alias '$alias' shadows skill '$other_name' (${other_dir#"$REPO_ROOT"/})")
+                fi
+                other_aliases="$(echo "$other_fm" | grep '^aliases:' | sed 's/^aliases: *//' | tr -d '[]"' | tr -d "'" || true)"
+                if [ -n "$other_aliases" ] && echo ",$other_aliases," | tr -d ' ' | grep -qF ",$alias,"; then
+                    errors+=("$skill_dir: alias '$alias' already claimed by ${other_dir#"$REPO_ROOT"/}")
+                fi
+            done < <(find "$REPO_ROOT/src/skills" "$REPO_ROOT/synapse/skills" -name SKILL.md -type f 2>/dev/null)
+        done
+    fi
+
     # --- Check 2: domain, subdomain, scope, role values are in SKILL_VOCABULARY.md ---
     domain_val="$(echo "$frontmatter" | grep '^domain:' | sed 's/^domain: *//' | tr -d '"' | tr -d "'" || true)"
     subdomain_val="$(echo "$frontmatter" | grep '^subdomain:' | sed 's/^subdomain: *//' | tr -d '"' | tr -d "'" || true)"

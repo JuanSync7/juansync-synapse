@@ -1,5 +1,6 @@
 ---
 name: code-build-planner
+aliases: [build-plan]
 description: "Use when you have implementation docs and need an execution plan that breaks work into independent tasks before writing code. Triggered by 'build plan', 'execution plan', 'create a plan from the implementation docs'."
 domain: code
 scope: build

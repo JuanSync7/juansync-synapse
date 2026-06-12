@@ -1,5 +1,6 @@
 ---
 name: code-test-runner
+aliases: [test-runner]
 description: Run pytest test suites safely through a validated execution pipeline with structured output and optional fix loop
 domain: code
 scope: test

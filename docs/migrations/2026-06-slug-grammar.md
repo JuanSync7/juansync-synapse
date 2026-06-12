@@ -134,12 +134,16 @@ protocols, the 1 tool, the 6 `synapse/skills/*`, `delivery-orchestration-plan-ex
 6. Cross-references: other skills' bodies, `Consumers` columns, pathway YAML, EVAL.md.
 7. Top-level docs: `CLAUDE.md`, `README.md`, `GOVERNANCE.md`.
 
-## Callability note
+## Callability note — resolved by the alias layer
 
 Structured slugs are less terse than the old verb names (`/brainstorm` →
-`/meta-process-brainstormer`). This is the deliberate trade chosen: structure + glance-readability +
-global uniqueness over terseness, with the `description`/triggers carrying actual routing. If terse
-invocation is later wanted, add an alias mechanism rather than reverting the grammar.
+`/meta-process-brainstormer`). The trade chosen: structure + glance-readability + global
+uniqueness in the slug, terseness restored via **aliases** (see SKILL_TAXONOMY.md "Aliases").
+`aliases: [brainstorm]` frontmatter → `cortex install` creates one extra symlink per alias with
+a refuse-to-overwrite collision guard. Identity model: slug = immutable ID (governance surfaces
+only ever use it), alias = mutable @handle (what a human types), description = display name
+(what the LLM routes on). The old verb names were seeded as aliases on the 14 most-typed
+renamed skills, restoring backward-compatible invocation.
 
 ## Two-clone note
 

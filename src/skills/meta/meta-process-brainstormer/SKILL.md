@@ -1,5 +1,6 @@
 ---
 name: meta-process-brainstormer
+aliases: [brainstorm]
 description: "Use when the user asks to think through, explore, or debate a non-trivial question before committing to execution — phrases like 'help me think through,' 'should I,' 'I'm debating,' 'I have an idea for,' 'I'm not sure how to approach.' Does not fire on factual questions, on requests with a clear direction already, or on skill-design topics."
 domain: meta
 scope: process

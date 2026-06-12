@@ -1,5 +1,6 @@
 ---
 name: code-test-generator
+aliases: [test-generate]
 description: "consume an AuditGapReport from code-test-auditor and generate descriptive-docstring tests gap-by-gap with branch mapping, Hypothesis where invariants exist, green-run + per-gap mutation + assertion-quality gates, then HARD-GATE on a descriptive-intent PR before any commit"
 domain: code
 scope: test

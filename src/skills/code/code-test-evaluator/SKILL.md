@@ -1,5 +1,6 @@
 ---
 name: code-test-evaluator
+aliases: [test-evaluate]
 description: "consume post-generate CoverageState and emit per-module IntegrationStrategy documents — two-tier boundary detection, replacement-value scoring, lifecycle pattern assignment, soft-gate PR; analysis-only, never writes test code or spins up services"
 domain: code
 scope: test

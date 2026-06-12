@@ -1,5 +1,6 @@
 ---
 name: code-test-fixer
+aliases: [test-fix]
 description: "consume a LintReport from code-test-linter and resolve auto-fixable issues per category (ruff→mypy→bandit→vulture→secrets) with re-verification, surfacing requires-human-review items and opening a soft-gated PR"
 domain: code
 scope: test

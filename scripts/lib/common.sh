@@ -114,6 +114,47 @@ check_external_submodules() {
     echo "${#_EMPTY_SUBMODULES[@]}"
 }
 
+# Install alias symlinks declared in a skill's `aliases:` frontmatter.
+# Aliases are convenience handles (taxonomy/SKILL_TAXONOMY.md "Aliases"): one extra
+# symlink per alias, same collision guard as the canonical link. An alias pointing at
+# a DIFFERENT skill (this pack's or another's) is never overwritten — fail loud, skip.
+_install_skill_aliases() {
+    local skill_md="$1" skill_dir="$2" skill_name="$3" target_dir="$4"
+
+    local alias_line
+    alias_line="$(sed -n '/^---$/,/^---$/p' "$skill_md" | grep '^aliases:' | sed 's/^aliases: *//' | tr -d "[]\"'" || true)"
+    [ -z "$alias_line" ] && return 0
+
+    local alias
+    IFS=',' read -ra _aliases <<< "$alias_line"
+    for alias in "${_aliases[@]}"; do
+        alias="$(echo "$alias" | xargs)"
+        [ -z "$alias" ] && continue
+
+        if [ -L "$target_dir/$alias" ]; then
+            local existing
+            existing="$(readlink "$target_dir/$alias")"
+            if [ "$existing" = "$skill_dir" ]; then
+                echo "  skip  $alias (alias already installed)"
+                continue
+            elif [ ! -e "$target_dir/$alias" ]; then
+                rm "$target_dir/$alias"
+                echo "  fix   $alias (alias was broken: $existing)"
+            else
+                echo "  WARN  alias '$alias' collision: already points to $existing — NOT overwriting (alias squatting refused)"
+                continue
+            fi
+        elif [ -e "$target_dir/$alias" ]; then
+            echo "  WARN  alias '$alias' collision: a non-symlink '$alias' exists in $target_dir — NOT overwriting"
+            continue
+        fi
+
+        ln -s "$skill_dir" "$target_dir/$alias"
+        echo "  alias $alias -> $skill_name"
+        _lockfile_record_artifact "skill-alias" "$alias" "$skill_dir" "$target_dir/$alias"
+    done
+}
+
 # Generic skill installer — shared by Claude and Codex adapters
 _install_skills_to() {
     local target_dir="$1"
@@ -153,6 +194,8 @@ _install_skills_to() {
                 existing="$(readlink "$target_dir/$skill_name")"
                 if [ "$existing" = "$skill_dir" ]; then
                     echo "  skip  $skill_name (already installed)"
+                    # Still reconcile aliases — they may have been added since first install
+                    _install_skill_aliases "$skill_md" "$skill_dir" "$skill_name" "$target_dir"
                     continue
                 elif [ ! -e "$target_dir/$skill_name" ]; then
                     rm "$target_dir/$skill_name"
@@ -167,6 +210,8 @@ _install_skills_to() {
             echo "  add   $skill_name"
             _lockfile_record_artifact "skill" "$skill_name" "$skill_dir" "$target_dir/$skill_name"
             count=$((count + 1))
+
+            _install_skill_aliases "$skill_md" "$skill_dir" "$skill_name" "$target_dir"
         done < <(find "$search_dir" -name "SKILL.md" -type f)
     done
 

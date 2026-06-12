@@ -1,5 +1,6 @@
 ---
 name: code-test-auditor
+aliases: [test-audit]
 description: "audit test coverage gaps, check for gaming patterns, flakiness, dependency vulnerabilities, edge coverage; produce diagnostic report before writing tests"
 domain: code
 scope: test

@@ -1,5 +1,6 @@
 ---
 name: optimization-process-researcher
+aliases: [auto-research]
 description: "Use when asked to autonomously improve a skill or artifact through repeated experimentation, or to set up an automated improvement loop. Triggered by 'optimization-process-researcher', 'optimize this overnight', 'run autonomous improvement'."
 domain: optimization
 scope: process

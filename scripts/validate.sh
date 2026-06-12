@@ -778,6 +778,20 @@ else
     done < <(find_all_scripts)
   fi
 
+  # Alias uniqueness: every skill name + alias shares one global pool
+  # (taxonomy/SKILL_TAXONOMY.md "Aliases" — an alias must never shadow a name or another alias)
+  echo "--- Alias uniqueness ---"
+  while IFS= read -r handle; do
+    [ -n "$handle" ] && report_error "aliases" "handle '$handle' claimed more than once across skill names/aliases"
+  done < <(
+    {
+      while IFS= read -r f; do
+        extract_frontmatter_field "$f" "name" || true
+        { extract_frontmatter_field "$f" "aliases" || true; } | tr -d '[]"' | tr "'" ' ' | tr ',' '\n' | sed 's/^ *//;s/ *$//'
+      done < <(find_all_skills)
+    } | grep -v '^$' | sort | uniq -d
+  )
+
   # Stale registry entries
   echo "--- Stale registry entries ---"
   check_stale_registry_entries "$SKILL_REGISTRY"

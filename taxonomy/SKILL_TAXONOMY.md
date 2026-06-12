@@ -52,7 +52,7 @@ Do not over-invest the name with routing detail the description already carries.
 | Slug | Why it's wrong |
 |------|----------------|
 | `docs-general-doc-writer` | `general` is filler. Drop the subdomain: `docs-doc-writer` (or promote the doc-type to scope: `docs-spec-writer`). |
-| `synapse-skill-improver` | `skill` doubled across subdomain+scope. Drop the redundant subdomain: `synapse-skill-improver`. |
+| `synapse-skill-skill-improver` *(historical)* | `skill` doubled across subdomain+scope. Drop the redundant subdomain: `synapse-skill-improver`. |
 | `synapse-skill-design-validate` | `validate` is a verb. Role must be an agentive noun (`validator`). |
 
 ## Persona / mode skills
@@ -75,6 +75,36 @@ role: <noun>           # required — what the skill IS (last name token)
 ```
 
 `subdomain` is omitted entirely (field absent) when the name has no subdomain token.
+
+## Aliases
+
+Optional frontmatter field — terse invocation handles layered on top of the structured slug:
+
+```yaml
+aliases: [brainstorm]   # OPTIONAL — convenience handles for human invocation
+```
+
+Think Twitter identity: the **slug** is the immutable user ID (registries, pipelines, and
+`Consumers` columns reference it — *always*), the **alias** is the @handle (what a human types),
+and the **description** is the display name (what the LLM routes on). Rules:
+
+- **Aliases never appear in governance surfaces.** Registry rows, pipeline stages,
+  `requires_*` chains, and cross-skill references use the slug only. An alias is resolved at
+  install time and nowhere else.
+- **Aliases share one global uniqueness pool with names.** An alias must not equal any skill's
+  name or any other skill's alias, repo-wide. The pre-commit hook and `scripts/validate.sh`
+  enforce this; `cortex install` re-checks against whatever is already installed on the machine
+  (other packs included) and refuses to overwrite — alias squatting fails loudly, never silently.
+- **Aliases are mutable; slugs are not.** Renaming a skill is a breaking change; remapping an
+  alias is not. This is the point: terse handles can evolve or be reassigned without touching
+  the stable key.
+- Keep them scarce. An alias is earned by frequent human typing (`brainstorm`, `build-plan`),
+  not granted by default. Most skills need none.
+
+Install behavior: `cortex install` creates one symlink per alias alongside the canonical
+symlink, applying the same collision guard, and reconciles missing alias links on reinstall.
+Removing an alias from frontmatter stops it being installed; an already-installed alias link
+is cleaned up by `cortex clean` (it removes broken/stale symlinks), not by reinstall.
 
 ## Tags
 

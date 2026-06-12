@@ -1,5 +1,6 @@
 ---
 name: code-test-linter
+aliases: [test-lint]
 description: "run ruff/mypy/bandit/vulture/detect-secrets plus descriptive-test docstring validator over a Python repo; emit LintReport for downstream code-test-fixer; never auto-fix or suppress"
 domain: code
 scope: test

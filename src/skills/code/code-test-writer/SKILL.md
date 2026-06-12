@@ -1,5 +1,6 @@
 ---
 name: code-test-writer
+aliases: [write-module-tests]
 description: "Use when you have a test plan and need to implement the actual pytest code for a specific module. Triggered by 'write module tests', 'implement the tests', 'create pytest code for this module'."
 domain: code
 scope: test

@@ -1,5 +1,6 @@
 ---
 name: code-test-integrator
+aliases: [test-integrate]
 description: "consume IntegrationStrategy from code-test-evaluator and convert mock-integration tests to real-service tests one item at a time — pattern selection, ephemeral spin-up, conversion, flakiness check, hard-gate PR per item; never auto-merges, never points at production"
 domain: code
 scope: test

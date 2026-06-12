@@ -1,5 +1,6 @@
 ---
 name: docs-doc-router
+aliases: [doc-authoring]
 description: "Use when asked to write documentation and you're unsure whether it should be a spec, summary, design doc, implementation doc, engineering guide, or test plan. Also use for doc placement, naming, and cross-referencing questions."
 domain: docs
 scope: doc
