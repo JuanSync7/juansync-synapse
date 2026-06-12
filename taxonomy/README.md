@@ -6,7 +6,7 @@ Controlled vocabularies for artifact metadata. When creating a skill, agent, pro
 
 | File | Description |
 |------|-------------|
-| [NAMING_RATIONALE.md](NAMING_RATIONALE.md) | Wiki page — rationale for the four schemas, design principles, and adoption guidance |
+| [NAMING_RATIONALE.md](../wiki/NAMING_RATIONALE.md) | Wiki page — rationale for the schemas, the iteration history (incl. the Iteration 5 variable-head revision), and adoption guidance |
 | [SKILL_TAXONOMY.md](SKILL_TAXONOMY.md) | Skill schema `{namespace}-{subdomain?}-{scope}-{role}` (fixed tail, optional subdomain) + controlled vocab |
 | [PERSONA_TAXONOMY.md](PERSONA_TAXONOMY.md) | Persona/mode skill schema `persona-{handle}` — no scope/role signature |
 | [AGENT_TAXONOMY.md](AGENT_TAXONOMY.md) | Agent schema `{namespace}-{subdomain?}-{scope}-{role}` + controlled vocab |

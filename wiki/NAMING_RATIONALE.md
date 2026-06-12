@@ -8,14 +8,20 @@ This document is the *why* behind the four taxonomy files (`SKILL_TAXONOMY.md`, 
 
 ## Summary: the four schemas
 
-All four artifact types use a locked four-slot slug. The first two slots are universal; the last two vary by artifact nature.
+All four artifact types use a fixed-tail slug: a required namespace head (domain, plus an
+*optional* subdomain used only to disambiguate — see Iteration 5), then a locked two-slot tail
+that varies by artifact nature.
 
 | Artifact | Schema | Last-2 pattern | Reading |
 |----------|--------|----------------|---------|
-| **Skill** | `{domain}-{subdomain}-{scope}-{role}` | persona | "the X persona" |
-| **Agent** | `{domain}-{subdomain}-{scope}-{role}` | persona | "the X persona" |
+| **Skill** | `{namespace}-{subdomain?}-{scope}-{role}` | persona | "the X persona" |
+| **Agent** | `{namespace}-{subdomain?}-{scope}-{role}` | persona | "the X persona" |
 | **Tool** | `{domain}-{subdomain}-{action}-{target}` | command | "do X to Y" |
 | **Protocol** | `{domain}-{subdomain}-{subject}-{kind}` | definition | "the X structural-type" |
+
+Skills additionally support an **alias layer** (`aliases:` frontmatter) for terse invocation
+handles — see `taxonomy/SKILL_TAXONOMY.md` "Aliases". Persona/mode skills are a separate class
+with their own rule (`persona-{handle}`, `taxonomy/PERSONA_TAXONOMY.md`).
 
 Three distinct shapes for three distinct artifact natures: **personas, commands, and definitions.**
 
@@ -29,7 +35,7 @@ We did not start with this schema. It emerged from iterative pressure-testing ag
 
 Original convention: `{domain}-{subdomain?}-{intent?}-{name}` for skills. Subdomain and intent included "when they aid disambiguation"; otherwise omitted. Sounds reasonable.
 
-**What broke:** Contributors couldn't agree on when to include optional slots. We ended up with `synapse-eval-writer` (intent in the name slot, no subdomain), `synapse-router-artifact-creator` (no intent, no subdomain), `synapse-skill-improver` (no domain), and `docs-postmortem-writer` (no domain, no subdomain). All four parsed differently. No tooling could enforce a rule because there wasn't one — just judgment.
+**What broke:** Contributors couldn't agree on when to include optional slots. We ended up with `synapse-eval-writer` (intent in the name slot, no subdomain), `synapse-router-artifact-creator` (no intent, no subdomain), `synapse-skill-skill-improver` (no domain), and `write-postmortem` (no domain, no subdomain). All four parsed differently. No tooling could enforce a rule because there wasn't one — just judgment.
 
 **Lesson:** optional slots devolve into "everyone picks differently" at any meaningful scale.
 
@@ -37,7 +43,7 @@ Original convention: `{domain}-{subdomain?}-{intent?}-{name}` for skills. Subdom
 
 Locked all four slots required: `{domain}-{subdomain}-{action}-{scope}`. `action` was a verb (write, improve, validate); `scope` was a noun (postmortem, skill, eval).
 
-**What broke:** Skills whose identity is a *role* (gatekeeper, architect, orchestrator, router) didn't fit verb-form naturally. "To gatekeep" is awkward; "the gatekeeper" is the actual identity. Forcing them into action-shape (`synapse-router-validate-artifact`) lost the persona — which is what made those skills memorable. Meanwhile, atomic action skills (`docs-postmortem-writer`) fit verb-shape perfectly.
+**What broke:** Skills whose identity is a *role* (gatekeeper, architect, orchestrator, router) didn't fit verb-form naturally. "To gatekeep" is awkward; "the gatekeeper" is the actual identity. Forcing them into action-shape (`synapse-router-validate-artifact`) lost the persona — which is what made those skills memorable. Meanwhile, atomic action skills (`write-postmortem`) fit verb-shape perfectly.
 
 **Lesson:** atomic skills and orchestrator/router skills have different grammar needs. Forcing one shape on both costs catchiness for half the corpus.
 
@@ -45,7 +51,7 @@ Locked all four slots required: `{domain}-{subdomain}-{action}-{scope}`. `action
 
 Locked all four slots, replaced action with role: `{domain}-{subdomain}-{scope}-{role}`. Role is a controlled noun vocab (writer, improver, gatekeeper, validator, etc.). Scope is the noun the role operates on.
 
-**Why this won:** every skill is now read as "the {scope} {role}" — a noun phrase describing what the skill IS. `docs-incident-postmortem-writer` = "the postmortem writer." `synapse-router-artifact-gatekeeper` = "the artifact gatekeeper." `synapse-skill-improver` = "the skill improver." Single grammar pattern, atomic and orchestrator skills both fit.
+**Why this won:** every skill is now read as "the {scope} {role}" — a noun phrase describing what the skill IS. `docs-incident-postmortem-writer` = "the postmortem writer." `synapse-router-artifact-gatekeeper` = "the artifact gatekeeper." `synapse-skill-skill-improver` = "the skill improver." Single grammar pattern, atomic and orchestrator skills both fit.
 
 **Cost paid:** some -er forms feel forced (`improver`, `summarizer`, `brainstormer`). Familiarity smooths it. Imperative reading (write the postmortem!) is lost — replaced by descriptive (the postmortem writer). Worth it for grammatical consistency.
 
@@ -58,6 +64,36 @@ We initially tried to use scope+role for all four artifact types. Pushback came 
 **Protocols** are passive structural definitions, not active recipes. Nothing executes a protocol — things conform to one. Forcing a "role" onto `failure-reporting` ("the failure-reporting reporter"?) is grammatically wrong because protocols don't *do* anything. Industry convention: schemas, contracts, and traces use subject-first naming with a kind suffix (`*Schema.json`, `*-spec.yaml`, `*Contract.ts`).
 
 **Lesson:** match the slug grammar to the artifact's runtime nature. Personas get noun phrases; commands get imperatives; definitions get noun-with-kind-suffix.
+
+### Iteration 5: variable head, fixed tail, alias layer (June 2026)
+
+Locked-four-slots accumulated its own debt: doubling (`synapse-skill-skill-improver`), filler
+subdomains (`general`), and slot drift — the same concept (`spec`) landed as subdomain in one
+domain and scope in another, so the name and the frontmatter disagreed about the function
+signature. Migration: `{namespace}-{subdomain?}-{scope}-{role}` — subdomain optional, the
+`scope-role` tail fixed and machine-checked; vocabulary reconciled so the document *type* is the
+scope (a spec-writer operates on a `spec`); a separate persona class for skills with no
+scope-role signature; and an **alias layer** for terse invocation.
+
+**Why this is not a regression to Iteration 1.** Iteration 1 died from *unenforceable judgment*:
+two optional slots, no parse anchor, no tooling — "include when it aids disambiguation" meant
+every contributor decided differently. Iteration 5 keeps the rule mechanical on every axis that
+matters: parse from the right (last two tokens are always `scope-role`, and the hook +
+`validate.sh` assert the name ends with the frontmatter's `scope-role`); the single optional
+slot is vocab-validated when present; and its inclusion criterion is itself mechanical — add a
+subdomain only when `{namespace}-{scope}-{role}` collides, never as decoration. Iteration 1 had
+no tooling; Iteration 5 is tooling-first.
+
+**Aliases vs. the catchy-names rejection.** Catchy *slugs* stay rejected — the slug remains a
+structured coordinate. But catchy *handles* return as a separate, mutable layer:
+`aliases: [brainstorm]` frontmatter installs an extra symlink, sharing one global uniqueness pool
+with names, never referenced by registries or pipelines. Identity model: slug = immutable ID,
+alias = @handle, description = display name. The brand lives in the handle and the prose; the
+slug stays a coordinate.
+
+**Lesson:** optionality is survivable when (and only when) the parse anchor is fixed and the
+optional slot's inclusion rule is mechanical and tool-enforced. What kills consistency is
+judgment, not optionality per se.
 
 ---
 
@@ -91,13 +127,18 @@ We initially tried to use scope+role for all four artifact types. Pushback came 
 
 ## Why locked four slots (no optionals)
 
+> **Superseded by Iteration 5** for the skill/agent `subdomain` slot: it is now optional under a
+> mechanical, tool-enforced inclusion rule (add only on `{namespace}-{scope}-{role}` collision).
+> The arguments below remain the bar any future optionality proposal must clear — judgment-based
+> optionality is still rejected; only *enforced* optionality with a fixed parse anchor passed.
+
 **Optionality kills consistency at scale.** This is the single most important lesson. If a slot is "include when it aids disambiguation," every contributor decides differently. At 6 artifacts you have 6 different decisions; at 300 you have NPM-style chaos with no parser able to handle the variance.
 
 **Mechanical rules survive contributor turnover.** "Always four slots from these vocab tables" is teachable in 30 seconds and applicable without judgment. "Use intent when it aids disambiguation" requires reading the existing corpus, understanding precedents, and making a call — friction that compounds across hundreds of artifacts and many contributors.
 
 **Tooling demands parseability.** Pre-commit hooks, registry generators, dependency graphs, batch migrations, audits — every piece of automation needs to parse slugs. Each optional slot is a special case in every tool. Locked schema = single regex.
 
-**Redundancy is acceptable price.** `synapse-skill-improver` repeats "skill" twice. That's fine. The clarity of "always four slots in this order from these vocabs" beats the clarity of "compress when redundant." Compression invites judgment; mechanical rules don't.
+**Redundancy is acceptable price.** `synapse-skill-skill-improver` repeats "skill" twice. That's fine. The clarity of "always four slots in this order from these vocabs" beats the clarity of "compress when redundant." Compression invites judgment; mechanical rules don't.
 
 ---
 

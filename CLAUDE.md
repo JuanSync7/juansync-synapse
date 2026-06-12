@@ -62,6 +62,7 @@ Every directory in the repo must have a README.md (exceptions: dot-directories a
 ## Conventions
 
 - **Skill names must be globally unique.** Claude Code discovers skills from a flat `~/.claude/skills/` directory — no namespacing is possible. Use domain-prefixed names (e.g., `jira-reporter`, `jira-planner`) to avoid collisions. `./cortex install` warns on collisions.
+- **Aliases give terse invocation, never identity.** A skill may declare `aliases: [handle]` (see [`taxonomy/SKILL_TAXONOMY.md`](taxonomy/SKILL_TAXONOMY.md) "Aliases") — installed as extra symlinks with a collision guard. Registries, pipelines, and cross-references always use the canonical slug.
 - **Description is a routing contract.** Frontmatter `description` specifies *when* a skill fires, not *what* it does. If the description could replace reading the body, it's too broad.
 - **Skills with 3+ phases** include a **Progress Tracking** section with `TaskCreate` examples.
 - **Wrong-Tool Detection** sections redirect to sibling skills when intent doesn't match.
