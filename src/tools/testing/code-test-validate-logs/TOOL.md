@@ -1,9 +1,11 @@
 ---
-name: log-contract-validator
+name: code-test-validate-logs
 description: Validates logging calls against a log archetype contract; computes log path coverage
-domain: testing
-action: validator
-type: internal
+domain: code
+subdomain: test
+action: validate
+target: logs
+kind: internal
 tags: [testing, logging, observability, audit, generate]
 ---
 
@@ -39,7 +41,7 @@ should treat the report as advisory.
 ### Input
 
 ```
-python -m src.tools.testing.log_contract_validator <source_root> \
+python src/tools/testing/code-test-validate-logs/log_contract_validator.py <source_root> \
     [--policy LOG_POLICY.yaml] \
     [--ignore-patterns tests/,migrations/]
 ```

@@ -101,10 +101,14 @@ and the **description** is the display name (what the LLM routes on). Rules:
 - Keep them scarce. An alias is earned by frequent human typing (`brainstorm`, `build-plan`),
   not granted by default. Most skills need none.
 
-Install behavior: `cortex install` creates one symlink per alias alongside the canonical
-symlink, applying the same collision guard, and reconciles missing alias links on reinstall.
-Removing an alias from frontmatter stops it being installed; an already-installed alias link
-is cleaned up by `cortex clean` (it removes broken/stale symlinks), not by reinstall.
+Install behavior: `cortex install` **materializes** each alias as a real directory — companion
+files symlinked, but SKILL.md regenerated with `name:` rewritten to the alias plus an
+`alias-of: <canonical>` marker. (A raw directory symlink would leave the frontmatter `name`
+disagreeing with the directory name, so the harness — whichever key it uses — would see a
+duplicate or inconsistent entry.) The same collision guard applies: a path already claimed by
+anything that is not our alias of this skill is never overwritten. Aliases reconcile on
+reinstall; removing an alias from frontmatter stops it being installed, and `cortex clean`
+removes installed alias dirs (it detects the `alias-of:` marker).
 
 ## Tags
 

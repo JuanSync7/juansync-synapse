@@ -1,9 +1,11 @@
 ---
-name: branch-mapper
+name: code-test-map-branches
 description: Enumerates executable branches per public function — including transitive private helpers — for test generation
-domain: testing
-action: analyzer
-type: internal
+domain: code
+subdomain: test
+action: map
+target: branches
+kind: internal
 tags: [testing, ast, branches, coverage, generate]
 ---
 
@@ -29,7 +31,7 @@ analyzer: never modifies source, never executes user code.
 ### CLI
 
 ```bash
-python -m src.tools.testing.branch_mapper <source_root> \
+python src/tools/testing/code-test-map-branches/branch_mapper.py <source_root> \
     [--module DOTTED] [--function NAME] [--include-private]
 ```
 

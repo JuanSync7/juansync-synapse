@@ -2,4 +2,6 @@
 
 Adopter tools. Framework tools live in [`../../synapse/tools/`](../../synapse/tools/).
 
-(no adopter tools yet — use `SCAFFOLD_ROOT=src ./cortex scaffold tool <domain> <name>` to create the first one)
+| Domain | Description |
+|--------|-------------|
+| [testing](testing/README.md) | Test coverage engine tools — coverage, mutation, flakiness, lint, and secret analysis dispatched by `code-test-*` skills |

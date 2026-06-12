@@ -582,13 +582,13 @@ find_all_skills() {
 
 find_all_agents() {
   for root in "${ART_AGENT_ROOTS[@]}"; do
-    [ -d "$root" ] && find "$root" -name "*.md" -type f ! -name "README.md" ! -path "*/change_requests/*" 2>/dev/null
+    [ -d "$root" ] && find "$root" -name "*.md" -type f ! -name "README.md" ! -name "*.eval.md" ! -path "*/change_requests/*" 2>/dev/null
   done | sort
 }
 
 find_all_protocols() {
   for root in "${ART_PROTO_ROOTS[@]}"; do
-    [ -d "$root" ] && find "$root" -name "*.md" -type f ! -name "README.md" ! -path "*/change_requests/*" 2>/dev/null
+    [ -d "$root" ] && find "$root" -name "*.md" -type f ! -name "README.md" ! -name "*.eval.md" ! -path "*/change_requests/*" 2>/dev/null
   done | sort
 }
 

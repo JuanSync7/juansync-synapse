@@ -1,9 +1,11 @@
 ---
-name: mutation-runner
+name: code-test-run-mutations
 description: Generates AST mutants of a target function and runs the test suite per mutant to detect weak assertions
-domain: testing
-action: validator
-type: internal
+domain: code
+subdomain: test
+action: run
+target: mutations
+kind: internal
 tags: [testing, mutation, ast, assertions, generate]
 ---
 
@@ -22,7 +24,7 @@ The runner is **project-agnostic**. Inputs and outputs flow on the command line;
 ## Input / output contract
 
 ```bash
-python -m src.tools.testing.mutation_runner <module_path> \
+python src/tools/testing/code-test-run-mutations/mutation_runner.py <module_path> \
     [--function NAME] [--test-cmd "pytest tests/"] \
     [--max-lines 20] [--timeout 30]
 ```

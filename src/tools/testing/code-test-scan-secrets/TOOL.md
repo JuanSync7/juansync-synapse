@@ -1,9 +1,11 @@
 ---
-name: secret-scanner
+name: code-test-scan-secrets
 description: Scans a file for leaked secrets — auth headers, API keys, tokens, high-entropy strings
-domain: testing
-action: validator
-type: internal
+domain: code
+subdomain: test
+action: scan
+target: secrets
+kind: internal
 tags: [testing, security, secrets, cassette, vcrpy, lint]
 ---
 
@@ -52,7 +54,7 @@ or written to any output stream.
 ### CLI
 
 ```
-python -m src.tools.testing.secret_scanner <file_path> [--format json|text]
+python src/tools/testing/code-test-scan-secrets/secret_scanner.py <file_path> [--format json|text]
 
 Positional arguments:
   file_path       Path to the file to scan (cassette YAML, source file, or any text file).

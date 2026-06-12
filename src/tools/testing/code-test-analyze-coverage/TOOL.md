@@ -1,9 +1,11 @@
 ---
-name: coverage-analyzer
+name: code-test-analyze-coverage
 description: Computes per-function coverage gaps and cross-package call graph edges from a test suite
-domain: testing
-action: analyzer
-type: internal
+domain: code
+subdomain: test
+action: analyze
+target: coverage
+kind: internal
 tags: [testing, coverage, edges, call-graph, audit, integrate]
 ---
 
@@ -22,10 +24,10 @@ Two-mode analyzer for the test coverage engine. Default mode reports which funct
 
 ```bash
 # Default mode — per-function coverage gaps
-python -m src.tools.testing.coverage_analyzer <source_root>
+python src/tools/testing/code-test-analyze-coverage/coverage_analyzer.py <source_root>
 
 # Edge mode — cross-package call graph edges
-python -m src.tools.testing.coverage_analyzer <source_root> \
+python src/tools/testing/code-test-analyze-coverage/coverage_analyzer.py <source_root> \
   --edges \
   [--test-path PATH] \
   [--baseline PATH] \

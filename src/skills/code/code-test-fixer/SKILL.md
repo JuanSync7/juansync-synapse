@@ -38,10 +38,10 @@ Second stage of the 6-skill test coverage engine. Consumes `LintReport` produced
 ### [NEW] Fresh session
 Do:
   1. Parse arguments: `--lint-report` (default `project/coverage/state/LINT_REPORT.json`), `--no-pr` (skip [OPEN-PR], stop after VERIFY-VULTURE).
-  2. Load `LintReport` from disk; verify it parses against `src/tools/testing/lint_reporter/schemas.py` `LintReport` model.
+  2. Load `LintReport` from disk; verify it parses against `src/tools/testing/code-test-report-lint/schemas.py` `LintReport` model.
   3. If `LintReport.issues` is empty AND `descriptive_test_violations` is empty → print "nothing to fix — codebase already lint-clean" and exit (no PR).
-  4. Confirm `lint_reporter` tool is available in `src/tools/testing/lint_reporter/` — abort if missing.
-Don't: Proceed if the report cannot be parsed; proceed if `lint_reporter` is missing.
+  4. Confirm `code-test-report-lint` tool is available in `src/tools/testing/code-test-report-lint/` — abort if missing.
+Don't: Proceed if the report cannot be parsed; proceed if `code-test-report-lint` is missing.
 Exit: → [TRIAGE]
 
 ## Flow
@@ -59,7 +59,7 @@ Don't: Cross category boundaries; suppress with bare `# noqa`.
 Exit: → [VERIFY-RUFF]
 
 ### [VERIFY-RUFF] Re-run ruff scope
-Do: Invoke `lint_reporter` scoped to ruff. Append any remaining ruff issues to `requires_human_review` with note "ruff verify residual". Commit edits as `fix(lint): ruff` (include the suppression-reason notes from [FIX-RUFF] in the commit body, if any).
+Do: Invoke `code-test-report-lint` scoped to ruff. Append any remaining ruff issues to `requires_human_review` with note "ruff verify residual". Commit edits as `fix(lint): ruff` (include the suppression-reason notes from [FIX-RUFF] in the commit body, if any).
 Don't: Loop back to [FIX-RUFF]; commit if no edits were made.
 Exit: → [FIX-MYPY]
 
@@ -70,7 +70,7 @@ Don't: Use bare `# type: ignore`; suppress without commit-message reason; touch 
 Exit: → [VERIFY-MYPY]
 
 ### [VERIFY-MYPY] Re-run mypy scope
-Do: Invoke `lint_reporter` scoped to mypy. Append unresolved issues to `requires_human_review` with note "mypy verify residual". Commit as `fix(lint): mypy` with suppression reasons in body.
+Do: Invoke `code-test-report-lint` scoped to mypy. Append unresolved issues to `requires_human_review` with note "mypy verify residual". Commit as `fix(lint): mypy` with suppression reasons in body.
 Don't: Re-fix; commit empty changes.
 Exit: → [FIX-BANDIT]
 
@@ -81,7 +81,7 @@ Don't: Delete the security check itself; add `# nosec` without explicit reason i
 Exit: → [VERIFY-BANDIT]
 
 ### [VERIFY-BANDIT] Re-run bandit scope
-Do: Invoke `lint_reporter` scoped to bandit. Append residuals to `requires_human_review`. Commit as `fix(lint): bandit`.
+Do: Invoke `code-test-report-lint` scoped to bandit. Append residuals to `requires_human_review`. Commit as `fix(lint): bandit`.
 Don't: Re-fix; bypass the verification call.
 Exit: → [FIX-VULTURE]
 
@@ -92,7 +92,7 @@ Don't: Delete plugin entry points, decorated callables, or `__all__` members; lo
 Exit: → [VERIFY-VULTURE]
 
 ### [VERIFY-VULTURE] Re-run vulture scope
-Do: Invoke `lint_reporter` scoped to vulture. Append residuals to `requires_human_review`. Commit as `fix(lint): vulture`.
+Do: Invoke `code-test-report-lint` scoped to vulture. Append residuals to `requires_human_review`. Commit as `fix(lint): vulture`.
 Don't: Re-fix; relax threshold.
 Exit: → [SURFACE-SECRETS]
 

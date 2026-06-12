@@ -37,12 +37,23 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .schemas import (
-    BoundaryClassification,
-    BoundaryFunction,
-    BoundaryType,
-    InternalFunction,
-)
+# Support both package import and ``python boundary_classifier.py``
+# (the hyphenated tool directory cannot be imported as a package).
+try:  # pragma: no cover - import shim
+    from .schemas import (
+        BoundaryClassification,
+        BoundaryFunction,
+        BoundaryType,
+        InternalFunction,
+    )
+except ImportError:  # pragma: no cover - import shim
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from schemas import (  # type: ignore[no-redef]
+        BoundaryClassification,
+        BoundaryFunction,
+        BoundaryType,
+        InternalFunction,
+    )
 
 # ---------------------------------------------------------------------------
 # Decorator -> boundary_type lookup tables.

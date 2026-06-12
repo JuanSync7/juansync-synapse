@@ -43,7 +43,18 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .schemas import Branch, BranchMap, BranchType, FunctionBranchMap
+# Support both package import and ``python branch_mapper.py``
+# (the hyphenated tool directory cannot be imported as a package).
+try:  # pragma: no cover - import shim
+    from .schemas import Branch, BranchMap, BranchType, FunctionBranchMap
+except ImportError:  # pragma: no cover - import shim
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from schemas import (  # type: ignore[no-redef]
+        Branch,
+        BranchMap,
+        BranchType,
+        FunctionBranchMap,
+    )
 
 
 # ---------------------------------------------------------------------------

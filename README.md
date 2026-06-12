@@ -283,7 +283,8 @@ make init                          # configure git hooks + submodules (first-tim
 ```
 
 Skills that declare `aliases:` (e.g. `brainstorm` for `meta-process-brainstormer`) get one extra
-symlink per alias on install, with a refuse-to-overwrite collision guard — see
+materialized entry per alias on install — companions symlinked, SKILL.md regenerated with the
+alias as `name:` and an `alias-of:` marker — with a refuse-to-overwrite collision guard. See
 [`taxonomy/SKILL_TAXONOMY.md`](taxonomy/SKILL_TAXONOMY.md) "Aliases".
 
 ### Contributor — create and validate artifacts

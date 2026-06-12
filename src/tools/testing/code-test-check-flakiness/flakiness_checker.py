@@ -28,7 +28,15 @@ import sys
 import time
 from datetime import datetime, timezone
 
-from .schemas import FlakinessSummary, TestOutcome
+# Support both package import and ``python flakiness_checker.py``
+# (the hyphenated tool directory cannot be imported as a package).
+try:  # pragma: no cover - import shim
+    from .schemas import FlakinessSummary, TestOutcome
+except ImportError:  # pragma: no cover - import shim
+    import os
+
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from schemas import FlakinessSummary, TestOutcome  # type: ignore[no-redef]
 
 _MIN_RUNS = 10
 _STABLE_THRESHOLD = 0.02  # fail_rate strictly below this → stable

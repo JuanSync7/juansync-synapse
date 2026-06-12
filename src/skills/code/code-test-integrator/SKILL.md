@@ -42,7 +42,7 @@ Do:
   1. Parse arguments: `--strategy-dir` (default `project/coverage/state/integration-strategies/`), `--item` (single item id; default = process all), `--rerecord` (re-record vcrpy cassettes for items where dependency version changed), `--retry-rejected` (re-attempt items previously marked `human-rejected`), `--notify` (notification channel; default `gh-pr-review`).
   2. Discover `IntegrationStrategy` documents in `--strategy-dir`; verify each parses against `src/skills/code/code-test-evaluator/schemas.py` `IntegrationStrategy` model.
   3. Verify `project/coverage/state/COVERAGE_STATE.yaml` exists and parses against `CoverageState` model.
-  4. Confirm engine tools available: `flakiness_checker`, `coverage_analyzer`, `secret_scanner`. Abort if missing.
+  4. Confirm engine tools available: `code-test-check-flakiness`, `code-test-analyze-coverage`, `code-test-scan-secrets`. Abort if missing.
   5. Build per-item work queue ordered by source `IntegrationStrategy` ranking (replacement_value descending). Filter out items already merged (`status: merged`), already rejected (`status: human-rejected`) unless `--retry-rejected`, and currently flaky-quarantined within SLA window.
   6. If queue empty → print "no strategy items to integrate — nothing to do" and exit.
 Don't: Modify source or tests; proceed if any `IntegrationStrategy` fails schema parse.
@@ -78,13 +78,13 @@ Do:
   2. Render a **new** test file using `templates/integration-test.md` (or `templates/recorded-response.md` for vcrpy items): `@pytest.mark.integration` marker, fixture pattern matching the lifecycle pattern, scoped teardown (rollback / container stop / cassette close).
   3. Verify the new test calls the real service: AST-scan the new test for any residual `@patch`, `Mock(...)`, `monkeypatch.setattr` targeting the boundary dependency. If found → reject conversion, abort item with `mock-still-active` error.
   4. Keep the original mock-integration test in place — it stays until the new test is merged at [MERGE-UPDATE].
-  5. For vcrpy items: after the test runs once to record, run `secret_scanner` against the cassette. If any secret is detected → fail conversion, abort item with `cassette-secret-leak` error, delete the cassette.
+  5. For vcrpy items: after the test runs once to record, run `code-test-scan-secrets` against the cassette. If any secret is detected → fail conversion, abort item with `cassette-secret-leak` error, delete the cassette.
 Don't: Delete the mock test now; emit a test that passes only because the mock was left in place; leave secrets inline in cassettes.
 Exit: → [FLAKE-CHECK]
 
 ### [FLAKE-CHECK] Validate stability over ≥10 reruns
-Load: rules/integration-constraints.md, src/tools/testing/flakiness_checker/schemas.py
-Do: Invoke `flakiness_checker` to run the new integration test ≥10 times in isolation. Compute fail rate (failures / total runs). Record outcomes into a `FlakinessSummary` per `src/tools/testing/flakiness_checker/schemas.py`.
+Load: rules/integration-constraints.md, src/tools/testing/code-test-check-flakiness/schemas.py
+Do: Invoke `code-test-check-flakiness` to run the new integration test ≥10 times in isolation. Compute fail rate (failures / total runs). Record outcomes into a `FlakinessSummary` per `src/tools/testing/code-test-check-flakiness/schemas.py`.
   - **Fail rate < 2%** → proceed to [HARD-GATE].
   - **Fail rate ≥ 2%** → mark item `flaky-quarantined` with 7-day SLA in `COVERAGE_STATE.yaml`; teardown service; advance to next item without opening PR. Quarantined items are excluded from required CI; revisited after SLA expiry.
 Don't: Stop early after the first 10 pass; suppress intermittent failures; lower the threshold mid-run.
@@ -115,7 +115,7 @@ Exit: → [EDGE-FEEDBACK]
 
 ### [EDGE-FEEDBACK] Recompute edge coverage and surface redundancy warning
 Load: references/edge-coverage-analysis.md
-Do: Run `coverage_analyzer --edges` against the merged commit. Compare new `EDGE_COVERAGE.yaml` against the pre-merge snapshot. If at least one new `(caller_module, callee_module)` edge is exercised → record edges and proceed. If zero new edges → emit advisory warning as a comment on the merged PR: "integration test exercised no new cross-package edge — verify it isn't redundant with existing coverage." Track in `EDGE_COVERAGE.yaml` audit log.
+Do: Run `code-test-analyze-coverage --edges` against the merged commit. Compare new `EDGE_COVERAGE.yaml` against the pre-merge snapshot. If at least one new `(caller_module, callee_module)` edge is exercised → record edges and proceed. If zero new edges → emit advisory warning as a comment on the merged PR: "integration test exercised no new cross-package edge — verify it isn't redundant with existing coverage." Track in `EDGE_COVERAGE.yaml` audit log.
 Don't: Block or revert the merge; treat the warning as a gate; gate further items on this signal.
 Exit: → next item (back to [PICK-PATTERN]) | → [END] (queue empty)
 

@@ -47,7 +47,17 @@ except ImportError:  # pragma: no cover - exercised at import time
     yaml = None  # type: ignore[assignment]
     _HAS_YAML = False
 
-from .schemas import LogCall, LogContractReport, LogContractViolation
+# Support both package import and ``python log_contract_validator.py``
+# (the hyphenated tool directory cannot be imported as a package).
+try:  # pragma: no cover - import shim
+    from .schemas import LogCall, LogContractReport, LogContractViolation
+except ImportError:  # pragma: no cover - import shim
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from schemas import (  # type: ignore[no-redef]
+        LogCall,
+        LogContractReport,
+        LogContractViolation,
+    )
 
 
 # ---------------------------------------------------------------------------

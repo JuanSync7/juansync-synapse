@@ -1,9 +1,11 @@
 ---
-name: assertion-quality
+name: code-test-score-assertions
 description: Scores pytest test functions by assertion strength — flags trivial, tautological, and missing assertions
-domain: testing
-action: analyzer
-type: internal
+domain: code
+subdomain: test
+action: score
+target: assertions
+kind: internal
 tags: [testing, ast, assertions, quality, audit]
 ---
 
@@ -18,7 +20,7 @@ Called by the `code-test-auditor` skill when reviewing a test suite for behavior
 ## Input / output contract
 
 ```bash
-python -m src.tools.testing.assertion_quality <test_root> [--threshold 0.5] [--min-assertions 2]
+python src/tools/testing/code-test-score-assertions/assertion_quality.py <test_root> [--threshold 0.5] [--min-assertions 2]
 ```
 
 | Arg | Required | Default | Description |

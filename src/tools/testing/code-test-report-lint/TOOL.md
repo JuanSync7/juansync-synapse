@@ -1,9 +1,11 @@
 ---
-name: lint-reporter
+name: code-test-report-lint
 description: Aggregates ruff, mypy, bandit, and vulture into a single structured LintReport
-domain: testing
-action: aggregator
-type: internal
+domain: code
+subdomain: test
+action: report
+target: lint
+kind: internal
 tags: [testing, lint, ruff, mypy, bandit, vulture, quality]
 ---
 
@@ -22,7 +24,7 @@ Runs four Python linters (`ruff`, `mypy`, `bandit`, `vulture`) as subprocesses a
 ### CLI
 
 ```bash
-python -m src.tools.testing.lint_reporter <source_root> \
+python src/tools/testing/code-test-report-lint/lint_reporter.py <source_root> \
     [--tools ruff,mypy,bandit,vulture] [--exclude PATTERN]
 ```
 

@@ -1,9 +1,11 @@
 ---
-name: hypothesis-strategy-generator
+name: code-test-generate-strategies
 description: Emits Hypothesis @given strategies from function type hints — for property-based test generation
-domain: testing
-action: generator
-type: internal
+domain: code
+subdomain: test
+action: generate
+target: strategies
+kind: internal
 tags: [testing, hypothesis, property-based, ast, generate]
 ---
 
@@ -26,7 +28,7 @@ Not the right tool when:
 ### CLI
 
 ```bash
-python -m src.tools.testing.hypothesis_strategy_generator <source_root> \
+python src/tools/testing/code-test-generate-strategies/hypothesis_strategy_generator.py <source_root> \
     [--module DOTTED] [--function NAME] [--public-only]
 ```
 

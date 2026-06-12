@@ -9,21 +9,37 @@
 
 ## Pydantic Model Definition
 
-All sub-types are imported from each tool's per-tool `schemas.py` module under
+All sub-types are loaded from each tool's per-tool `schemas.py` module under
 `src/tools/testing/<tool>/schemas.py` — those modules are the canonical sources of truth.
 Do not redefine them here. The shared `CoverageState` lives in
 `src/skills/code/code-test-evaluator/schemas.py`.
 
+Tool directories are hyphenated slugs and therefore not dotted-importable; load each
+`schemas.py` by file path with a unique module name (each tool ships its own `schemas.py`,
+so plain `sys.path` insertion would collide):
+
 ```python
 from datetime import datetime
-from src.tools.testing.coverage_analyzer.schemas import (
-    CoverageGap,            # per-function gap with line %, uncovered branches, layer
-    EdgeCoverageGaps,       # (caller_module, callee_module) edges: covered vs unanalyzed
-)
-from src.tools.testing.critical_scorer.schemas import PriorityRanking  # critical/standard/cold tier assignments + coverage targets
-from src.tools.testing.gaming_detector.schemas import GamingAlert      # flagged AST anti-pattern with test_id and pattern name
-from src.tools.testing.dep_vulnerability.schemas import DependencyVulnerability  # advisory ID, severity, affected package, fixed version
-from src.tools.testing.log_contract_validator.schemas import LogContractViolation  # call-site path, violation type, log-path coverage fraction
+import importlib.util
+
+def _load_schemas(tool_dir: str, mod_name: str):
+    spec = importlib.util.spec_from_file_location(
+        mod_name, f"src/tools/testing/{tool_dir}/schemas.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+_cov = _load_schemas("code-test-analyze-coverage", "coverage_schemas")
+CoverageGap = _cov.CoverageGap          # per-function gap with line %, uncovered branches, layer
+_log = _load_schemas("code-test-validate-logs", "log_contract_schemas")
+LogContractViolation = _log.LogContractViolation  # call-site path, violation type, log-path coverage fraction
+
+# NOT YET IMPLEMENTED — these types have no canonical schemas.py today. Until their tools
+# exist, define them locally in the report module and mark them provisional:
+#   EdgeCoverageGaps          (edge-coverage tool — planned)
+#   PriorityRanking           (critical-scorer tool — planned)
+#   GamingAlert               (gaming-detector tool — planned)
+#   DependencyVulnerability   (dep-vulnerability tool — planned)
 
 class AuditGapReport(BaseModel):
     gaps: list[CoverageGap]                         # <list[CoverageGap]> — one entry per function

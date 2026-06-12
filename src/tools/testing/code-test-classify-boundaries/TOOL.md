@@ -1,9 +1,11 @@
 ---
-name: boundary-classifier
+name: code-test-classify-boundaries
 description: Classifies every function as boundary (runtime-exposed) or internal — directs where to apply boundary-style tests
-domain: testing
-action: classifier
-type: internal
+domain: code
+subdomain: test
+action: classify
+target: boundaries
+kind: internal
 tags: [testing, ast, boundaries, audit, generate]
 ---
 
@@ -40,7 +42,7 @@ internal helper to a boundary (or vice versa).
 ### Input
 
 ```
-python -m src.tools.testing.boundary_classifier <source_root> [--include-internals]
+python src/tools/testing/code-test-classify-boundaries/boundary_classifier.py <source_root> [--include-internals]
 ```
 
 - `<source_root>` — path to the directory to walk. Every `.py` file beneath

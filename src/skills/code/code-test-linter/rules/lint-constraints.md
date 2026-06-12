@@ -67,7 +67,7 @@ Hard constraints for `code-test-linter`. Loaded at every node. No exceptions.
 
 ## Schema Source of Truth
 
-- MUST import `LintIssue` and `LintReport` from `src/tools/testing/lint_reporter/schemas.py` (and secret-finding schemas from `src/tools/testing/secret_scanner/schemas.py`).
+- MUST import `LintIssue` and `LintReport` from `src/tools/testing/code-test-report-lint/schemas.py` (and secret-finding schemas from `src/tools/testing/code-test-scan-secrets/schemas.py`).
 - MUST NOT redeclare these types locally, even partially. If the import fails, abort with a clear error rather than falling back to a local definition.
 
 ---

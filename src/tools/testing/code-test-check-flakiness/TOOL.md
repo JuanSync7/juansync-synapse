@@ -1,9 +1,11 @@
 ---
-name: flakiness-checker
+name: code-test-check-flakiness
 description: Runs a pytest test ≥10 times and computes fail rate to detect flaky tests before integration
-domain: testing
-action: validator
-type: internal
+domain: code
+subdomain: test
+action: check
+target: flakiness
+kind: internal
 tags: [testing, flakiness, pytest, integration, stability]
 ---
 
@@ -28,7 +30,7 @@ Do **not** use this tool as a substitute for fixing a known-broken test. If a te
 ### CLI invocation
 
 ```
-python -m src.tools.testing.flakiness_checker <test_node_id> [--runs N] [--timeout SECONDS]
+python src/tools/testing/code-test-check-flakiness/flakiness_checker.py <test_node_id> [--runs N] [--timeout SECONDS]
 ```
 
 | Argument | Type | Default | Description |

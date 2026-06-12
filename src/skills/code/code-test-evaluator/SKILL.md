@@ -42,7 +42,7 @@ Do:
   2. Load `CoverageState` from disk; verify it parses against `src/skills/code/code-test-evaluator/schemas.py` `CoverageState` model. Verify at least one module has mocked-integration tests.
   3. Load `AuditGapReport.priority_ranking` if `--top-n critical`; otherwise use top-N by criticality score.
   4. If no qualifying modules → print "no modules with mocked-integration tests — nothing to evaluate" and exit (no PR, no state mutation).
-  5. Confirm engine tools available in `src/tools/testing/`: `boundary_classifier`, `mock_inventory`, `coverage_analyzer`. Abort if missing.
+  5. Confirm engine tools available in `src/tools/testing/`: `code-test-classify-boundaries`, `mock_inventory`, `code-test-analyze-coverage`. Abort if missing.
   6. If `--rerun-mode source-changed`: load prior `IntegrationStrategy` documents; compute source-hash delta; skip unchanged modules.
 Don't: Modify source or tests; proceed if `CoverageState` cannot be parsed.
 Exit: → [LOAD]
@@ -57,7 +57,7 @@ Exit: → [DETECT] (first module)
 
 ### [DETECT] Classify boundary tier per function
 Load: rules/evaluate-constraints.md, references/boundary-<category>.md (per module category — db | api | queue | file | cli)
-Do: For the current module, run `boundary_classifier`:
+Do: For the current module, run `code-test-classify-boundaries`:
   - **Logical tier:** grep `__init__.py` for `__all__` exports — functions in `__all__` are logical-boundary candidates.
   - **Runtime tier:** grep source for `@app.route`, `@activity.defn`, `@click.command`, `@celery.task`, FastAPI/Flask handlers, and reads of `request` / `os.environ` / `sys.stdin` / `sys.argv` — matched functions are runtime-boundary.
   - Classify each function as `boundary-runtime`, `boundary-logical`, or `internal`.
@@ -79,7 +79,7 @@ Exit: → [SCORE] (mock inventory non-empty) | → [DETECT] (next module if no m
 Do: For each mocked boundary dependency, compute `replacement_value = boundary_tier × external_dependency_risk × current_mock_coverage_gap`:
   - **`boundary_tier`:** runtime=3, logical=2, internal=0 (excluded — emit `over_mocking_warning` for any mock that resolves to an internal function).
   - **`external_dependency_risk`:** DB=5, external API=4, queue=3, file=2, CLI=1 (use category from [DETECT] — never invent weights).
-  - **`current_mock_coverage_gap`:** fraction of boundary branches covered ONLY by mocked tests (0.0–1.0). Run `coverage_analyzer --boundary-only` against the module to derive this.
+  - **`current_mock_coverage_gap`:** fraction of boundary branches covered ONLY by mocked tests (0.0–1.0). Run `code-test-analyze-coverage --boundary-only` against the module to derive this.
   - Rank candidates by `replacement_value`; exclude any with `replacement_value == 0`.
 Don't: Score internal functions; invent risk weights not in the table; lower thresholds mid-run.
 Exit: → [ASSIGN] (candidates with `replacement_value > 0`) | → [DETECT] (next module if all candidates score 0)

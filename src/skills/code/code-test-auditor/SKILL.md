@@ -44,7 +44,7 @@ Exit: → [SNAPSHOT]
 
 ### [SNAPSHOT] Coverage analyzer
 Load: references/coverage-analysis.md
-Do: Run `coverage_analyzer` against repo root; collect `CoverageGap[]` per function (line %, uncovered branches, layer).
+Do: Run `code-test-analyze-coverage` against repo root; collect `CoverageGap[]` per function (line %, uncovered branches, layer).
 Exit: → [SCORE]
 
 ### [SCORE] Critical scoring
@@ -64,7 +64,7 @@ Exit: → [FLAKINESS]
 
 ### [FLAKINESS] Flake measurement
 Load: references/flakiness-detection.md
-Do: Run `flakiness_checker` over `FLAKE_HISTORY.csv`; compute `fail_rate = distinct_outcomes / total_runs` per `(test_id, sha)`; flag fail_rate > 2%. If `FLAKE_HISTORY.csv` missing, emit `flakiness_scores: {}` and note absence in report.
+Do: Run `code-test-check-flakiness` over `FLAKE_HISTORY.csv`; compute `fail_rate = distinct_outcomes / total_runs` per `(test_id, sha)`; flag fail_rate > 2%. If `FLAKE_HISTORY.csv` missing, emit `flakiness_scores: {}` and note absence in report.
 Exit: → [DEP-VULN]
 
 ### [DEP-VULN] Dependency vulnerabilities
@@ -80,11 +80,11 @@ Exit: → [LOG-CONTRACT]
 
 ### [LOG-CONTRACT] Log conformance
 Load: LOG_POLICY.yaml (project state)
-Do: Run `log_contract_validator`; AST-compare every `logger.error/exception/warning` and audit call against the archetype contract; compute log-path coverage. If `LOG_POLICY.yaml` missing, emit warning and skip cleanly with empty `log_contract_violations: []`.
+Do: Run `code-test-validate-logs`; AST-compare every `logger.error/exception/warning` and audit call against the archetype contract; compute log-path coverage. If `LOG_POLICY.yaml` missing, emit warning and skip cleanly with empty `log_contract_violations: []`.
 Exit: → [ASSERTION-QUALITY]
 
 ### [ASSERTION-QUALITY] Assertion strength
-Do: Run `assertion_quality` on all tests; score raises checks, mock assertion methods, value assertions, parametrize coverage.
+Do: Run `code-test-score-assertions` on all tests; score raises checks, mock assertion methods, value assertions, parametrize coverage.
 Exit: → [CONSOLIDATE]
 
 ### [CONSOLIDATE] Merge

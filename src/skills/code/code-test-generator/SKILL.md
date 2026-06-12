@@ -42,7 +42,7 @@ Do:
   1. Parse arguments: `--audit-report` (default `project/coverage/state/AUDIT_GAP_REPORT.json`), `--max-gaps` (default unlimited), `--mutation-threshold` (default `all` = all-mutants-killed), `--no-pr` (skip [GATE]; write intent list to disk and stop).
   2. Load `AuditGapReport` from disk; verify it parses against `src/skills/code/code-test-evaluator/schemas.py` `AuditGapReport` model.
   3. If `gaps` is empty → print "no gaps to close — coverage already meets thresholds" and exit (no PR, no state mutation).
-  4. Confirm engine tools available in `src/tools/testing/`: `branch_mapper`, `hypothesis_strategy_generator`, `mutation_runner`, `assertion_quality`, `coverage_analyzer`, `log_contract_validator` (invoke as `python -m src.tools.testing.<tool>`). Abort if missing.
+  4. Confirm engine tools available in `src/tools/testing/`: `code-test-map-branches`, `code-test-generate-strategies`, `code-test-run-mutations`, `code-test-score-assertions`, `code-test-analyze-coverage`, `code-test-validate-logs` (invoke as `python src/tools/testing/<tool-dir>/<entry>.py`). Abort if missing.
   5. Initialize `closed_gaps`, `unresolvable_gaps`, `human_rejected_gaps` accumulators; generate batch `generation_id` (UUID).
 Don't: Proceed if report cannot be parsed; touch source code; pre-commit anything.
 Exit: → [BRANCH-MAP] (first gap)
@@ -51,7 +51,7 @@ Exit: → [BRANCH-MAP] (first gap)
 
 ### [BRANCH-MAP] Map public-function branches
 Load: rules/generation-constraints.md, references/assertion-policy.md, references/layer-unit.md
-Do: For the current gap, run `branch_mapper` on the target public function. Build a tree: public entry → reachable `_private` calls → leaf branches (if/else, early return, raise, with-block exits). If a `_private` function is unreachable from any public caller, mark gap as `implementation-coupled` in the state buffer and skip to the next gap.
+Do: For the current gap, run `code-test-map-branches` on the target public function. Build a tree: public entry → reachable `_private` calls → leaf branches (if/else, early return, raise, with-block exits). If a `_private` function is unreachable from any public caller, mark gap as `implementation-coupled` in the state buffer and skip to the next gap.
 Don't: Inspect `_private` internals directly; descend into stdlib or third-party code.
 Exit: → [INPUT-CRAFT] (branch map ready) | → [BRANCH-MAP] (next gap, if current marked implementation-coupled)
 
@@ -63,7 +63,7 @@ Exit: → [HYPOTHESIS]
 
 ### [HYPOTHESIS] Decide example-test vs property-test
 Load: rules/generation-constraints.md, references/assertion-policy.md, references/hypothesis-strategies.md
-Do: For each candidate test, apply Hypothesis when (pure function + structured input + statable invariant). Use `hypothesis_strategy_generator` with `from_type` to derive strategies from type hints. Target ≥30% of unit tests in this gap as property-based; track with a counter on the gap.
+Do: For each candidate test, apply Hypothesis when (pure function + structured input + statable invariant). Use `code-test-generate-strategies` with `from_type` to derive strategies from type hints. Target ≥30% of unit tests in this gap as property-based; track with a counter on the gap.
 Don't: Apply Hypothesis to single-mapping cases, side-effect-heavy code without a clean invariant, or where assertions would just restate the implementation.
 Exit: → [GENERATE]
 
@@ -80,13 +80,13 @@ Exit: → [MUTATE] (all green) | → [GENERATE] (one diagnosis cycle, then disca
 
 ### [MUTATE] Per-gap mutation testing
 Load: rules/generation-constraints.md, references/assertion-policy.md
-Do: Run `mutation_runner` scoped to ONLY the lines covered by the new tests (~5–20 lines per gap). Threshold from `--mutation-threshold` (default: all mutants killed). Surviving mutants → return to [GENERATE] to strengthen assertions. Single restrengthen cycle per gap; if mutants still survive after one cycle, log gap as `mutation-survived` in state and continue to the next gap (do not commit).
+Do: Run `code-test-run-mutations` scoped to ONLY the lines covered by the new tests (~5–20 lines per gap). Threshold from `--mutation-threshold` (default: all mutants killed). Surviving mutants → return to [GENERATE] to strengthen assertions. Single restrengthen cycle per gap; if mutants still survive after one cycle, log gap as `mutation-survived` in state and continue to the next gap (do not commit).
 Don't: Run full-project mutation; lower threshold mid-run; advance with surviving mutants.
 Exit: → [SCORE] (all killed) | → [GENERATE] (one cycle) | → [BRANCH-MAP] (next gap if still surviving after one restrengthen)
 
 ### [SCORE] Assertion-quality score
 Load: rules/generation-constraints.md, references/assertion-policy.md
-Do: Run `assertion_quality` on the generated tests. Verify: ≥2 assertions per test, no `assert True`/`assert 1`, no self-mocking of unit under test, no AST-hash duplicates of existing tests. Score must meet project threshold.
+Do: Run `code-test-score-assertions` on the generated tests. Verify: ≥2 assertions per test, no `assert True`/`assert 1`, no self-mocking of unit under test, no AST-hash duplicates of existing tests. Score must meet project threshold.
 Don't: Pass to the hard gate below threshold; suppress findings; rerun until it passes (fix the tests).
 Exit: → [GATE] (threshold met) | → [GENERATE] (single cycle to fix) | → [BRANCH-MAP] (log gap as `score-deficit` if still below after one cycle)
 
@@ -109,10 +109,10 @@ Exit: → [END]
 Do:
   1. Commit the approved test files as `test(generate): close gaps <gap-ids> [generation_id=<id>]`.
   2. Update `project/coverage/state/COVERAGE_STATE.yaml` for each gap: status (`closed` / `unresolvable` / `mutation-survived` / `score-deficit` / `implementation-coupled` / `human-rejected`), auto-generated test IDs, validation status (green + mutation-killed + score-met + approved), `generation_id`.
-  3. Run `coverage_analyzer` to confirm coverage actually improved at each closed gap; if not, downgrade the gap status to `coverage-unchanged` with a note.
-  4. Run `log_contract_validator` if the function under test emits logs; record any failure as a non-blocking warning in state.
+  3. Run `code-test-analyze-coverage` to confirm coverage actually improved at each closed gap; if not, downgrade the gap status to `coverage-unchanged` with a note.
+  4. Run `code-test-validate-logs` if the function under test emits logs; record any failure as a non-blocking warning in state.
   5. If `benchmark_selector` flagged candidates during [INPUT-CRAFT] / [GENERATE], record them under `benchmark_candidates` in state — surface for human authoring; do not auto-write benchmark tests.
-Don't: Mark a gap closed if `coverage_analyzer` shows no improvement; block the commit on `log_contract_validator` warnings; auto-author benchmark suites.
+Don't: Mark a gap closed if `code-test-analyze-coverage` shows no improvement; block the commit on `code-test-validate-logs` warnings; auto-author benchmark suites.
 Exit: → [END]
 
 ### [END]

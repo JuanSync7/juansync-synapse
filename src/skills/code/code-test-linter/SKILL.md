@@ -35,8 +35,8 @@ Read-only first stage of the 6-skill test coverage engine. Runs the project's fu
 ### [NEW] Fresh session
 Do:
   1. Parse arguments: `--repo-root` (default cwd), `--output` (default `project/coverage/state/LINT_REPORT.json`).
-  2. Confirm tool inventory: `lint_reporter` (`python -m src.tools.testing.lint_reporter`) and `secret_scanner` (`python -m src.tools.testing.secret_scanner`) available — abort with clear error if missing.
-  3. Verify `src/tools/testing/lint_reporter/schemas.py` defines `LintIssue` and `LintReport` — abort if missing (no local redeclaration).
+  2. Confirm tool inventory: `code-test-report-lint` (`python src/tools/testing/code-test-report-lint/lint_reporter.py`) and `code-test-scan-secrets` (`python src/tools/testing/code-test-scan-secrets/secret_scanner.py`) available — abort with clear error if missing.
+  3. Verify `src/tools/testing/code-test-report-lint/schemas.py` defines `LintIssue` and `LintReport` — abort if missing (no local redeclaration).
 Don't: Proceed without tool inventory verified.
 Exit: → [SCAN]
 
@@ -50,8 +50,8 @@ Exit: → [RUN-EACH-LINTER]
 ### [RUN-EACH-LINTER] Linter sweep
 Load: references/ruff-config.md, references/mypy-strict.md, references/bandit-rules.md, references/vulture-thresholds.md, references/descriptive-test-rules.md
 Do: Invoke linters sequentially (ordering matters for config inheritance):
-  1. `lint_reporter` (ruff → mypy → bandit → vulture aggregator) — collect per-tool JSON.
-  2. `secret_scanner` — respect `.secrets.baseline` if committed; surface baseline path in report metadata; only report new secrets not in baseline.
+  1. `code-test-report-lint` (ruff → mypy → bandit → vulture aggregator) — collect per-tool JSON.
+  2. `code-test-scan-secrets` — respect `.secrets.baseline` if committed; surface baseline path in report metadata; only report new secrets not in baseline.
   3. Descriptive-test docstring validator — over test files only; check each test function for `@tests`, `@scenario`, `@asserts`, `@layer` tags. Emit one `LintIssue` per missing tag (do not collapse). Missing docstring entirely → `code: "MISSING_DOCSTRING"`.
   4. Per-linter exit-code handling: 0 = clean, 1 = findings (normal), 2 = config error → emit `LintIssue` severity `error` with `code: "CONFIG_ERROR"` containing stderr; continue remaining linters.
   5. Per-linter timeout policy: emit `LintIssue` with `code: "TIMEOUT"` rather than crashing.
@@ -59,7 +59,7 @@ Exit: → [AGGREGATE]
 
 ### [AGGREGATE] Merge findings
 Load: templates/lint-report.md
-Do: Import `LintIssue` and `LintReport` from `src/tools/testing/lint_reporter/schemas.py` (secret findings come from `src/tools/testing/secret_scanner/schemas.py`). Merge per-tool JSON into normalized `LintIssue` objects; populate `severity`, `files_scanned`, `duration_ms`. Partition descriptive-test docstring violations into `descriptive_test_violations` (subset of `issues`, surfaced separately). Include all findings — do not deduplicate or filter.
+Do: Import `LintIssue` and `LintReport` from `src/tools/testing/code-test-report-lint/schemas.py` (secret findings come from `src/tools/testing/code-test-scan-secrets/schemas.py`). Merge per-tool JSON into normalized `LintIssue` objects; populate `severity`, `files_scanned`, `duration_ms`. Partition descriptive-test docstring violations into `descriptive_test_violations` (subset of `issues`, surfaced separately). Include all findings — do not deduplicate or filter.
 Exit: → [EMIT-REPORT]
 
 ### [EMIT-REPORT] Persist + summarize
