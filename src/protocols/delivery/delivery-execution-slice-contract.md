@@ -6,7 +6,7 @@ subdomain: execution
 subject: slice
 kind: contract
 version: 1
-status: draft
+status: stable
 tags: [slice, dispatch-gate, validation, vertical-slice, leaf-wbs]
 ---
 

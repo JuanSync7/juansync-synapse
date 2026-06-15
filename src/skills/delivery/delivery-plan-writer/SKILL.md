@@ -4,7 +4,7 @@ description: "Use when the user signals 'slice this spec into stories', 'plan de
 domain: delivery
 scope: plan
 role: writer
-status: draft
+status: stable
 tags: [vertical-slice, story-writer, planning, plan-source]
 user-invocable: true
 argument-hint: "[--input-mode {spec,prd,intent}] [--tag TAG] [--foundation-first <list>] [--file-cap N] [--horizontal-docs <path>] [--replan-only <ids>] [--confirm] [--confirm-no-foundation]"

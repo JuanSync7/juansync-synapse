@@ -6,7 +6,7 @@ subdomain: orchestration
 subject: dispatch
 kind: contract
 version: 2
-status: draft
+status: stable
 tags: [dispatch, sequential-default, prompt-assembly, pre-dispatch-checks, escape-hatch]
 ---
 
@@ -102,7 +102,7 @@ When a violation of this protocol is detected, the main agent MUST immediately e
 PROTOCOL FAILURE: delivery-orchestration-dispatch-contract <slice_id> [violation_id reason]
 ```
 
-Where `violation_id` is the letter from the Violation Signatures table (a–e) and `reason` is a one-line description of the unmet condition.
+Where `violation_id` is the letter from the Violation Signatures table (a–g) and `reason` is a one-line description of the unmet condition.
 
 ## Injection
 

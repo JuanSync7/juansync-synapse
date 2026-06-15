@@ -1,7 +1,7 @@
 ---
 name: code-test-auditor
 aliases: [test-audit]
-description: "audit test coverage gaps, check for gaming patterns, flakiness, dependency vulnerabilities, edge coverage; produce diagnostic report before writing tests"
+description: "Use when asked to audit tests, check coverage gaps, find missing tests, detect gaming or flakiness, or produce a coverage report — before writing new tests. Not for writing tests (use code-test-generator) or fixing lint (use code-test-linter)."
 domain: code
 scope: test
 role: auditor
@@ -10,7 +10,7 @@ user-invocable: true
 argument-hint: "[--delta|--absolute] [--max-edges N] [--cadence pr|nightly|on-demand]"
 ---
 
-Read-only first stage of the 6-skill test coverage engine. Orchestrates 9 testing tools sequentially to snapshot coverage, score criticality, detect gaming, and produce `AuditGapReport` — the canonical input that `code-test-generator`, `code-test-evaluator`, and `code-test-integrator` all consume.
+This skill is a diagnostic instrument, not a fix agent. Its single responsibility is to produce an accurate, structured `AuditGapReport` — the canonical contract that every downstream skill (`code-test-generator`, `code-test-evaluator`, `code-test-integrator`) depends on. The audit's value comes from completeness and honesty: a gap report that skips a tool or silently drops data will cause downstream skills to generate tests against a distorted view of coverage. All 9 tools run in order; missing data produces sentinel values, not aborts. The skill never writes, modifies, quarantines, or deletes any test or source file — doing so would corrupt the state the audit is trying to measure.
 
 > **Execution scope:** Ignore `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, and `test-inputs/` during execution — these are used only by improvement and migration workflows.
 
@@ -20,15 +20,26 @@ Read-only first stage of the 6-skill test coverage engine. Orchestrates 9 testin
 - Run all 9 nodes in declared order; no early exit unless precondition fails
 
 ## MUST NOT (global)
-- Modify any source file, test file, coverage config, or project state file other than the audit history target
-- Skip a node — emit empty/sentinel output and note absence in report instead
-- Run mutation testing inline (that is `code-test-generator`'s per-gap responsibility)
-- Quarantine, delete, or auto-fix any flagged test
+- Modify any source file, test file, coverage config, or project state file other than the audit history target — any write corrupts the pre-run hash baseline and invalidates EVAL-O11
+- Skip a node — emit empty/sentinel output and note absence in report instead; skipping produces gaps in `AuditGapReport` that downstream generators treat as "no problem found"
+- Run mutation testing inline — that is `code-test-generator`'s per-gap responsibility; doing it here conflates read-only audit with generation and triggers the MUST NOT on writes
+- Quarantine, delete, or auto-fix any flagged test — the audit's job is to surface problems, not resolve them; auto-fixes silently change the state being measured
 
 ## Wrong-Tool Detection
 - **User wants tests written from gaps** → `/code-test-generator` (consumes this skill's output)
 - **User wants to fix lint issues** → `/code-test-fixer` (audit's precondition)
 - **User wants to evaluate test boundary correctness** → `/code-test-evaluator`
+
+## Progress Tracking
+
+For runs spanning multiple turns, use `TaskCreate` to checkpoint each completed node:
+
+```
+TaskCreate: title="[SNAPSHOT] Coverage snapshot complete", status="completed"
+TaskCreate: title="[GAMING] Gaming detection in progress", status="in_progress"
+```
+
+Create one task per node when entering it; mark completed on exit. This lets the user resume a partial run and shows which tool is active.
 
 ## Entry
 

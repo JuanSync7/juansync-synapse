@@ -10,7 +10,7 @@ user-invocable: true
 argument-hint: "[--strategy-dir PATH] [--item ID] [--rerecord] [--retry-rejected] [--notify CHANNEL]"
 ---
 
-Sixth and final stage of the test coverage engine. Consumes `IntegrationStrategy` documents from `code-test-evaluator`; for each strategy item, picks one lifecycle pattern, spins up an ephemeral service (or records a cassette), converts the mock-integration test to real-integration, validates flakiness over ≥10 reruns, then opens a hard-gate PR and **stops**. Engine never auto-merges; human approval is the only path forward.
+Sixth and final stage of the test coverage engine. The core contract: every mock-integration test that graduates to real-service coverage must be validated in isolation, confirmed stable, and reviewed by a human before it lands — because a flaky or secret-leaking real-integration test in `main` is harder to remove than a mock. This skill enforces that contract by making the human gate structurally unavoidable: it opens one PR per strategy item, then stops and waits. Automation handles the mechanical work (pattern selection, ephemeral spin-up, conversion, flakiness sampling); humans handle the merge decision.
 
 > **Execution scope:** Ignore `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, and `test-inputs/` during execution — these are used only by improvement and migration workflows.
 
@@ -21,19 +21,38 @@ Sixth and final stage of the test coverage engine. Consumes `IntegrationStrategy
 - Assign exactly one lifecycle pattern per strategy item
 
 ## MUST NOT (global)
-- Auto-merge a PR — `[HARD-GATE]` requires explicit human approval, no exceptions, no timeout
-- Run real tests against a production endpoint — ephemeral testcontainers or recorded cassettes only
-- Reuse a shared/long-lived testcontainer across test sessions — every container is ephemeral
-- Commit a vcrpy cassette without scrubbing secrets (Authorization, X-API-Key, vendor headers, cookies, tokens)
-- Delete the original mock-integration test before the real test is human-approved and merged
-- Apply more than one lifecycle pattern to a single strategy item
-- Process the next strategy item while a hard gate is open
+- Auto-merge a PR — `[HARD-GATE]` requires explicit human approval; auto-merge defeats the review gate and can land flaky or secret-leaking tests silently
+- Run real tests against a production endpoint — ephemeral testcontainers or recorded cassettes only; production data corruption and secret exposure are non-recoverable
+- Reuse a shared/long-lived testcontainer across test sessions — shared state between tests causes intermittent failures that are undetectable at conversion time
+- Commit a vcrpy cassette without scrubbing secrets (Authorization, X-API-Key, vendor headers, cookies, tokens) — cassettes persist in git history and leak credentials even after a follow-up scrub
+- Delete the original mock-integration test before the real test is human-approved and merged — premature deletion breaks CI if the PR is rejected
+- Apply more than one lifecycle pattern to a single strategy item — mixed patterns produce unscoped teardown and ambiguous failure attribution
+- Process the next strategy item while a hard gate is open — parallel gate items obscure which approval unlocks which item
 
 ## Wrong-Tool Detection
 - **No `IntegrationStrategy` documents on disk** → `/code-test-evaluator` first, then return here
 - **User wants the classification, not the conversion** → `/code-test-evaluator`
 - **User wants to write fresh mock-integration tests** → `/code-test-generator`
 - **User wants to evaluate test code quality / lint** → `/code-test-linter`
+
+## Progress Tracking
+
+Multi-item runs use tasks to surface per-item state and prevent silent loss of position across context boundaries.
+
+```
+TaskCreate(title="[INTEGRATOR] item DB-001 — transaction-rollback",
+           description="Strategy item DB-001: ragweave.store.session_store\nPattern: transaction-rollback\nStatus: in-progress",
+           status="in_progress")
+
+TaskUpdate(id=<task_id>, status="completed",
+           description="... PR #42 opened — awaiting human approval")
+
+TaskCreate(title="[INTEGRATOR] run summary",
+           description="Processed: 5 | Merged: 3 | Rejected: 1 | Quarantined: 1 | Pattern-mismatch: 0",
+           status="completed")
+```
+
+Create one task per strategy item at [PICK-PATTERN]; update to `completed` when the item exits the gate (merged, rejected, or quarantined). Create the run-summary task at [END].
 
 ## Entry
 

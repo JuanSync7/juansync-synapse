@@ -12,13 +12,15 @@ argument-hint: "[--coverage-state PATH] [--top-n N|critical] [--rerun-mode sourc
 
 Fifth stage of the 6-skill test coverage engine. Consumes `CoverageState` from `code-test-generator`; classifies each module's mocked dependencies through a 5-step per-module loop (detect boundary tier → identify mocks → score replacement value → assign lifecycle pattern → emit IntegrationStrategy). Produces one `IntegrationStrategy` per module, bundled into a soft-gated PR. Analysis-only — never writes test code, never modifies source, never spins up real services.
 
+**Mental model:** This skill is a triage analyst, not a builder. It reads the test suite, asks "which mocked boundaries carry the most risk if they stay mocked?", and scores each one so that `code-test-integrator` picks up the highest-value replacements first. The scoring formula (`boundary_tier × external_dependency_risk × current_mock_coverage_gap`) encodes three independent risk signals — without all three, you'd either convert cheap mocks first or miss high-risk gaps entirely. Every output is a strategy document: prose recommendations with a ranked table, never test code.
+
 > **Execution scope:** Ignore `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, and `test-inputs/` during execution — these are used only by improvement and migration workflows.
 
 ## MUST (every turn)
 - Load `rules/evaluate-constraints.md` — read-only invariants apply at every node
 - Record position: `Position: [node-id] — <context>`
-- Process modules in `AuditGapReport.priority_ranking` order (critical first)
-- Use the inline scoring formula exactly: `replacement_value = boundary_tier × external_dependency_risk × current_mock_coverage_gap`
+- Process modules in `AuditGapReport.priority_ranking` order (critical first) — without priority order, low-risk modules can consume the run budget before high-risk ones are evaluated
+- Use the inline scoring formula exactly: `replacement_value = boundary_tier × external_dependency_risk × current_mock_coverage_gap` — never substitute qualitative ranking; invented weights produce inconsistent strategies across runs
 
 ## MUST NOT (global)
 - Write or modify test code, source code, or fixtures — analysis only
@@ -42,7 +44,7 @@ Do:
   2. Load `CoverageState` from disk; verify it parses against `src/skills/code/code-test-evaluator/schemas.py` `CoverageState` model. Verify at least one module has mocked-integration tests.
   3. Load `AuditGapReport.priority_ranking` if `--top-n critical`; otherwise use top-N by criticality score.
   4. If no qualifying modules → print "no modules with mocked-integration tests — nothing to evaluate" and exit (no PR, no state mutation).
-  5. Confirm engine tools available in `src/tools/testing/`: `code-test-classify-boundaries`, `mock_inventory`, `code-test-analyze-coverage`. Abort if missing.
+  5. Confirm engine tools available in `src/tools/testing/`: `code-test-classify-boundaries`, `code-test-analyze-coverage`. Abort if missing.
   6. If `--rerun-mode source-changed`: load prior `IntegrationStrategy` documents; compute source-hash delta; skip unchanged modules.
 Don't: Modify source or tests; proceed if `CoverageState` cannot be parsed.
 Exit: → [LOAD]
@@ -63,24 +65,31 @@ Do: For the current module, run `code-test-classify-boundaries`:
   - Classify each function as `boundary-runtime`, `boundary-logical`, or `internal`.
   - If module has zero boundary-classified functions: log as `skipped_internal` ("no boundary functions detected") and advance.
 Don't: Re-classify internal functions as boundary without a grep-detectable signal; descend into stdlib or third-party code.
-Exit: → [IDENTIFY] (boundary functions found) | → [DETECT] (next module if all-internal)
+Exit: → [IDENTIFY] (boundary functions found) | → [DETECT] : next module (current module all-internal; log as `skipped_internal`) | → [GATE] (all modules exhausted)
 
 ### [IDENTIFY] Inventory mocked dependencies
 Load: rules/evaluate-constraints.md
-Do: Run `mock_inventory` on the test files covering this module. Enumerate every `@patch`, `Mock(spec=...)`, `MagicMock`, `monkeypatch.setattr`. Map each mock to the boundary function it shadows (by import path or attribute reference). Record:
+Do: Grep test files covering this module for all mock constructs: `@patch`, `Mock(spec=`, `MagicMock`, `monkeypatch.setattr`. For each match, resolve the mock target (fully-qualified import path or attribute reference) and map it to the boundary function it shadows. Record:
   - Mock target (fully-qualified name)
   - Test files using the mock
   - Corresponding boundary function (or "no boundary match" → over-mock warning)
+
+  Example: `@patch("ragweave.ingest.db.session_factory")` → target `ragweave.ingest.db.session_factory`, boundary function `ingest_document` (runtime-boundary via `@activity.defn`).
 If module has no mocks (already uses real services): log as `skipped_already_real` and advance.
 Don't: Evaluate mock correctness or test quality — that is `code-test-linter` / `code-test-auditor`'s concern.
 Exit: → [SCORE] (mock inventory non-empty) | → [DETECT] (next module if no mocks)
 
 ### [SCORE] Compute replacement value per mock
-Do: For each mocked boundary dependency, compute `replacement_value = boundary_tier × external_dependency_risk × current_mock_coverage_gap`:
+Do: For each mocked boundary dependency, compute `replacement_value = boundary_tier × external_dependency_risk × current_mock_coverage_gap` — without the formula, mock conversion order is arbitrary and high-risk DB boundaries may be skipped while low-risk CLI helpers are converted:
   - **`boundary_tier`:** runtime=3, logical=2, internal=0 (excluded — emit `over_mocking_warning` for any mock that resolves to an internal function).
   - **`external_dependency_risk`:** DB=5, external API=4, queue=3, file=2, CLI=1 (use category from [DETECT] — never invent weights).
   - **`current_mock_coverage_gap`:** fraction of boundary branches covered ONLY by mocked tests (0.0–1.0). Run `code-test-analyze-coverage --boundary-only` against the module to derive this.
   - Rank candidates by `replacement_value`; exclude any with `replacement_value == 0`.
+
+  Example (show breakdown per candidate):
+  - `session_factory` (DB, runtime): `3 × 5 × 0.8 = 12.0` → top candidate
+  - `send_email` (API, logical): `2 × 4 × 0.5 = 4.0`
+  - `_build_query` (internal): `0 × 5 × 0.9 = 0` → over_mocking_warning, excluded from ranking
 Don't: Score internal functions; invent risk weights not in the table; lower thresholds mid-run.
 Exit: → [ASSIGN] (candidates with `replacement_value > 0`) | → [DETECT] (next module if all candidates score 0)
 
@@ -110,6 +119,21 @@ Do:
   3. Update `COVERAGE_STATE.yaml`: per module, record `integration_strategy_path`, `boundary_classification`, `evaluate_run_id`, `source_hash` (for next-run delta detection).
 Don't: Block on reviewer feedback; commit any test-tree files; modify source.
 Exit: → [END]
+
+## Progress Tracking
+
+Use `TaskCreate` at session start to track per-module evaluation progress. Update status at each phase transition.
+
+```
+TaskCreate(title="code-test-evaluator run", description="Evaluating CoverageState: <path>")
+TaskCreate(title="[DETECT] <module-slug>", description="Boundary classification")
+TaskCreate(title="[IDENTIFY] <module-slug>", description="Mock inventory")
+TaskCreate(title="[SCORE] <module-slug>", description="Replacement value scoring")
+TaskCreate(title="[ASSIGN] <module-slug>", description="Lifecycle pattern assignment")
+TaskCreate(title="[EMIT] <module-slug>", description="IntegrationStrategy output")
+```
+
+Update each task to `completed` before advancing to the next node. If the session resumes after interruption, check task statuses to restore position.
 
 ### [END]
 Do: Print PR URL (or strategy bundle path with `--no-pr`), per-module result table (classified / skipped-internal / skipped-already-real / over-mock-warnings), top-5 highest replacement-value candidates across the batch. Suggest `/code-test-integrator` as the next stage.

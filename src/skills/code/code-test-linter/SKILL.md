@@ -1,7 +1,7 @@
 ---
 name: code-test-linter
 aliases: [test-lint]
-description: "run ruff/mypy/bandit/vulture/detect-secrets plus descriptive-test docstring validator over a Python repo; emit LintReport for downstream code-test-fixer; never auto-fix or suppress"
+description: "Use when asked to lint a Python repo, run static analysis, check test docstrings, scan for secrets, or produce a LintReport. Not for fixing lint findings (use code-test-fixer) or auditing coverage gaps (use code-test-auditor)."
 domain: code
 scope: test
 role: linter
@@ -30,6 +30,21 @@ Read-only first stage of the 6-skill test coverage engine. Runs the project's fu
 - **User wants test coverage gaps audited** → `/code-test-auditor` (requires lint-clean precondition first)
 - **User wants tests written** → `/code-test-generator` (downstream of audit)
 
+## Progress Tracking
+
+Create a task at [NEW] to track node progression:
+
+```
+TaskCreate: "code-test-linter run — <repo-root>"
+  → [NEW] tool inventory verified
+  → [SCAN] manifest built
+  → [RUN-EACH-LINTER] linter sweep complete
+  → [AGGREGATE] LintReport assembled
+  → [EMIT-REPORT] report persisted
+```
+
+Update to `in_progress` at each node entry; mark `completed` at [END].
+
 ## Entry
 
 ### [NEW] Fresh session
@@ -45,6 +60,7 @@ Exit: → [SCAN]
 ### [SCAN] Repo discovery
 Load: rules/lint-constraints.md
 Do: Resolve repo root; locate lint config files (`ruff.toml`, `mypy.ini`, `pyproject.toml`, `.bandit`, `.secrets.baseline`); build file manifest (Python source + test files). Record missing-config findings as `LintIssue` with `code: "MISSING_CONFIG"` for [AGGREGATE] to merge.
+Don't: Skip missing-config recording — without it, downstream consumers can't distinguish "linter not configured" from "linter ran clean".
 Exit: → [RUN-EACH-LINTER]
 
 ### [RUN-EACH-LINTER] Linter sweep
@@ -55,11 +71,13 @@ Do: Invoke linters sequentially (ordering matters for config inheritance):
   3. Descriptive-test docstring validator — over test files only; check each test function for `@tests`, `@scenario`, `@asserts`, `@layer` tags. Emit one `LintIssue` per missing tag (do not collapse). Missing docstring entirely → `code: "MISSING_DOCSTRING"`.
   4. Per-linter exit-code handling: 0 = clean, 1 = findings (normal), 2 = config error → emit `LintIssue` severity `error` with `code: "CONFIG_ERROR"` containing stderr; continue remaining linters.
   5. Per-linter timeout policy: emit `LintIssue` with `code: "TIMEOUT"` rather than crashing.
+Don't: Run linters in parallel — sequential ordering matters for config inheritance; parallel dispatch would mask per-tool exit codes. Do not suppress or collapse any issue.
 Exit: → [AGGREGATE]
 
 ### [AGGREGATE] Merge findings
 Load: templates/lint-report.md
 Do: Import `LintIssue` and `LintReport` from `src/tools/testing/code-test-report-lint/schemas.py` (secret findings come from `src/tools/testing/code-test-scan-secrets/schemas.py`). Merge per-tool JSON into normalized `LintIssue` objects; populate `severity`, `files_scanned`, `duration_ms`. Partition descriptive-test docstring violations into `descriptive_test_violations` (subset of `issues`, surfaced separately). Include all findings — do not deduplicate or filter.
+Don't: Declare `LintIssue` or `LintReport` locally — schema divergence from the canonical file will silently break `code-test-fixer` deserialization.
 Exit: → [EMIT-REPORT]
 
 ### [EMIT-REPORT] Persist + summarize

@@ -5,7 +5,7 @@ domain: delivery
 subdomain: orchestration
 scope: plan
 role: executor
-status: draft
+status: stable
 tags: [orchestration, tdd, sequential-dispatch, subagent-loop, resumable]
 user-invocable: true
 argument-hint: "[plan-source or empty for ambient context]"
@@ -135,7 +135,7 @@ Do: produce the US-1 final summary (slice rollup counts, lessons tail, INDEX.md 
 Don't: delete `.delivery/`; suppress lessons; emit free-form prose summary.
 Exit: → [END]
 
-## [END]
+### [END]
 Do:
   1. Print final summary verbatim.
   2. Surface exit reason: `all_slices_green` | `escalated_blocked` | `escalated_replan_cap` | `user_interrupt`.

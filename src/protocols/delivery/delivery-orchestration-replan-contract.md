@@ -6,7 +6,7 @@ subdomain: orchestration
 subject: replan
 kind: contract
 version: 1
-status: draft
+status: stable
 tags: [replan, plan-mutation, audit-trail, changelog, escalation-bound, append-only-lessons]
 ---
 
@@ -126,7 +126,7 @@ This protocol owns the full **ingest-to-mutation** flow:
 
 ## Failure Reporting
 
-Violations of this protocol use the `synapse-observability-failure-reporting-schema` format:
+When a violation is detected, the main agent MUST immediately emit the following tag using the `synapse-observability-failure-reporting-schema` format, then halt or escalate per the response column in the Violation Signatures table:
 
 ```
 PROTOCOL FAILURE: delivery-orchestration-replan-contract <slice_id> [violation_id reason]

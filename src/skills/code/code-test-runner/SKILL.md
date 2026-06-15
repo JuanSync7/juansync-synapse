@@ -1,13 +1,15 @@
 ---
 name: code-test-runner
 aliases: [test-runner]
-description: Run pytest test suites safely through a validated execution pipeline with structured output and optional fix loop
+description: "Use when asked to run tests, execute pytest, re-run failing tests, or trigger a fix loop after test failures. NOT for writing new tests (use /code-test-writer) or auditing coverage (use /code-test-auditor)."
 domain: code
 scope: test
 role: runner
-tags: [pytest, test execution, fix loop]
+tags: [pytest, test-execution, fix-loop]
 tools: Bash, Read, Grep, Glob, Edit, Agent
 allowed-tools: Bash, Read, Grep, Glob, Edit, Agent
+user-invocable: true
+argument-hint: "[group|path] [--marker <expr>] [--keyword <expr>] [--strict] [--timeout <s>] [--fix]"
 ---
 
 # Test Runner Skill

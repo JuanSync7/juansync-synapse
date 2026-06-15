@@ -1,7 +1,7 @@
 ---
 name: code-test-fixer
 aliases: [test-fix]
-description: "consume a LintReport from code-test-linter and resolve auto-fixable issues per category (ruff→mypy→bandit→vulture→secrets) with re-verification, surfacing requires-human-review items and opening a soft-gated PR"
+description: "Use when a LintReport from code-test-linter is on disk and the user asks to fix lint errors, clean up lint warnings, or apply auto-fixes. NOT for running a fresh lint scan (use code-test-linter) or writing new tests (use code-test-generator)."
 domain: code
 scope: test
 role: fixer
@@ -10,7 +10,7 @@ user-invocable: true
 argument-hint: "[--lint-report PATH] [--no-pr]"
 ---
 
-Second stage of the 6-skill test coverage engine. Consumes `LintReport` produced by `code-test-linter`; iterates through five lint categories (ruff → mypy → bandit → vulture → secrets) with mandatory re-verification between categories. Issues that require human judgment are surfaced as `requires-human-review` rather than guessed at. Closes with a soft-gated PR summarising every change.
+Second stage of the 6-skill test coverage engine. This skill resolves lint findings from a `LintReport` — it does not produce the report (that's `code-test-linter`) and it does not audit coverage gaps (that's `code-test-auditor`). The core discipline here is **category isolation with mandatory re-verification**: each of the five categories (ruff → mypy → bandit → vulture → secrets) is fixed independently, re-verified before commit, and never looped back. Issues that require human judgment are accumulated in `requires_human_review` rather than guessed at. The run closes with a soft-gated PR (or a file report with `--no-pr`) that surfaces every residual for human triage.
 
 > **Execution scope:** Ignore `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, and `test-inputs/` during execution — these are used only by improvement and migration workflows.
 
@@ -33,6 +33,24 @@ Second stage of the 6-skill test coverage engine. Consumes `LintReport` produced
 - **User wants tests written** → `/code-test-generator`
 - **User has no LintReport on disk** → `/code-test-linter` first, then return here
 
+## Progress Tracking
+
+Use `TaskCreate` to track category progress on multi-category runs:
+
+```
+TaskCreate("code-test-fixer run", subtasks=[
+  "TRIAGE — partition issues",
+  "FIX-RUFF / VERIFY-RUFF",
+  "FIX-MYPY / VERIFY-MYPY",
+  "FIX-BANDIT / VERIFY-BANDIT",
+  "FIX-VULTURE / VERIFY-VULTURE",
+  "SURFACE-SECRETS",
+  "OPEN-PR"
+])
+```
+
+Mark each subtask `in_progress` on entry and `completed` after the verify commit.
+
 ## Entry
 
 ### [NEW] Fresh session
@@ -49,6 +67,18 @@ Exit: → [TRIAGE]
 ### [TRIAGE] Partition issues by category
 Load: rules/fix-constraints.md
 Do: Partition `LintReport.issues` into five buckets keyed by `tool` (ruff, mypy, bandit, vulture, detect-secrets). Pre-flag obvious `requires-human-review` items: bandit findings on subprocess/pickle/eval in core modules, vulture findings on `__all__`/decorated/externally-imported symbols, all detect-secrets findings. Initialize `requires_human_review: list[LintIssue]` for accumulation.
+
+Each entry must be fully populated — incomplete entries are worse than no entry:
+```
+# Good
+{ file: "src/auth/validator.py", line: 42, code: "B602",
+  category: "bandit", reason: "subprocess shell=True — architectural escalation required" }
+
+# Bad
+{ file: "src/auth/validator.py", code: "B602", reason: "bandit" }
+# Missing line; reason is just the category name — not actionable
+```
+
 Don't: Edit any source file; collapse buckets; drop issues silently.
 Exit: → [FIX-RUFF]
 
@@ -114,4 +144,4 @@ Exit: → [END]
 
 ### [END]
 Do: Print PR URL (or report path with `--no-pr`), per-category commit list, and `requires_human_review` count. Suggest `/code-test-auditor` once the PR is reviewed and merged.
-Don't: Auto-route or invoke `/code-test-auditor` directly — handoff is the user's call.
+Don't: Auto-route or invoke `/code-test-auditor` directly — handoff is the user's call. Don't reopen a closed session or loop back to any earlier node.

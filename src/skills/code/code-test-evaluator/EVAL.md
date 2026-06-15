@@ -125,7 +125,7 @@ For Temporal-decorated workers and Celery tasks specifically, lifecycle assignme
 Per-module node sequence: DETECT → IDENTIFY → SCORE → ASSIGN → EMIT → (advance to next module or proceed to [GATE]). No skips, no reordering. After all modules processed, single transition to [GATE].
 
 ### EVAL-E06
-`boundary_classifier` invoked at [DETECT]; `mock_inventory` invoked at [IDENTIFY]; `coverage_analyzer --boundary-only` invoked at [SCORE] for the gap fraction. No tool runs full-project; all scope per-module.
+`code-test-classify-boundaries` invoked at [DETECT]; mock detection via inline grep at [IDENTIFY]; `code-test-analyze-coverage --boundary-only` invoked at [SCORE] for the gap fraction. No tool runs full-project; all scope per-module.
 
 ### EVAL-E07
 [GATE] segment contains zero edits/writes to test tree or source tree; only writes to `project/coverage/state/integration-strategies/` and `COVERAGE_STATE.yaml`. No service spin-up tool calls (no `docker run`, no `testcontainers.start`, no DB client connection) anywhere in the trace.

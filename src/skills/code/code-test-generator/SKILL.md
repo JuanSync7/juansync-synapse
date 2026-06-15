@@ -1,7 +1,7 @@
 ---
 name: code-test-generator
 aliases: [test-generate]
-description: "consume an AuditGapReport from code-test-auditor and generate descriptive-docstring tests gap-by-gap with branch mapping, Hypothesis where invariants exist, green-run + per-gap mutation + assertion-quality gates, then HARD-GATE on a descriptive-intent PR before any commit"
+description: "Use when the user provides an AuditGapReport (from code-test-auditor) and asks to generate tests, close coverage gaps, or run the test-generation stage of the coverage engine"
 domain: code
 scope: test
 role: generator
@@ -10,7 +10,7 @@ user-invocable: true
 argument-hint: "[--audit-report PATH] [--max-gaps N] [--mutation-threshold all|N] [--no-pr]"
 ---
 
-Third stage of the 6-skill test coverage engine. Consumes `AuditGapReport` from `code-test-auditor`; iterates each gap in priority order through a 9-step loop (branch-map → input-craft → hypothesis-decision → generate → green-run → mutation → assertion-quality → **hard-gate intent review** → commit + state). Engine STOPS at the hard gate and waits for reviewer approval of a plain-English descriptive-intent list before any test is committed.
+Third stage of the 6-skill test coverage engine. Its job is not to maximize coverage numbers — it is to produce tests whose intent a human reviewer can verify before any code is committed. Every gap travels through a deterministic 9-node loop: map branches → craft inputs → decide example-vs-property → generate → green-run → mutation → assertion-quality → hard-gate → commit. The engine STOPS at the hard gate and waits for explicit human approval of a plain-English descriptive-intent list; no timeout, no auto-approve path exists. Quality gates (green-run, mutation, assertion-quality) enforce that tests are meaningful, not just passing. The hard gate enforces that tests are reviewable, not just correct.
 
 > **Execution scope:** Ignore `research/`, `EVAL.md`, `PROGRAM.md`, `SCOPE.md`, and `test-inputs/` during execution — these are used only by improvement and migration workflows.
 
@@ -21,13 +21,24 @@ Third stage of the 6-skill test coverage engine. Consumes `AuditGapReport` from 
 - Run all gates (green-run, mutation, assertion-quality) before the hard gate; never bypass
 
 ## MUST NOT (global)
-- Write per-line tests, `assert True`, `assert 1`, or any vacuous-assertion padding
-- Generate a test without a 5-tag descriptive docstring (`@tests`, `@scenario`, `@asserts`, `@layer`, `@generation_id`)
-- Commit any test before the hard gate (STEP 8) returns approved
-- Call `_private` functions directly — cover them through public callers only
-- Create a second test file for a module that already has one — append instead
-- Auto-approve, timeout-approve, or simulate human approval at the hard gate
-- Run full-project mutation testing inside the loop — STEP 6 is per-gap scoped (~5–20 lines)
+- Write per-line tests, `assert True`, `assert 1`, or vacuous-assertion padding — without this the assertion-quality gate passes but the tests catch nothing
+- Generate a test without a 5-tag descriptive docstring (`@tests`, `@scenario`, `@asserts`, `@layer`, `@generation_id`) — without this the hard-gate intent list cannot be assembled and `generation_id` traceability breaks
+- Commit any test before the hard gate (STEP 8) returns approved — without this the reviewer loses the ability to reject; gaps land in main with unreviewed intent
+- Call `_private` functions directly — cover them through public callers only; otherwise refactors that rename internals silently break the test suite
+- Create a second test file for a module that already has one — append instead; duplicate files cause pytest collection ambiguity and split the coverage record
+- Auto-approve, timeout-approve, or simulate human approval at the hard gate — silent approval defeats the entire purpose of the intent review
+- Run full-project mutation testing inside the loop — STEP 6 is per-gap scoped (~5–20 lines); full-project scope triggers the nightly job budget and blocks the loop
+
+## Progress Tracking
+
+For batches with 5+ gaps, create a task at [NEW] and update at each node transition:
+
+```
+TaskCreate: "code-test-generator: batch <generation_id> — <N> gaps"
+TaskUpdate: "[BRANCH-MAP] gap 1/N — mapping branches"
+TaskUpdate: "[GATE] — awaiting intent review"
+TaskUpdate: "[COMMIT] — <M> closed, <K> unresolvable, <J> mutation-survived"
+```
 
 ## Wrong-Tool Detection
 - **User has no AuditGapReport on disk** → `/code-test-auditor` first, then return here

@@ -6,7 +6,7 @@ subdomain: orchestration
 subject: closeout
 kind: schema
 version: 2
-status: draft
+status: stable
 tags: [closeout, dual-target, audit-trail, resumable, extends-execution-trace]
 ---
 
