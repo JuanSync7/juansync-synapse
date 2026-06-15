@@ -1,3 +1,27 @@
 dist/
 .brainstorms/
 *.pem
+
+# Stray root-level npm install (e.g. `npm i @anthropic-ai/claude-code`) — this
+# repo is not a node project at its root; the web app has its own package.json.
+/node_modules/
+/package.json
+/package-lock.json
+# Python bytecode caches (scripts/lib)
+**/__pycache__/
+*.pyc
+
+# web app (slice S2+) — workspace installs and runtime session state
+web/node_modules/
+web/**/node_modules/
+web/**/dist/
+web/.sessions/
+web/test-results/
+# Playwright e2e (slice S10) — reports, traces, and browser/cache artifacts
+web/playwright-report/
+web/**/playwright-report/
+web/blob-report/
+web/.cache/
+web/**/.cache/
+web/e2e/.cache/
+web/chrome/
