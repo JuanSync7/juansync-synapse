@@ -1,6 +1,6 @@
 ---
 name: delivery-orchestration-dispatch-contract
-description: "Sequential-by-default subagent dispatch contract — 8 mandatory prompt slots, 4 pre-dispatch checks, explicit model selection, parallel escape hatch with three named conditions"
+description: "Sequential-by-default subagent dispatch contract — 8 mandatory prompt slots, 5 pre-dispatch checks, explicit model selection, parallel escape hatch with three named conditions"
 domain: delivery
 subdomain: orchestration
 subject: dispatch
@@ -40,7 +40,7 @@ This is the main agent's pre-flight checklist. Nothing may be dispatched unless 
    | `{{worker_protocols}}` | Bodies of `delivery-execution-slice-contract`, `delivery-execution-tdd-contract`, `delivery-execution-coding-contract`, `delivery-orchestration-closeout-schema` | Missing → subagent doesn't know it owes a closeout, test-first discipline, an iteration cap, or the code-quality discipline (YAGNI, neighbors-first, no-dead-code, fail-loudly, green-tree-exit, security-tripwires) |
    | `{{model}}` | Explicit model identifier | Missing → cost surprises and non-reproducible runs |
 
-5. **Pre-dispatch checks (all four, in order, every dispatch):**
+5. **Pre-dispatch checks (all five, in order, every dispatch):**
    1. **Slice-contract validation** — the chosen slice file passes `delivery-execution-slice-contract`. On malformation: refuse dispatch; route to replan-contract.
    2. **Dependency check** — every slice listed in this slice's `depends_on` has a `validation_result: pass` closeout. On unmet dependency: route to replan-contract.
    3. **No-in-flight check** — sequential invariant. Confirm no subagent is currently executing. On in-flight: halt and escalate.

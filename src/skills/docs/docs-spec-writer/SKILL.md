@@ -119,7 +119,7 @@ Every requirement MUST have three fields — the writer agent enforces this, but
 
 All state lives in files — every decision, every brief, every signal externalized to disk so the workflow survives auto-compaction. The reason: subagents have no memory of what you decided, so the notepad is the only communication channel between your planning turns and their execution turns. When in doubt about whether to write something down, write it down.
 
-> This skill follows the [external-memory protocol](../../../../synapse/protocols/memory/external-memory.md). Read it if this is your first time orchestrating with file-based memory.
+> This skill follows the [external-memory protocol](../../../../synapse/protocols/memory/synapse-memory-external-memory-contract.md). Read it if this is your first time orchestrating with file-based memory.
 
 ### Memory Files
 
@@ -222,7 +222,7 @@ When a section hits max retries (1 per section, 1 coherence re-pass) and cannot 
 
 - **Per-section:** Max 1 retry. After revision + re-dispatch, if still rejected → NEEDS_MANUAL.
 - **Coherence:** Max 1 re-pass after fixing rejected sections. If still failing → fail loudly with summary table.
-- **Failure tags:** All agents use the [failure-reporting protocol](../../../../synapse/protocols/observability/failure-reporting.md). Accumulate failures, continue through all sections, surface complete summary at the end.
+- **Failure tags:** All agents use the [failure-reporting protocol](../../../../synapse/protocols/observability/synapse-observability-failure-reporting-schema.md). Accumulate failures, continue through all sections, surface complete summary at the end.
 
 ---
 

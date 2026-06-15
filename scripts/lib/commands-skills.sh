@@ -154,7 +154,7 @@ cmd_zip() {
             python3 -c "
 import zipfile, os, fnmatch, sys
 exclude = ['research/*', 'test-inputs/*', 'EVAL.md', 'PROGRAM.md', 'SCOPE.md',
-           '.meta-process-brainstormer-*', '.decision-memo-*', '*.pyc', '__pycache__/*']
+           '.brainstorm-*', '.decision-memo-*', '*.pyc', '__pycache__/*']
 skill_dir = sys.argv[1]
 zip_path = sys.argv[2]
 with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:

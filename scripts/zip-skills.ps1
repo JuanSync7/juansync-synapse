@@ -29,8 +29,8 @@ Get-ChildItem -Path (Join-Path $Root "src") -Filter "SKILL.md" -Recurse | ForEac
         Get-ChildItem -Path $tempDir -Filter $ex -Recurse -Force -ErrorAction SilentlyContinue |
             Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
     }
-    # Remove meta-process-brainstormer/memo files
-    Get-ChildItem -Path $tempDir -Filter ".meta-process-brainstormer-*" -Force -ErrorAction SilentlyContinue |
+    # Remove brainstorm/memo files
+    Get-ChildItem -Path $tempDir -Filter ".brainstorm-*" -Force -ErrorAction SilentlyContinue |
         Remove-Item -Force -ErrorAction SilentlyContinue
     Get-ChildItem -Path $tempDir -Filter ".decision-memo-*" -Force -ErrorAction SilentlyContinue |
         Remove-Item -Force -ErrorAction SilentlyContinue
