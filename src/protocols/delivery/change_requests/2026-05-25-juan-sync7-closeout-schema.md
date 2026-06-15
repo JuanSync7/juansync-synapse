@@ -63,7 +63,7 @@ This table is normative. Every field is required unless marked conditional.
 
 `delivery-orchestration-closeout-schema` is a superset of `synapse-observability-execution-trace` (at `/home/kok-shew-juan/juansync-synapse/synapse/protocols/observability/synapse-observability-execution-trace.md`). The parent protocol's fields are inherited — do not duplicate their definitions in this protocol's body. Cross-reference the parent for the base envelope (agent identity, timestamp, context token counts, etc.). This protocol's field table above defines delivery-specific additions only.
 
-Structural decision from meta-process-brainstormer: extend, do not fork. Rationale: forking would diverge the observability surface across delivery and synapse contexts; extending preserves tooling that consumes the base trace format.
+Structural decision from brainstorm: extend, do not fork. Rationale: forking would diverge the observability surface across delivery and synapse contexts; extending preserves tooling that consumes the base trace format.
 
 ---
 
@@ -109,7 +109,7 @@ Main agent rejects the closeout (routes to replan-contract) on any of the follow
 
 ## Ingestion semantics: scoped out
 
-This protocol describes the DATA SHAPE of a closeout. It does not describe what the main agent does after validation passes or fails (mark slice complete, append lessons, evaluate next_moves, trigger replan). That logic is owned by `delivery-orchestration-replan-contract` (see CL-P1 from meta-process-brainstormer [B] lens rotation). Cross-reference that protocol for the full ingest-to-mutation flow.
+This protocol describes the DATA SHAPE of a closeout. It does not describe what the main agent does after validation passes or fails (mark slice complete, append lessons, evaluate next_moves, trigger replan). That logic is owned by `delivery-orchestration-replan-contract` (see CL-P1 from brainstorm [B] lens rotation). Cross-reference that protocol for the full ingest-to-mutation flow.
 
 ---
 
@@ -140,4 +140,4 @@ This protocol describes the DATA SHAPE of a closeout. It does not describe what 
 
 ## Open questions
 
-None. All threads resolved during meta-process-brainstormer phases [A], [N], and [B].
+None. All threads resolved during brainstorm phases [A], [N], and [B].

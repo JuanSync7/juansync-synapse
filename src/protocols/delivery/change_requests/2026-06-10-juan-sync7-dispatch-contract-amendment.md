@@ -2,7 +2,7 @@
 
 > Artifact type: protocol | Target: `src/protocols/delivery/delivery-orchestration-dispatch-contract.md`
 
-Source meta-process-brainstormer: `.brainstorms/2026-05-31-vertical-slice-planning-stack/` (Artifact 2 — `delivery-execution-coding-contract`, "Dispatch-contract dependency (paired CR)" subsection; Cross-cutting line: "Dispatch-contract needs paired CR: {{worker_protocols}} slot description amended 3→4 bodies; EVAL test updated").
+Source brainstorm: `.brainstorms/2026-05-31-vertical-slice-planning-stack/` (Artifact 2 — `delivery-execution-coding-contract`, "Dispatch-contract dependency (paired CR)" subsection; Cross-cutting line: "Dispatch-contract needs paired CR: {{worker_protocols}} slot description amended 3→4 bodies; EVAL test updated").
 
 ---
 
@@ -55,12 +55,12 @@ Source meta-process-brainstormer: `.brainstorms/2026-05-31-vertical-slice-planni
 
 ## Why
 
-The new protocol `delivery-execution-coding-contract` (created in the same meta-process-brainstormer) defines subagent code-quality discipline (YAGNI, neighbors-first, no-dead-code, fail-loudly, green-tree-exit, security-tripwires) that complements `delivery-execution-tdd-contract`. It MUST be injected into every dispatch alongside the existing three worker protocols, otherwise:
+The new protocol `delivery-execution-coding-contract` (created in the same brainstorm) defines subagent code-quality discipline (YAGNI, neighbors-first, no-dead-code, fail-loudly, green-tree-exit, security-tripwires) that complements `delivery-execution-tdd-contract`. It MUST be injected into every dispatch alongside the existing three worker protocols, otherwise:
 
 - The subagent runs without a code-quality envelope. Speculative abstractions, dead code, swallowed exceptions, fabricated lint passes, and secret leaks all become undetectable at closeout time because the contract that defines those violation signatures was never in the brief.
 - The closeout-schema's new fields (`lint_result`, `dead_code_violations[]`, `neighbors_consulted[]`, etc. — added by the paired closeout-schema CR) have no producer-side contract telling the subagent to populate them.
 
-Earlier meta-process-brainstormer prose claimed "no new wiring" was needed in the dispatch-contract. The [B] lens-rotation pass invalidated that claim: the slot description IS load-bearing wiring (it is the canonical enumeration the orchestrator's EVAL.md asserts against), and the four-body inventory is what guarantees the subagent receives the protocol in its prompt context.
+Earlier brainstorm prose claimed "no new wiring" was needed in the dispatch-contract. The [B] lens-rotation pass invalidated that claim: the slot description IS load-bearing wiring (it is the canonical enumeration the orchestrator's EVAL.md asserts against), and the four-body inventory is what guarantees the subagent receives the protocol in its prompt context.
 
 The pre-flight halt-loud and collision check exist because silent fallback is the dominant failure mode for injection wiring — an absent or duplicated protocol body produces a dispatch that looks well-formed but behaves as if the contract didn't exist.
 

@@ -43,7 +43,7 @@ A new sibling protocol — `delivery-execution-coding-contract` — has been bra
 - Rule 3 (no dead code) needs `dead_code_violations[]` as the structured surface for intake validation.
 - Rule 5 (green-tree exit — lint + typecheck) needs `lint_*` and `typecheck_*` fields, **including command-invoked + exit-code + output-digest evidence**, so a fabricated `pass` claim is detectable at intake rather than at human-review time.
 - The contract's `discipline_deltas` schema mandates that applied exceptions be echoed verbatim — this requires `applied_deltas[]`.
-- `declared_edges[]` closes a separate gap surfaced in the meta-process-brainstormer's Cross-Artifact Sweep: subagents currently can claim cross-slice interface use without a structured surface for the orchestrator to validate against `depends_on`.
+- `declared_edges[]` closes a separate gap surfaced in the brainstorm's Cross-Artifact Sweep: subagents currently can claim cross-slice interface use without a structured surface for the orchestrator to validate against `depends_on`.
 
 Without these fields, the coding-contract's compliance signatures degrade to "trust the subagent's prose," which is exactly the failure mode the closeout schema exists to eliminate (see existing schema's opening paragraph on "subagent invents its own output format").
 

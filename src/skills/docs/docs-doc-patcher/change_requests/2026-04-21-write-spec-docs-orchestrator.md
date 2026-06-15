@@ -6,4 +6,4 @@ Two changes needed in docs-doc-patcher:
 
 2. **`_SPEC_MAP.md` awareness:** docs-spec-writer now produces a companion `_SPEC_MAP.md` file alongside every spec. This contains the document skeleton (headings + anchors) and a knowledge graph index (sections, entities, REQ IDs). When docs-doc-patcher escalates to docs-spec-writer, it should pass the map file path if one exists — docs-spec-writer uses it as the base for update mode.
 
-Source: docs-spec-writer meta-process-brainstormer 2026-04-21
+Source: docs-spec-writer brainstorm 2026-04-21

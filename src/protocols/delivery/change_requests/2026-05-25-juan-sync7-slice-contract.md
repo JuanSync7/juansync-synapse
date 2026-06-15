@@ -166,4 +166,4 @@ The slice-contract enforces a strict read-only posture for the subagent on ticke
 
 ## Open questions
 
-None. All threads were resolved during the meta-process-brainstormer. The exact YAML frontmatter schema for the slice assignment file (field names and types) is flagged as **Resolved (not fleshed)** — the creator should confirm alignment with write-story's story.md frontmatter at companion-file design time, but the four required logical fields are locked.
+None. All threads were resolved during the brainstorm. The exact YAML frontmatter schema for the slice assignment file (field names and types) is flagged as **Resolved (not fleshed)** — the creator should confirm alignment with write-story's story.md frontmatter at companion-file design time, but the four required logical fields are locked.

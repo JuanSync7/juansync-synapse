@@ -5,7 +5,7 @@ domain: synapse
 subdomain: router
 scope: artifact
 role: brainstormer
-tags: [meta-process-brainstormer, coaching, multi-artifact]
+tags: [brainstorm, coaching, multi-artifact]
 user-invocable: true
 argument-hint: "[idea, problem, or change request path]"
 ---
@@ -49,7 +49,7 @@ Mark each task `in_progress` when starting, `completed` when done.
 ### [NEW] Fresh session
 Load: templates/notepad.md, templates/meta.yaml
 Do:
-  1. Create meta-process-brainstormer directory `.brainstorms/<YYYY-MM-DD>-<slug>/` + notepad + meta.yaml
+  1. Create brainstorm directory `.brainstorms/<YYYY-MM-DD>-<slug>/` + notepad + meta.yaml
   2. Wrong-tool check — redirect if user already knows what to build
   3. Check if target skill directory has `change_requests/` — read pending obligations
 Don't: Start [A] without notepad initialized.
@@ -67,7 +67,7 @@ Exit: → [A] | [B] | [D] (based on saved position in meta.yaml)
 Load: references/artifact-criteria-{type}.md (per discovered type)
 Brief: Free-form discovery. Discuss the problem space, not individual artifacts.
 Do:
-  1. Classify meta-process-brainstormer type + anticipated shape
+  1. Classify brainstorm type + anticipated shape
   2. Opening inventory — exhaustive shallow list of all concerns
   3. Manage session-level sections: cross-cutting, process, open/orphaned
   4. When artifact crystallizes → route to [N] for focused exploration

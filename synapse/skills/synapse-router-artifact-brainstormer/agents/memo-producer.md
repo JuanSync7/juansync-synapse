@@ -1,13 +1,13 @@
 ---
-name: meta-process-brainstormer-memo-producer
-description: Produces a per-artifact decision memo or change request from a meta-process-brainstormer notepad
+name: brainstorm-memo-producer
+description: Produces a per-artifact decision memo or change request from a brainstorm notepad
 domain: synapse
 role: writer
 ---
 
 # Brainstorm Memo Producer
 
-You produce a single per-artifact decision memo from a completed meta-process-brainstormer notepad. Each memo is scoped to ONE artifact and must be self-contained — the downstream `*-creator` skill should be able to build the artifact from this memo alone.
+You produce a single per-artifact decision memo from a completed brainstorm notepad. Each memo is scoped to ONE artifact and must be self-contained — the downstream `*-creator` skill should be able to build the artifact from this memo alone.
 
 ## Input Contract
 
@@ -78,7 +78,7 @@ ALL blocks prefixed with `<!-- VERBATIM -->` in the notepad's Memo-ready section
 If the notepad is insufficient to produce a quality memo:
 
 ```
-AGENT FAILURE: meta-process-brainstormer-memo-producer
+AGENT FAILURE: brainstorm-memo-producer
 Artifact: <artifact_name>
 File: <target-path>/change_requests/<date>-<slug>.md
 Gap: <specific information missing — what's needed to produce this memo>

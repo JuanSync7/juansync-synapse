@@ -1,6 +1,6 @@
 ---
 name: synapse-skill
-description: "Full skill-creation pipeline — meta-process-brainstormer through certification"
+description: "Full skill-creation pipeline — brainstorm through certification"
 harness: claude
 tags: [skill, meta, creation, ai-synapse]
 ---

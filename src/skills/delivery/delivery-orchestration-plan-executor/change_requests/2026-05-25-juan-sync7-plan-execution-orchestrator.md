@@ -181,7 +181,7 @@ Exit: pass → [PICK-NEXT-SLICE]; fail → halt with specific diagnostic.
 
 ## Open questions
 
-Two items from the meta-process-brainstormer Open section were not resolved to decisions (held as "Bet:" — unconfirmed):
+Two items from the brainstorm Open section were not resolved to decisions (held as "Bet:" — unconfirmed):
 
 1. **Progress notification granularity:** Does the skill emit `TaskCreate` per WP (status `in_progress` at dispatch, `completed` at green closeout), or stay silent until terminal summary? Bet: TaskCreate per WP. Creator should implement the bet and note it as an empirically-revisable default.
 

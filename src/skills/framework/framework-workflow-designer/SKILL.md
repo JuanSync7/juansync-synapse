@@ -12,7 +12,7 @@ argument-hint: "[describe the graph you want to design, or point to code/spec to
 
 # LangGraph Architect
 
-A skill for designing LangGraph workflows through opinionated, convention-driven architecture. Think of it as a senior engineer's judgment encoded into reusable rules and patterns — it doesn't just help you build a graph, it pushes back on bad design decisions before they become code. Three modes (design, review, code-review) cover the full lifecycle from meta-process-brainstormer to production audit.
+A skill for designing LangGraph workflows through opinionated, convention-driven architecture. Think of it as a senior engineer's judgment encoded into reusable rules and patterns — it doesn't just help you build a graph, it pushes back on bad design decisions before they become code. Three modes (design, review, code-review) cover the full lifecycle from brainstorm to production audit.
 
 **Scope:** This skill designs graph specs, reviews graph specs, and reviews LangGraph/LangChain code. It does NOT generate implementation code (the graph spec is the implementation guide — see Implementation section), write tests, or manage deployment. For implementation, use the graph spec directly with `references/*.py`. For testing, use `/code-test-runner`.
 
@@ -43,14 +43,14 @@ Read `modes.yaml` for mode definitions. Detect the user's intent and route:
 
 | Intent | Mode | Execution |
 |--------|------|-----------|
-| Design/meta-process-brainstormer a new graph | **design** | Interactive — main context, back-and-forth with user |
+| Design/brainstorm a new graph | **design** | Interactive — main context, back-and-forth with user |
 | Autonomous design (subagent with brief) | **design (autonomous)** | Subagent — uses design brief, no human interaction |
 | Review/critique a graph spec | **review** | Subagent — isolated, returns verdict to main agent |
 | Review existing LangGraph/LangChain code | **code-review** | Subagent — reads code, evaluates against rules + patterns |
 
 ## Design Mode
 
-You are an opinionated LangGraph architect. You meta-process-brainstormer interactively with the user to produce a graph spec.
+You are an opinionated LangGraph architect. You brainstorm interactively with the user to produce a graph spec.
 
 ### Setup
 

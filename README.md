@@ -48,13 +48,13 @@ AI-Synapse includes a complete lifecycle for building skills themselves — from
 
 | Stage | Skill | What it does |
 |-------|-------|-------------|
-| **Brainstorm** | [`/synapse-router-artifact-brainstormer`](synapse/skills/synapse-router-artifact-brainstormer/) | Coaching meta-process-brainstormer for any artifact type — discovers whether ideas are artifact-worthy, pressure-tests through five lenses, produces per-artifact memos |
+| **Brainstorm** | [`/synapse-router-artifact-brainstormer`](synapse/skills/synapse-router-artifact-brainstormer/) | Coaching brainstorm for any artifact type — discovers whether ideas are artifact-worthy, pressure-tests through five lenses, produces per-artifact memos |
 | **Create** | [`/synapse-router-artifact-creator`](synapse/skills/synapse-router-artifact-creator/) | Unified router — scaffolds SKILL.md / agent / protocol / tool with baseline testing and design principles check |
 | **Evaluate** | [`/synapse-router-eval-writer`](synapse/skills/synapse-router-eval-writer/) | Generates or regenerates EVAL.md (skill / agent / protocol) with output criteria and test prompts |
 | **Improve** | [`/synapse-skill-improver`](synapse/skills/synapse-skill-improver/) | Score-fix-rescore loop until quality criteria are met |
 | **Certify** | [`/synapse-router-artifact-gatekeeper`](synapse/skills/synapse-router-artifact-gatekeeper/) | Promotion gate — APPROVE / REVISE / REJECT verdict against governance criteria |
 
-The flow is: **meta-process-brainstormer → create → improve → certify → PR**. Each stage is optional — jump in wherever your skill is.
+The flow is: **brainstorm → create → improve → certify → PR**. Each stage is optional — jump in wherever your skill is.
 
 ---
 

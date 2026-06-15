@@ -1,6 +1,6 @@
 # Circuit Breaker
 
-Senses diminishing returns during [B] lens rotation. Without this, meta-process-brainstormer sessions grind past the point of usefulness — the coach keeps rotating lenses mechanically when signal has stopped. Two parts: a **diagnostic** (when to fire) and an **action** (what to do).
+Senses diminishing returns during [B] lens rotation. Without this, brainstorm sessions grind past the point of usefulness — the coach keeps rotating lenses mechanically when signal has stopped. Two parts: a **diagnostic** (when to fire) and an **action** (what to do).
 
 ---
 

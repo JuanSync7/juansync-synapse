@@ -138,7 +138,7 @@ Companions live in `references/`, `templates/`, `agents/`, or `change_requests/`
 - `templates/` — output skeletons used at write nodes
 - `agents/` — symlinks to internal agent recipes
 - `examples/` — worked examples (rare; usually a sign instructions need rewriting)
-- `change_requests/` — historical records of meta-process-brainstormer-driven changes (frozen)
+- `change_requests/` — historical records of brainstorm-driven changes (frozen)
 - `research/`, `test-inputs/`, `PROGRAM.md`, `SCOPE.md`, `EVAL.md` — improvement/migration scaffolding (out of scope for anatomy review)
 
 ---

@@ -10,7 +10,7 @@ version: 2
 # Only stage_name and output_type are required — input_type is absent (no predecessor).
 # Listed here so the dependency resolver can find them when walking requires chains.
 built_ins:
-  - stage_name: meta-process-brainstormer
+  - stage_name: brainstorm
     output_type: design_sketch
 
 registry:
@@ -29,7 +29,7 @@ registry:
                   input_type: design_sketch
                   output_type: formal_spec
                   context_type: spec_review
-                  requires_all: [meta-process-brainstormer]
+                  requires_all: [brainstorm]
                   skippable: true
               - name: docs-spec-summarizer
                 pipeline:
@@ -127,10 +127,10 @@ presets:
   # and type validation. This allows presets to intentionally skip stages whose
   # requires chain would otherwise force inclusion (e.g., bugfix skips spec despite
   # design.requires_all: [spec]).
-  full:     [meta-process-brainstormer, spec, spec-summary, design, impl, code, eng-guide, test-docs, tests]
-  feature:  [meta-process-brainstormer, spec, design, impl, code, eng-guide, test-docs, tests]
-  bugfix:   [meta-process-brainstormer, design, code]
+  full:     [brainstorm, spec, spec-summary, design, impl, code, eng-guide, test-docs, tests]
+  feature:  [brainstorm, spec, design, impl, code, eng-guide, test-docs, tests]
+  bugfix:   [brainstorm, design, code]
   # bugfix drops tests vs v1 — inline tests produced by the code stage suffice for scoped fixes.
   # test-docs requires eng-guide which is not in bugfix scope.
-  docs-only: [meta-process-brainstormer, spec, spec-summary, eng-guide]
+  docs-only: [brainstorm, spec, spec-summary, eng-guide]
   # docs-only intentionally excludes test-docs — produces no test artifacts.

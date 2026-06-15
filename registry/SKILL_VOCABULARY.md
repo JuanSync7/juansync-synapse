@@ -77,7 +77,7 @@ tail of the slug.
 | `repo` | Operates on a whole repository |
 | `page` | Operates on a single web page artifact |
 | `workflow` | Operates on a workflow / state graph |
-| `process` | Operates on a development process (research loop, meta-process-brainstormer session) |
+| `process` | Operates on a development process (research loop, brainstorm session) |
 | `plan` | Operates on a plan-shaped artifact (work-package list, slice graph) |
 | `program` | Operates on a multi-plan delivery program — coordinates writer stages, gates, and the plan-writer→plan-executor handoff across one customer engagement |
 

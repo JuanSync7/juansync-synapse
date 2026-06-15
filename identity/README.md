@@ -10,6 +10,7 @@ Personal identity files consumed by AI agents across all tools. These define **w
 | `SOUL.template.md` | Blank skeleton with guidance for creating your own SOUL.md | *(not installed — repo reference only)* |
 | `STAKEHOLDER.md` | Decision proxy persona: priorities, expertise map, heuristics, red flags, escalation triggers | `~/.claude/stakeholder.md` |
 | `STAKEHOLDER.template.md` | Blank skeleton with guidance for creating your own STAKEHOLDER.md | *(not installed — repo reference only)* |
+| `TONE.md` | Writing voice guide: how agents should sound when drafting or editing on your behalf — voice principles, register dial (Raw / Polished / Formal), do/don't examples | `~/.claude/TONE.md` |
 
 ## Two Consumption Modes
 
@@ -29,6 +30,7 @@ The soul is descriptive (neutral facts about who you are). The consuming agent o
 This creates symlinks:
 - `identity/SOUL.md` → `~/.claude/SOUL.md`
 - `identity/STAKEHOLDER.md` → `~/.claude/stakeholder.md`
+- `identity/TONE.md` → `~/.claude/TONE.md`
 
 If `~/.claude/stakeholder.md` already exists as a regular file, back it up and remove it first — the installer won't overwrite existing files.
 
@@ -46,6 +48,7 @@ If `~/.claude/stakeholder.md` already exists as a regular file, back it up and r
 | File | Scope | Always loaded? | Purpose |
 |------|-------|----------------|---------|
 | `SOUL.md` | Global identity | Yes (via `~/.claude/CLAUDE.md` reference) | Who you are |
+| `TONE.md` | Writing voice | On demand (loaded when an agent drafts/edits prose on your behalf) | How you sound on the page |
 | `stakeholder.md` | Decision gate | No (loaded on demand by the stakeholder review gate) | How you evaluate decisions |
 | `CLAUDE.md` (global) | Behavioral instructions | Yes (auto-loaded by Claude Code) | How Claude should interact with you |
 | `MEMORY.md` | Temporal context | Yes (auto-loaded) | What's happening now, recent learnings |
@@ -54,4 +57,4 @@ SOUL.md and stakeholder.md are **independent** — they overlap in values but se
 
 ## Multi-Agent Use (Future)
 
-In multi-agent meta-process-brainstormer rooms, each agent reads only its own person's SOUL.md — preserving diversity. Agents can swap between Job 1 (emulate) and Job 2 (compensate) mid-session based on what the task needs.
+In multi-agent brainstorm rooms, each agent reads only its own person's SOUL.md — preserving diversity. Agents can swap between Job 1 (emulate) and Job 2 (compensate) mid-session based on what the task needs.

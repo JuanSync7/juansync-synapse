@@ -4,4 +4,4 @@ docs-spec-writer now produces a companion `_SPEC_MAP.md` alongside every spec. T
 
 For docs-spec-summarizer, this map may be sufficient to generate the summary without reading the full spec — or at minimum, it can guide which sections to read in detail vs. skim. This could reduce token cost and improve summary accuracy by starting from the structural index rather than parsing the full document.
 
-Source: docs-spec-writer meta-process-brainstormer 2026-04-21
+Source: docs-spec-writer brainstorm 2026-04-21

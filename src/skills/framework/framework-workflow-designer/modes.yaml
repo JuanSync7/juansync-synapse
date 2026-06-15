@@ -6,7 +6,7 @@ modes:
     trigger:
       - "design a graph"
       - "build a langgraph"
-      - "meta-process-brainstormer a workflow"
+      - "brainstorm a workflow"
       - "architect a pipeline"
       - "plan a graph"
     role: interactive  # runs in main context, back-and-forth with user

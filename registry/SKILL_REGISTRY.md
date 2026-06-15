@@ -35,7 +35,7 @@ Schema: see [registry/README.md](README.md).
 | [docs-coverage-writer](../src/skills/docs/docs-coverage-writer/SKILL.md) | Test coverage register mapping acceptance criteria to test scenarios | stable | — |
 | [docs-postmortem-writer](../src/skills/docs/docs-postmortem-writer/SKILL.md) | Structured blameless postmortem document from incident facts | stable | — |
 | [docs-doc-router](../src/skills/docs/docs-doc-router/SKILL.md) | Router directing to docs-spec-summarizer, docs-spec-writer, or docs-engineering-guide-writer | stable | — |
-| [meta-process-brainstormer](../src/skills/meta/meta-process-brainstormer/SKILL.md) | Generic meta-process-brainstormer protocol with indexed notepad, phase gates, and mentor circuit breaker | stable | — |
+| [meta-process-brainstormer](../src/skills/meta/meta-process-brainstormer/SKILL.md) | Generic brainstorm protocol with indexed notepad, phase gates, and mentor circuit breaker | stable | — |
 | [optimization-process-researcher](../src/skills/optimization/optimization-process-researcher/SKILL.md) | Autonomous iterative improvement loop with subagent-per-iteration execution | stable | — |
 | [framework-workflow-designer](../src/skills/framework/framework-workflow-designer/SKILL.md) | Design, review, or code-review LangGraph workflow graphs | stable | — |
 | [creative-page-animator](../src/skills/creative/creative-page-animator/SKILL.md) | Single-page interactive animation as one HTML file with embedded CSS/JS | draft | — |

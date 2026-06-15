@@ -169,4 +169,4 @@ Full threshold set lives in `src/skills/docs/docs-claim-shrinker/references/thre
 
 ## Open questions
 
-None — all threads resolved during meta-process-brainstormer lens rotation.
+None — all threads resolved during brainstorm lens rotation.

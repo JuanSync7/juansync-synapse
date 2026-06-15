@@ -23,7 +23,7 @@ Two kinds of agents serve different purposes:
 
 | Type | Lives in | Purpose | Example |
 |------|----------|---------|---------|
-| **Offloading** (tier 1) | Skill's `agents/` dir | Parallelizes part of one skill's work | `memo-producer` dispatched by meta-process-brainstormer skill |
+| **Offloading** (tier 1) | Skill's `agents/` dir | Parallelizes part of one skill's work | `memo-producer` dispatched by brainstorm skill |
 | **Shared** (tier 3) | `src/agents/<domain>/` | Reusable capability across multiple skills | `protocol-review-agent` used by protocol-creator and synapse-router-artifact-gatekeeper |
 
 Start as tier 1. Promote to tier 3 only when a second consumer appears. Premature sharing creates coupling without benefit.

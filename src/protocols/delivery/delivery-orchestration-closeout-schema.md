@@ -91,7 +91,7 @@ Main agent rejects the closeout (routes to `delivery-orchestration-replan-contra
 
 ## Ingestion Semantics — Scoped Out
 
-This protocol defines the **data shape** of a closeout and the **write contract** that produces it. It does NOT define what the main agent does after intake (mark slice complete, append lessons, evaluate `next_moves`, mutate plan, log to CHANGELOG). That logic is owned by `delivery-orchestration-replan-contract` (per **CL-P1** from meta-process-brainstormer). Readers seeking the ingest-to-mutation flow must cross-reference that protocol.
+This protocol defines the **data shape** of a closeout and the **write contract** that produces it. It does NOT define what the main agent does after intake (mark slice complete, append lessons, evaluate `next_moves`, mutate plan, log to CHANGELOG). That logic is owned by `delivery-orchestration-replan-contract` (per **CL-P1** from brainstorm). Readers seeking the ingest-to-mutation flow must cross-reference that protocol.
 
 ## Extends `synapse-observability-execution-trace`
 

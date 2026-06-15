@@ -31,4 +31,4 @@ Push back with the specific failing items named:
 
 > "These items are unresolved: [list]. Producing memos now would create incomplete handoffs to the creator skills. Let's address [specific item] first — it should take [estimated turns]."
 
-The Done Signal is the coach's honest judgment that no major flaws remain. Firing it early undermines the entire meta-process-brainstormer's value.
+The Done Signal is the coach's honest judgment that no major flaws remain. Firing it early undermines the entire brainstorm's value.

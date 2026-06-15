@@ -82,7 +82,7 @@
 
 ## Naming conventions
 
-<!-- Include only if naming decisions were made during the meta-process-brainstormer.
+<!-- Include only if naming decisions were made during the brainstorm.
      Pattern, segment breakdown, taxonomy source, examples. -->
 
 ---
@@ -119,5 +119,5 @@
 ## Open questions
 
 <!-- Remaining uncertainties for the creator to focus on.
-     "None" if all threads were resolved during the meta-process-brainstormer.
+     "None" if all threads were resolved during the brainstorm.
      Each item here tells the creator "don't re-check everything — focus here." -->

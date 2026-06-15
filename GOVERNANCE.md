@@ -330,7 +330,7 @@ Change requests serve two roles: **scope control** (defer out-of-scope changes) 
 When brainstorming or improving a skill reveals that another skill, agent, protocol, tool, or pathway needs updating, drop a change request file in the affected target's `change_requests/` folder rather than expanding scope.
 
 - **One file per change**, named `YYYY-MM-DD-short-description.md`
-- **Content:** what needs to change, why, and which meta-process-brainstormer/skill triggered it. Free-form markdown — no enforced template. Must be self-contained — meta-process-brainstormer notepads are working memory (`.brainstorms/`, gitignored) and do not ship with the CR.
+- **Content:** what needs to change, why, and which brainstorm/skill triggered it. Free-form markdown — no enforced template. Must be self-contained — brainstorm notepads are working memory (`.brainstorms/`, gitignored) and do not ship with the CR.
 - **Consumed by** `/synapse-router-artifact-brainstormer` — it checks for `change_requests/` on entry and incorporates pending requests as context.
 - **Lifecycle:** contributor creates the CR on a feature branch → artifact owner reviews the CR + implementation diff on the PR to `develop` → owner deletes the CR file on acceptance and merges → `develop` → `main` PR is blocked if any CR files remain. An empty `change_requests/` folder (or no folder) means no pending obligations.
 

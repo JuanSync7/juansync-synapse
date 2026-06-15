@@ -118,7 +118,7 @@ to find the most recent completed stage's output.
 
 **Bad:**
 ```markdown
-If spec is skipped, pass meta-process-brainstormer output to design.
+If spec is skipped, pass brainstorm output to design.
 If design is skipped, pass spec output to impl.
 If impl is skipped, pass design output to code.
 ```
@@ -155,13 +155,13 @@ Always write clean, well-organized YAML files with proper indentation.
 
 **Good:**
 ```markdown
-> **Read [`meta-process-brainstormer-phase.md`](meta-process-brainstormer-phase.md)** when entering the
+> **Read [`brainstorm-phase.md`](brainstorm-phase.md)** when entering the
 brainstorming stage.
 ```
 *Brainstorm details loaded only when needed. SKILL.md stays focused on orchestration.*
 
 **Bad:**
-A 400-line SKILL.md that inlines the full meta-process-brainstormer protocol, stakeholder review
+A 400-line SKILL.md that inlines the full brainstorm protocol, stakeholder review
 protocol, and escalation handler — all always loaded even when the agent is in
 Phase 0 initialization.
 

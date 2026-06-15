@@ -76,7 +76,7 @@ The protocol body MUST NOT name any specific test framework (no pytest, jest, go
 
 ### Three facets, one protocol
 
-TDD + Ralph + validable-end-goal are NOT three separate protocols. Structural decision #3 from the meta-process-brainstormer: the validable end-goal IS the failing test (TDD red); Ralph IS the iterate-until-green wrapper; inner TDD IS red-green-refactor per iteration of that wrapper. Collapsing into one protocol avoids a multi-protocol injection burden on every dispatch and eliminates the risk that any one facet is omitted.
+TDD + Ralph + validable-end-goal are NOT three separate protocols. Structural decision #3 from the brainstorm: the validable end-goal IS the failing test (TDD red); Ralph IS the iterate-until-green wrapper; inner TDD IS red-green-refactor per iteration of that wrapper. Collapsing into one protocol avoids a multi-protocol injection burden on every dispatch and eliminates the risk that any one facet is omitted.
 
 ---
 
@@ -129,4 +129,4 @@ Violation (d) is the cheating signature. It cannot be auto-resolved by replan â€
 
 ## Open questions
 
-None. All threads resolved during meta-process-brainstormer lens rotation (TC-B1 locked iteration cap as skill-overridable; "Ralph adds over plain TDD" rationale confirmed turn 10; framework-agnostic confirmed at lens rotation; cheating signature confirmed as human-review flag).
+None. All threads resolved during brainstorm lens rotation (TC-B1 locked iteration cap as skill-overridable; "Ralph adds over plain TDD" rationale confirmed turn 10; framework-agnostic confirmed at lens rotation; cheating signature confirmed as human-review flag).

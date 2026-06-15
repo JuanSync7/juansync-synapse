@@ -43,7 +43,7 @@ Exit:
 ### [U] — understand goal
 Brief: Self-loops until all gate conditions pass. If a decision memo from `/synapse-router-artifact-brainstormer` exists, evaluate against gates — fill gaps only; do not re-derive what the memo already decided.
 Do:
-  1. If memo provided with VERBATIM blocks (flow graphs, node specs), use as starting point — pressure-tested during meta-process-brainstormer
+  1. If memo provided with VERBATIM blocks (flow graphs, node specs), use as starting point — pressure-tested during brainstorm
   2. Identify trigger conditions (routing contract for `description:`)
   3. Define primary output artifact and its format
   4. Check SKILL_REGISTRY.md for sibling skills with overlapping scope
