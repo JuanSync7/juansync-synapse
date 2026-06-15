@@ -1,0 +1,185 @@
+/* Design tokens — minimalist modern tech (light, Stripe-like). See docs/web/DESIGN.md.
+   The token NAMES are a stable Tailwind contract used across every page
+   (bg-ink, text-synapse, font-display, …); the redesign remaps their VALUES
+   to the light palette so the whole look shifts centrally. Names are legacy:
+   `ink` = page canvas, `surface` = card, `synapse` = the violet accent,
+   `signal` = amber (warn/draft), `membrane` = red (error). `code` = the one
+   dark surface, kept dark for code/terminal contrast even on a light UI. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300..700&family=JetBrains+Mono:wght@400..600&display=swap');
+@import 'tailwindcss';
+
+:root {
+  --ink: #ffffff;
+  --surface: #f7f8fa;
+  --line: #e6e8ec;
+  --text: #1a1d21;
+  --muted: #6b7280;
+  --synapse: #5b5bd6;
+  --signal: #b45309;
+  --membrane: #dc2626;
+  --code: #14161a;
+}
+
+/* Expose tokens to Tailwind v4 utilities (bg-ink, text-synapse, font-display, …). */
+@theme {
+  --color-ink: #ffffff;
+  --color-surface: #f7f8fa;
+  --color-line: #e6e8ec;
+  --color-text: #1a1d21;
+  --color-muted: #6b7280;
+  --color-synapse: #5b5bd6;
+  --color-signal: #b45309;
+  --color-membrane: #dc2626;
+  --color-code: #14161a;
+  --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', monospace;
+}
+
+body {
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+}
+
+/* --- Section divider (formerly the dendrite motif; now a plain hairline) ---
+   The component API (DendriteRule) is unchanged; the motif is stripped to a
+   quiet rule per the minimalist redesign. */
+.dendrite {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: var(--line);
+}
+
+/* --- Staggered fade-rise for list mounts (kept; subtle) --- */
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-rise {
+  opacity: 0;
+  animation: fade-rise 360ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-rise {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* --- Rendered markdown (SKILL.md bodies, memos) — light typography --- */
+.prose-lab {
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+.prose-lab h1,
+.prose-lab h2,
+.prose-lab h3,
+.prose-lab h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #0f1115;
+  line-height: 1.25;
+  margin: 1.6em 0 0.5em;
+}
+.prose-lab h1 {
+  font-size: 1.8rem;
+}
+.prose-lab h2 {
+  font-size: 1.4rem;
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--line);
+}
+.prose-lab h3 {
+  font-size: 1.12rem;
+}
+.prose-lab p,
+.prose-lab ul,
+.prose-lab ol,
+.prose-lab blockquote,
+.prose-lab table {
+  margin: 0.85em 0;
+}
+.prose-lab ul,
+.prose-lab ol {
+  padding-left: 1.4em;
+}
+.prose-lab li {
+  margin: 0.25em 0;
+}
+.prose-lab ul li::marker {
+  color: var(--synapse);
+}
+.prose-lab a {
+  color: var(--synapse);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--synapse) 35%, transparent);
+}
+.prose-lab a:hover {
+  border-bottom-color: var(--synapse);
+}
+.prose-lab code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+  color: #4338ca;
+}
+.prose-lab pre {
+  font-family: var(--font-mono);
+  background: var(--code);
+  border: 1px solid var(--code);
+  border-radius: 10px;
+  padding: 1em 1.1em;
+  overflow-x: auto;
+  font-size: 0.85rem;
+}
+.prose-lab pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #e6e8ec;
+}
+.prose-lab blockquote {
+  border-left: 2px solid var(--synapse);
+  padding-left: 1em;
+  color: var(--muted);
+}
+.prose-lab table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.prose-lab th,
+.prose-lab td {
+  border: 1px solid var(--line);
+  padding: 0.45em 0.7em;
+  text-align: left;
+}
+.prose-lab th {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface);
+}
+.prose-lab hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 1.8em 0;
+}
