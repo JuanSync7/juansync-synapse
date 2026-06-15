@@ -72,6 +72,9 @@ export function safeWrite(
   );
   fs.writeFileSync(tmp, content, 'utf8');
   try {
+    // Rename into the already-validated real dir (realTargetDir), NOT the
+    // possibly-symlinked original absTarget — keeps the final file inside the
+    // containment boundary checked above.
     fs.renameSync(tmp, path.join(realTargetDir, path.basename(absTarget)));
   } catch (err) {
     // Clean up the temp file on a failed rename so we never leave litter.

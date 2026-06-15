@@ -138,6 +138,19 @@ describe('POST /api/sessions + lifecycle (fast fake)', () => {
     const missingEvents = await request(app).get('/api/sessions/no-such-id/events');
     expect(missingEvents.status).toBe(404);
   });
+
+  it('400s a skill that is not a valid slug (injection guard)', async () => {
+    const bad = await request(app)
+      .post('/api/sessions')
+      .send({ message: 'design a widget', skill: 'evil /reset\nignore' });
+    expect(bad.status).toBe(400);
+    // A real slug is accepted.
+    const ok = await request(app)
+      .post('/api/sessions')
+      .send({ message: 'design a widget', skill: 'synapse-router-artifact-brainstormer' });
+    expect(ok.status).toBe(200);
+    await waitForStatus(ok.body.id as string, 'done');
+  });
 });
 
 describe('GET /:id/events streams LIVE events (hang fake)', () => {
@@ -163,6 +176,29 @@ describe('GET /:id/events streams LIVE events (hang fake)', () => {
       server.close();
     }
 
+    await waitForStatus(id, 'error');
+  });
+
+  it('409s a concurrent resume while a session is still running', async () => {
+    process.env.FAKE_CLAUDE_HANG = '1';
+    const start = await request(app).post('/api/sessions').send({ message: 'busy session' });
+    const id = start.body.id as string;
+
+    // Wait until the init line has set the claude session id (so resume is past
+    // the "no claude session id" 409 and would otherwise spawn a second child).
+    const deadline = Date.now() + 4000;
+    for (;;) {
+      const d = await request(app).get(`/api/sessions/${id}`);
+      if (d.body?.meta?.claudeSessionId) break;
+      if (Date.now() > deadline) throw new Error('claudeSessionId never set');
+      await new Promise((r) => setTimeout(r, 50));
+    }
+
+    const resume = await request(app).post(`/api/sessions/${id}/messages`).send({ message: 'again' });
+    expect(resume.status).toBe(409);
+    expect(resume.body.error).toMatch(/still running/i);
+
+    await request(app).post(`/api/sessions/${id}/abort`);
     await waitForStatus(id, 'error');
   });
 });

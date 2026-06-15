@@ -232,9 +232,16 @@ function spawnClaude(args: SpawnArgs): ActiveSession {
   });
 
   child.on('error', (err) => {
+    // `error` and `exit` are independent: a spawn failure (e.g. ENOENT because
+    // the `claude` binary isn't on PATH) fires `error` but NOT `exit`. Without
+    // this cleanup the write-stream + readline leak an fd and the registry
+    // entry stays 'running' forever. Close everything and deregister here.
+    rl.close();
+    out.end();
     meta.status = 'error';
     writeMeta(sessionDir, meta);
     emitter.emit('event', { type: 'error', data: { message: err.message } });
+    registry.delete(id);
   });
 
   child.on('exit', (code, signal) => {

@@ -45,6 +45,15 @@ export function sessionsRouter(repoRoot: string): ExpressRouter {
       res.status(400).json({ error: 'Body must include a non-empty `message`.' });
       return;
     }
+    // A caller-supplied skill must be a real slug ([a-z0-9-]) — it is prepended
+    // to the prompt as `/<skill> …`, so an unconstrained value could inject a
+    // malformed/adversarial directive past the brainstormer framing.
+    if (body.skill !== undefined && body.skill !== '') {
+      if (typeof body.skill !== 'string' || !/^[a-z0-9-]+$/.test(body.skill)) {
+        res.status(400).json({ error: '`skill` must be a slug matching [a-z0-9-].' });
+        return;
+      }
+    }
     const skill = typeof body.skill === 'string' && body.skill !== '' ? body.skill : BRAINSTORM_SKILL;
     const prompt = effectivePrompt(body.message, skill);
     const session = startSession({ repoRoot, prompt, sessionDir, title: body.message.trim() });
@@ -130,6 +139,13 @@ export function sessionsRouter(repoRoot: string): ExpressRouter {
     }
     if (!meta.claudeSessionId) {
       res.status(409).json({ error: 'Session has no claude session id yet — cannot resume.' });
+      return;
+    }
+    // Guard against a concurrent resume: spawning a second child for the same id
+    // clobbers the registry entry and orphans the in-flight process (it keeps
+    // running, writes the shared transcript, and fires events no route hears).
+    if (getActiveSession(id)) {
+      res.status(409).json({ error: 'Session is still running — wait for the current turn to finish.' });
       return;
     }
     resumeSession({
