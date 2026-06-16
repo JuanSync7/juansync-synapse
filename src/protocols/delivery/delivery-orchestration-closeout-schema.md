@@ -70,8 +70,8 @@ A closeout passes intake validation when **all** hold:
 5. `files_modified` ⊆ slice's declared `touches` (cross-referenced with slice-contract).
 6. `validable_outcome` is verbatim from the assignment.
 7. Closeout file exists at `.delivery/closeouts/<slice_id>-attempt-<attempt_number>.yaml` with identical content to the inline block.
-8. **Lint/typecheck evidence consistent.** `lint_result` and `typecheck_result` are present; when either is `pass | fail`, the corresponding `*_command_invoked` and `*_exit_code` are populated.
-9. **`applied_deltas` matches `discipline_deltas` injected at dispatch time** (verbatim subset check against the dispatch prompt's `{{discipline_deltas}}` slot).
+8. **Lint/typecheck evidence consistent.** `lint_result` and `typecheck_result` are present; when either is `pass | fail`, the corresponding `*_command_invoked` and `*_exit_code` are populated; additionally `lint_output_digest` is populated when `lint_result ∈ {pass, fail}` (anti-fabrication evidence).
+9. **`applied_deltas` matches the `discipline_deltas` injected at dispatch time** (verbatim subset check against the deltas the orchestrator pre-authorized for this dispatch per delivery-execution-coding-contract rule 7).
 
 ## Violation Signatures
 

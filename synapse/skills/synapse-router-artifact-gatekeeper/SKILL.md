@@ -88,7 +88,7 @@ TaskCreate "Phase 6 — Record verdict (skill flow, APPROVE only)"
 
 **Pathway flow — read:**
 - The pathway `.yaml` file itself
-- > **Read [`../../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../../taxonomy/PATHWAY_TAXONOMY.md)** for harness values and naming conventions
+- > **Read [`../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../taxonomy/PATHWAY_TAXONOMY.md)** for harness values and naming conventions
 
 **Score precondition check (skill flow only):** If `--score` is not provided, ask before proceeding: "Do you have an eval score from `/synapse-skill-improver` or `/optimization-process-researcher`? A missing score caps the verdict at REVISE." DO NOT run all phases only to report this at the end.
 
@@ -114,7 +114,7 @@ TaskCreate "Phase 6 — Record verdict (skill flow, APPROVE only)"
 
 ### Skill flow
 
-> **Read [`../../../../taxonomy/SKILL_TAXONOMY.md`](../../../../taxonomy/SKILL_TAXONOMY.md)** to validate `domain` and `intent` values against the controlled vocabulary.
+> **Read [`../../../taxonomy/SKILL_TAXONOMY.md`](../../../taxonomy/SKILL_TAXONOMY.md)** to validate `domain` and `intent` values against the controlled vocabulary.
 
 | Check | Pass condition |
 |-------|---------------|
@@ -141,7 +141,7 @@ Use the checklist from `references/protocol-checklist.md` (loaded in Phase 1). V
 
 ### Tool flow
 
-> **Read [`../../../../taxonomy/TOOL_TAXONOMY.md`](../../../../taxonomy/TOOL_TAXONOMY.md)** to validate `domain`, `action`, and `type` values against the controlled vocabulary.
+> **Read [`../../../taxonomy/TOOL_TAXONOMY.md`](../../../taxonomy/TOOL_TAXONOMY.md)** to validate `domain`, `action`, and `type` values against the controlled vocabulary.
 
 | Check | Pass condition |
 |-------|---------------|
@@ -156,7 +156,7 @@ Use the checklist from `references/protocol-checklist.md` (loaded in Phase 1). V
 
 ### Pathway flow
 
-> **Read [`../../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../../taxonomy/PATHWAY_TAXONOMY.md)** to validate `harness` value against the controlled vocabulary.
+> **Read [`../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../taxonomy/PATHWAY_TAXONOMY.md)** to validate `harness` value against the controlled vocabulary.
 
 | Check | Pass condition |
 |-------|---------------|
@@ -218,8 +218,8 @@ Use the Tier 2 (Conformance) checks from `references/protocol-checklist.md`.
 
 **Agent, protocol, tool, and pathway flows skip this phase entirely** — their registry checks are handled in Phase 2.
 
-> **Read [`../../../../registry/SKILL_REGISTRY.md`](../../../../registry/SKILL_REGISTRY.md)** to verify the skill has an inventory row.
-> **Read [`../../../SKILLS_REGISTRY.yaml`](../../../SKILLS_REGISTRY.yaml)** to verify pipeline stage registration (pipeline-routable skills only).
+> **Read [`../../../registry/SKILL_REGISTRY.md`](../../../registry/SKILL_REGISTRY.md)** to verify the skill has an inventory row.
+> **Read [`../../SKILLS_REGISTRY.yaml`](../../SKILLS_REGISTRY.yaml)** to verify pipeline stage registration (pipeline-routable skills only).
 
 A skill is **pipeline-routable** if it: (a) consumes a defined artifact type, (b) produces a defined artifact type, and (c) other skills in the registry depend on its output via `requires_all` or `requires_any`.
 
@@ -235,7 +235,7 @@ A skill is **pipeline-routable** if it: (a) consumes a defined artifact type, (b
 
 ## Phase 5 — Verdict and Report
 
-> **Read [`../../../../GOVERNANCE.md`](../../../../GOVERNANCE.md)** for authoritative REVISE vs. REJECT classification.
+> **Read [`../../../GOVERNANCE.md`](../../../GOVERNANCE.md)** for authoritative REVISE vs. REJECT classification.
 
 **Verdict rules:**
 

@@ -6,7 +6,7 @@ subdomain: execution
 subject: coding
 kind: contract
 version: 1
-status: stable
+status: draft
 tags: [code-quality, yagni, lint-typecheck, security-tripwires, subagent-discipline]
 ---
 
@@ -20,7 +20,7 @@ Without this contract, subagent workers ship speculative abstractions, neighbor-
 
 2. **Read neighbors first.** BEFORE editing any file in `files_modified`, MUST identify and read at least one sibling file in the same module that defines the matching idiom (style, naming, error-handling). AFTER completing the slice, MUST populate `neighbors_consulted: [<file paths>]` in the closeout with the files read. If the field is absent or empty, STOP and route to replan with reason `neighbors_unconsulted`.
 
-3. **No dead code.** BEFORE writing the closeout, MUST scan the `files_modified` diff for commented-out code. A commented-out code block is two or more consecutive lines matching `^\s*[#//]\s*[a-zA-Z_]+\s*[=(.]`, excluding lines containing `TODO`, `FIXME`, `noqa`, or `type:ignore`. If any block matches, MUST populate `dead_code_violations: [<file:line ranges>]` in the closeout. Any non-empty value rejects the closeout; route to replan.
+3. **No dead code.** BEFORE writing the closeout, MUST scan the `files_modified` diff for commented-out code. A commented-out code block is two or more consecutive lines matching `^\s*[#//]\s*[a-zA-Z_]+\s*[=(.]`, excluding lines containing `TODO`, `FIXME`, `noqa`, or `type:ignore`. If any block matches, MUST populate `dead_code_violations: [{path, line, snippet}]` in the closeout (the shape defined by delivery-orchestration-closeout-schema). Any non-empty value rejects the closeout; route to replan.
 
 4. **Fail loudly.** DO NOT introduce bare except / catch-and-ignore in `files_modified`. The diff MUST NOT contain `except:\s*pass`, `except\s+Exception:\s*pass`, `rescue\s*=>\s*nil`, or `catch\s*\(\s*_+\s*\)\s*{\s*}`. AFTER each file edit, MUST re-scan the patched lines for these patterns. On match, STOP and route to replan with reason `silent_failure`.
 
