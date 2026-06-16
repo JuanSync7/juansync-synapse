@@ -75,7 +75,7 @@ usage() {
     echo "Claude Code:"
     echo "  install <path...>   Install skills to ~/.claude/skills/"
     echo "  agents              Install agent definitions to ~/.claude/agents/"
-    echo "  identity            Install identity files (SOUL.md, stakeholder.md)"
+    echo "  identity            Install identity files (SOUL.md, stakeholder.md, TONE.md)"
     echo "  zip <path...>       Package skills as .zip for Claude Desktop"
     echo "  clean               Remove all installed symlinks (all harnesses)"
     echo ""

@@ -10,6 +10,9 @@ Personal identity files consumed by AI agents across all tools. These define **w
 | `SOUL.template.md` | Blank skeleton with guidance for creating your own SOUL.md | *(not installed — repo reference only)* |
 | `STAKEHOLDER.md` | Decision proxy persona: priorities, expertise map, heuristics, red flags, escalation triggers | `~/.claude/stakeholder.md` |
 | `STAKEHOLDER.template.md` | Blank skeleton with guidance for creating your own STAKEHOLDER.md | *(not installed — repo reference only)* |
+| `TONE.md` | Writing voice guide: how agents should sound when drafting or editing on your behalf — voice principles, register dial (Raw / Polished / Formal), do/don't examples | `~/.claude/TONE.md` |
+| `research-format.md` | Worked reference: format spec for auto-research output (`iterations.tsv` + `changelog.md`) — kept here as a voice/format example | *(not installed — repo reference only)* |
+| `linkedin_post_research_format.md` | Worked example of TONE.md applied to public register — a LinkedIn post drafted in-voice | *(not installed — repo reference only)* |
 
 ## Two Consumption Modes
 

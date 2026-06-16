@@ -170,9 +170,9 @@ cmd_install_identity() {
     local count=0
 
     # Files to install: source_name -> target_name
-    # SOUL.template.md is excluded (repo-only, not installed)
-    local src_files=("SOUL.md" "STAKEHOLDER.md")
-    local tgt_files=("SOUL.md" "stakeholder.md")
+    # SOUL.template.md / STAKEHOLDER.template.md are excluded (repo-only, not installed)
+    local src_files=("SOUL.md" "STAKEHOLDER.md" "TONE.md")
+    local tgt_files=("SOUL.md" "stakeholder.md" "TONE.md")
 
     for i in "${!src_files[@]}"; do
         local src="$IDENTITY_DIR/${src_files[$i]}"
