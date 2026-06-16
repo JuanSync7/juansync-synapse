@@ -10,34 +10,46 @@
   - Fail signal: Pass condition does not hold
 
 - [ ] **EVAL-S02:** Frontmatter complete
-  - Verify: `name`, `description`, `domain`, `type` all present
+  - Verify: `name`, `description`, `domain`, `subdomain`, `subject`, `kind`, `version` all present
   - Fail signal: Pass condition does not hold
 
-- [ ] **EVAL-S03:** `domain` in PROTOCOL_TAXONOMY.md
-  - Verify: Value matches a row in PROTOCOL_TAXONOMY.md
+- [ ] **EVAL-S03:** `domain` in PROTOCOL_VOCABULARY.md
+  - Verify: Value matches a row in the `## Domains` section of `registry/PROTOCOL_VOCABULARY.md`
   - Fail signal: Pass condition does not hold
 
-- [ ] **EVAL-S04:** `type` in PROTOCOL_TAXONOMY.md
-  - Verify: Value matches a row in PROTOCOL_TAXONOMY.md
+- [ ] **EVAL-S04:** `subdomain` in PROTOCOL_VOCABULARY.md
+  - Verify: Value matches a row in the `## Subdomains` section of `registry/PROTOCOL_VOCABULARY.md`
   - Fail signal: Pass condition does not hold
 
-- [ ] **EVAL-S05:** `tags` well-formed
+- [ ] **EVAL-S05:** `subject` in PROTOCOL_VOCABULARY.md
+  - Verify: Value matches a row in the `## Subjects` section of `registry/PROTOCOL_VOCABULARY.md`
+  - Fail signal: Pass condition does not hold
+
+- [ ] **EVAL-S06:** `kind` in PROTOCOL_VOCABULARY.md
+  - Verify: Value matches a row in the `## Kinds` section of `registry/PROTOCOL_VOCABULARY.md`
+  - Fail signal: Pass condition does not hold
+
+- [ ] **EVAL-S07:** `version` well-formed
+  - Verify: Integer ≥ 1
+  - Fail signal: Pass condition does not hold
+
+- [ ] **EVAL-S08:** `tags` well-formed
   - Verify: Array of lowercase hyphenated strings
   - Fail signal: Pass condition does not hold
 
-- [ ] **EVAL-S06:** Mental model paragraph present
+- [ ] **EVAL-S09:** Mental model paragraph present
   - Verify: One paragraph after the heading explaining WHY the protocol exists
   - Fail signal: Pass condition does not hold
 
-- [ ] **EVAL-S07:** Contract section present
+- [ ] **EVAL-S10:** Contract section present
   - Verify: Section with imperative rules (MUST/NEVER/BEFORE/AFTER) — behavioral or schema-based
   - Fail signal: Pass condition does not hold
 
-- [ ] **EVAL-S08:** Failure assertion present
+- [ ] **EVAL-S11:** Failure assertion present
   - Verify: Protocol contains a `PROTOCOL FAILURE: [protocol-name] — [reason]` instruction
   - Fail signal: Pass condition does not hold
 
-- [ ] **EVAL-S09:** Domain README has row
+- [ ] **EVAL-S12:** Domain README has row
   - Verify: Domain `README.md` contains a row linking this protocol
   - Fail signal: Pass condition does not hold
 
