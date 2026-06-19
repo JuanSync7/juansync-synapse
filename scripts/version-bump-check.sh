@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# @name: version-bump-check
+# @description: CI gate asserting a PR's bump:* label matches the mechanical classification of its diff
+# @audience: automation
+# @action: release
+# @scope: repo
 # version-bump-check.sh — CI gate that asserts a PR's bump label matches
 # the mechanical classification of its diff.
 #

@@ -11,13 +11,13 @@ tags: []
 
 # docs-claim-doc-writer
 
-Rewrite-stage agent in the `docs-claim-doc-shrinker` compress workflow. Given a fixed `kept_claims` list (the post-audit retention set), the original document, and — only for `style` sub-type docs — 3–5 voice anchor sentences, it recomposes the document so every kept claim is asserted while every source heading is preserved. The writer never self-verifies entailment; the sibling `docs-claim-claim-judge` owns that downstream gate. Style anchors are cadence/diction guidance only and must never be interpreted as content to include.
+Rewrite-stage agent in the `docs-claim-shrinker` compress workflow. Given a fixed `kept_claims` list (the post-audit retention set), the original document, and — only for `style` sub-type docs — 3–5 voice anchor sentences, it recomposes the document so every kept claim is asserted while every source heading is preserved. The writer never self-verifies entailment; the sibling `docs-claim-claim-judge` owns that downstream gate. Style anchors are cadence/diction guidance only and must never be interpreted as content to include.
 
 ## Input Contract
 
 | Input | Type | Required | Description |
 |-------|------|----------|-------------|
-| `kept_claims` | `[Claim]` | yes | Ordered list of Claim objects to assert. Schema in `src/skills/docs/docs-claim-doc-shrinker/references/claim-schema.md`. Empty list is a structured error, not a no-op. |
+| `kept_claims` | `[Claim]` | yes | Ordered list of Claim objects to assert. Schema in `src/skills/docs/docs-claim-shrinker/references/claim-schema.md`. Empty list is a structured error, not a no-op. |
 | `original_doc` | string | yes | Full source markdown. Used for heading set (authoritative) and as length floor reference. |
 | `voice_anchors` | `[string]` | no | 3–5 verbatim sentences sampled from `original_doc`. REQUIRED iff caller declares the doc sub-type is `style`; MUST be absent for other sub-types. |
 | `sub_type` | `identity \| style \| principle \| decision` | yes | Drives whether `voice_anchors` is consulted. |
@@ -81,6 +81,6 @@ A clear failure report is more valuable than a partial or ambiguous result. Do N
 
 **Date:** 2026-08-13 (3 months from creation).
 
-**Action:** Per design doc §12 (Accepted Tensions), this agent is the most tightly coupled of the four `docs-claim-doc-shrinker` siblings to the orchestrating skill. If by 2026-08-13 no second consumer beyond `docs-claim-doc-shrinker` has emerged, demote this agent to an inline prompt inside the shrinker and remove the standalone file.
+**Action:** Per design doc §12 (Accepted Tensions), this agent is the most tightly coupled of the four `docs-claim-shrinker` siblings to the orchestrating skill. If by 2026-08-13 no second consumer beyond `docs-claim-shrinker` has emerged, demote this agent to an inline prompt inside the shrinker and remove the standalone file.
 
 **Tracker:** Issue #30.

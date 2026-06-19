@@ -2,7 +2,7 @@
 
 ## Structural Criteria
 
-(From synapse-skill-skill-improver's baseline checklist — no need to duplicate here)
+(From synapse-skill-improver's baseline checklist — no need to duplicate here)
 
 ## Execution Criteria
 
@@ -43,7 +43,7 @@
   - **Fail signal:** All lens reference files appear as a batch read at the start of [B], or a lens is applied in the trace without a preceding load of its reference file.
 
 - [ ] **EVAL-E10:** Wrong-tool check fires at [NEW] entry before [A] begins
-  - **Test:** Trace records a wrong-tool evaluation step (redirect check for synapse-router-artifact-creator / synapse-skill-skill-improver / synapse-router-artifact-gatekeeper) after notepad initialization and before the first [A] turn.
+  - **Test:** Trace records a wrong-tool evaluation step (redirect check for synapse-router-artifact-creator / synapse-skill-improver / synapse-router-artifact-gatekeeper) after notepad initialization and before the first [A] turn.
   - **Fail signal:** [A] discovery begins with no wrong-tool check recorded in the trace, or wrong-tool check appears after the first [A] exchange.
 
 ## Output Criteria
@@ -166,6 +166,6 @@
 
 ### EVAL-T10 — Wrong Tool: Evaluating an existing skill, not exploring
 
-**Prompt:** "My synapse-skill-skill-improver skill keeps failing on the scoring phase. Can you brainstorm what's wrong with it?"
+**Prompt:** "My synapse-skill-improver skill keeps failing on the scoring phase. Can you brainstorm what's wrong with it?"
 
-**Why this tests the skill:** Tests whether the skill distinguishes between exploring a design space (its job) and diagnosing a runtime failure in a live artifact (belongs to /synapse-skill-skill-improver or debugging).
+**Why this tests the skill:** Tests whether the skill distinguishes between exploring a design space (its job) and diagnosing a runtime failure in a live artifact (belongs to /synapse-skill-improver or debugging).

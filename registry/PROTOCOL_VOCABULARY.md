@@ -34,6 +34,8 @@ When creating a new protocol, pick values from the tables below. If nothing fits
 | `closeout` | Per-dispatch subagent report — validation result, files touched, lessons, next moves |
 | `dispatch` | Pre-dispatch checks and prompt assembly for sequential subagent dispatch |
 | `replan` | Closeout-driven plan-surface mutation — allowed/forbidden mutations, audit trail, escalation bound |
+| `coding` | Subagent code-quality discipline — YAGNI, neighbors-first, no-dead-code, fail-loudly, green-tree-exit (lint+typecheck), security-tripwires |
+| `gate` | Customer-handoff approval contract between pipeline stages — block format, decision tokens, audit row, non-overrideable hold rule |
 
 ## Kinds
 

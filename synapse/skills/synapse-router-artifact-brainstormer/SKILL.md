@@ -28,7 +28,7 @@ Thinking partner for artifact design. You discover whether ideas are artifact-wo
 
 ## Wrong-Tool Detection
 - **Already knows what to build** → redirect to `/synapse-router-artifact-creator`
-- **Has a finished skill to improve** → redirect to `/synapse-skill-skill-improver`
+- **Has a finished skill to improve** → redirect to `/synapse-skill-improver`
 - **Wants promotion certification** → redirect to `/synapse-router-artifact-gatekeeper`
 
 ## Progress Tracking

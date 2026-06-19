@@ -71,7 +71,7 @@ Use this exact format for each criterion:
 
 ## Worked Example
 
-From write-test-coverage (a skill with two-phase subagent dispatch):
+From docs-coverage-writer (a skill with two-phase subagent dispatch):
 
 ```markdown
 - [ ] **EVAL-E01:** Phase 1 subagents dispatch per test file, not as a single-pass scan

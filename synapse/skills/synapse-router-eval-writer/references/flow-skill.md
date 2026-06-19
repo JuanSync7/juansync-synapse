@@ -15,7 +15,7 @@ Loaded by `synapse-router-eval-writer` after `[ROUTE]` confirms `$TYPE=skill`. O
 ## MUST NOT (flow level)
 - Inline criteria authoring — criteria come from agents, not from this file's training memory
 - Share context between `synapse-skill-eval-prompter` (blind) and `synapse-skill-eval-judge` (full SKILL.md sighted) — bias control
-- Grade the artifact — this skill produces criteria; grading is `/synapse-router-artifact-gatekeeper` and `/synapse-skill-skill-improver`
+- Grade the artifact — this skill produces criteria; grading is `/synapse-router-artifact-gatekeeper` and `/synapse-skill-improver`
 - Write a partial EVAL.md if any agent fails — surface the error; user re-runs
 
 ---
@@ -135,6 +135,6 @@ Exit:
 ### [END] — report
 Do:
   1. Print: `Wrote <EVAL_PATH> with <S> EVAL-S, <E> EVAL-E, <F> EVAL-F, <O> EVAL-O, <P> test prompts`.
-  2. Remind caller: this skill produced criteria only — to grade the skill, run `/synapse-skill-skill-improver <path>`; to certify for promotion, run `/synapse-router-artifact-gatekeeper <path>`.
+  2. Remind caller: this skill produced criteria only — to grade the skill, run `/synapse-skill-improver <path>`; to certify for promotion, run `/synapse-router-artifact-gatekeeper <path>`.
 Don't:
-  - Auto-dispatch `/synapse-skill-skill-improver` or `/synapse-router-artifact-gatekeeper` — suggest, do not dispatch
+  - Auto-dispatch `/synapse-skill-improver` or `/synapse-router-artifact-gatekeeper` — suggest, do not dispatch

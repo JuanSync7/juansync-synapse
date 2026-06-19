@@ -4,10 +4,11 @@ Naming and metadata rules for agents. The controlled vocabulary for each slug sl
 
 ## Naming convention
 
-`{domain}-{subdomain}-{scope}-{role}` — lowercase-hyphenated. All four slots required.
+`{namespace}-{subdomain?}-{scope}-{role}` — lowercase-hyphenated. **Fixed `scope`-`role` tail;
+`subdomain` optional** (same grammar as skills — see [`SKILL_TAXONOMY.md`](SKILL_TAXONOMY.md)).
 
-- **`domain`** — ecosystem (e.g., `synapse`).
-- **`subdomain`** — category within the domain (e.g., `skill`).
+- **`namespace`** (the `domain` field) — required collision-safe prefix (e.g., `synapse`).
+- **`subdomain`** — optional; include only to disambiguate (e.g., `skill`).
 - **`scope`** — noun naming what the agent operates on (e.g., `companion`, `eval`, `readme`).
 - **`role`** — agentive noun naming what the agent is (e.g., `judge`, `auditor`, `writer`).
 

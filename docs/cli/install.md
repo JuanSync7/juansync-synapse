@@ -21,7 +21,7 @@ The target directory defaults to `~/.claude/skills/` and can be overridden via t
 ```bash
 ./cortex install all                                        # install every skill
 ./cortex install src/skills/docs                            # install all skills in the docs domain
-./cortex install src/skills/docs src/skills/code/build-plan # install specific domains/skills
+./cortex install src/skills/docs src/skills/code/code-build-planner # install specific domains/skills
 ./cortex install external/jira-suite                        # install skills from an external suite
 ```
 

@@ -39,7 +39,7 @@ Re-decompose via `replan-contract` when:
 Escalate to user when:
 - M=3 replan cycles on a single slice — plan is fundamentally misframed, no local edit will fix it.
 - A dependency is blocked and the blocker is outside the plan's scope (external service down, missing decision).
-- Re-decomposition would require touching the spec surface (`docs/.../FR-NNN/`) — that is `write-story`'s authority, not this skill's.
+- Re-decomposition would require touching the story surface (`.delivery/stories/TAG-NNN-*.md` + `STORIES.md`) — that is `delivery-plan-writer`'s authority, not this skill's.
 
 ## Escape-hatch — when parallel dispatch is permitted
 

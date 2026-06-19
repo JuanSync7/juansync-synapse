@@ -15,7 +15,7 @@
 
 ## What is AI-Synapse?
 
-AI-Synapse is a central library of reusable, composable artifacts — skills, agents, protocols, and tools — for [Claude Code](https://claude.ai/code) and other AI coding harnesses. Artifacts (synapses) are installed as symlinks and discovered automatically. Once installed, invoking a skill is as simple as `/write-spec-docs` or `/synapse-router-artifact-creator` in any Claude Code session.
+AI-Synapse is a central library of reusable, composable artifacts — skills, agents, protocols, and tools — for [Claude Code](https://claude.ai/code) and other AI coding harnesses. Artifacts (synapses) are installed as symlinks and discovered automatically. Once installed, invoking a skill is as simple as `/docs-spec-writer` or `/synapse-router-artifact-creator` in any Claude Code session.
 
 The repo serves two roles: a **home for standalone artifacts** (self-contained, no shared infrastructure) and a **registry that submodules artifact suites** from external repos (multi-artifact projects with shared config and their own CI). Both are installed the same way via the `cortex` CLI.
 
@@ -51,7 +51,7 @@ AI-Synapse includes a complete lifecycle for building skills themselves — from
 | **Brainstorm** | [`/synapse-router-artifact-brainstormer`](synapse/skills/synapse-router-artifact-brainstormer/) | Coaching brainstorm for any artifact type — discovers whether ideas are artifact-worthy, pressure-tests through five lenses, produces per-artifact memos |
 | **Create** | [`/synapse-router-artifact-creator`](synapse/skills/synapse-router-artifact-creator/) | Unified router — scaffolds SKILL.md / agent / protocol / tool with baseline testing and design principles check |
 | **Evaluate** | [`/synapse-router-eval-writer`](synapse/skills/synapse-router-eval-writer/) | Generates or regenerates EVAL.md (skill / agent / protocol) with output criteria and test prompts |
-| **Improve** | [`/synapse-skill-skill-improver`](synapse/skills/synapse-skill-skill-improver/) | Score-fix-rescore loop until quality criteria are met |
+| **Improve** | [`/synapse-skill-improver`](synapse/skills/synapse-skill-improver/) | Score-fix-rescore loop until quality criteria are met |
 | **Certify** | [`/synapse-router-artifact-gatekeeper`](synapse/skills/synapse-router-artifact-gatekeeper/) | Promotion gate — APPROVE / REVISE / REJECT verdict against governance criteria |
 
 The flow is: **brainstorm → create → improve → certify → PR**. Each stage is optional — jump in wherever your skill is.
@@ -115,7 +115,7 @@ ai-synapse/
 │   └── SCRIPT_REGISTRY.md          # Script discovery table
 │
 ├── taxonomy/
-│   ├── SKILL_TAXONOMY.md           # Controlled vocabulary for skill domain/intent
+│   ├── SKILL_TAXONOMY.md           # Skill slug grammar {namespace}-{subdomain?}-{scope}-{role}
 │   ├── AGENT_TAXONOMY.md           # Controlled vocabulary for agent domain/role
 │   ├── PROTOCOL_TAXONOMY.md        # Controlled vocabulary for protocol domain/type
 │   ├── TOOL_TAXONOMY.md            # Controlled vocabulary for tool domain/action/type
@@ -154,6 +154,7 @@ The single source of truth for pipeline metadata. Every skill that participates 
 ### Registries (`registry/`)
 Discovery tables for all artifact types. Check these before creating a new artifact:
 - [`SKILL_REGISTRY.md`](registry/SKILL_REGISTRY.md) — skills with domain, pipeline stage, and status
+- [`PERSONA_REGISTRY.md`](registry/PERSONA_REGISTRY.md) — persona/mode skills (behavior-graded, separate class)
 - [`AGENTS_REGISTRY.md`](registry/AGENTS_REGISTRY.md) — agent definitions dispatched by skills
 - [`PROTOCOL_REGISTRY.md`](registry/PROTOCOL_REGISTRY.md) — behavioral contracts injected into agents
 - [`TOOL_REGISTRY.md`](registry/TOOL_REGISTRY.md) — mechanical capabilities (scripts, MCP servers, CLI wrappers)
@@ -162,10 +163,11 @@ Discovery tables for all artifact types. Check these before creating a new artif
 
 ### Taxonomies (`taxonomy/`)
 Controlled vocabularies for artifact metadata. Enforced by the pre-commit hook — committing an artifact with a value not listed in its taxonomy will fail:
-- [`SKILL_TAXONOMY.md`](taxonomy/SKILL_TAXONOMY.md) — `domain` and `intent` for skills
-- [`AGENT_TAXONOMY.md`](taxonomy/AGENT_TAXONOMY.md) — `domain` and `role` for agents
-- [`PROTOCOL_TAXONOMY.md`](taxonomy/PROTOCOL_TAXONOMY.md) — `domain` and `type` for protocols
-- [`TOOL_TAXONOMY.md`](taxonomy/TOOL_TAXONOMY.md) — `domain`, `action`, and `type` for tools
+- [`SKILL_TAXONOMY.md`](taxonomy/SKILL_TAXONOMY.md) — `{namespace}-{subdomain?}-{scope}-{role}` grammar, aliases, and slot vocab for skills
+- [`PERSONA_TAXONOMY.md`](taxonomy/PERSONA_TAXONOMY.md) — `persona-{handle}` rule for persona/mode skills (no scope-role signature)
+- [`AGENT_TAXONOMY.md`](taxonomy/AGENT_TAXONOMY.md) — same fixed-tail grammar for agents
+- [`PROTOCOL_TAXONOMY.md`](taxonomy/PROTOCOL_TAXONOMY.md) — `{domain}-{subdomain}-{subject}-{kind}` for protocols
+- [`TOOL_TAXONOMY.md`](taxonomy/TOOL_TAXONOMY.md) — `{domain}-{subdomain}-{action}-{target}` for tools
 - [`PATHWAY_TAXONOMY.md`](taxonomy/PATHWAY_TAXONOMY.md) — `harness` for pathways + naming convention guide
 - [`SCRIPT_TAXONOMY.md`](taxonomy/SCRIPT_TAXONOMY.md) — `audience`, `action`, and `scope` for scripts
 
@@ -226,7 +228,7 @@ Pathways (`pathways/`) are named bundles of synapses — a YAML file listing whi
 
 ### synapse/ vs src/ vs external/
 
-- **`synapse/`** — framework artifacts shipped by ai-synapse: the meta-tools that build, evaluate, and govern artifacts (synapse-router-artifact-creator, synapse-router-artifact-gatekeeper, synapse-router-eval-writer, synapse-router-suite-validator, synapse-skill-skill-improver, tooling).
+- **`synapse/`** — framework artifacts shipped by ai-synapse: the meta-tools that build, evaluate, and govern artifacts (synapse-router-artifact-creator, synapse-router-artifact-gatekeeper, synapse-router-eval-writer, synapse-router-suite-validator, synapse-skill-improver, tooling).
 - **`src/`** — adopter artifact slot owned by this repo. Convention-enforced, managed by `scripts/reorganize.sh`. Empty in the framework distribution; downstream adopters populate it with their own skills, agents, protocols, and tools.
 - **`external/`** — submodule slot for externally-owned suites. Empty in the framework distribution; adopters add multi-artifact suites here as git submodules. Each suite owns its own structure (typically `skills/`, `agents/`, `protocols/`).
 
@@ -279,6 +281,11 @@ make init                          # configure git hooks + submodules (first-tim
 ./cortex pathway list                       # list available pathways
 ./cortex pathway install <name>             # install a pathway bundle
 ```
+
+Skills that declare `aliases:` (e.g. `brainstorm` for `meta-process-brainstormer`) get one extra
+materialized entry per alias on install — companions symlinked, SKILL.md regenerated with the
+alias as `name:` and an `alias-of:` marker — with a refuse-to-overwrite collision guard. See
+[`taxonomy/SKILL_TAXONOMY.md`](taxonomy/SKILL_TAXONOMY.md) "Aliases".
 
 ### Contributor — create and validate artifacts
 

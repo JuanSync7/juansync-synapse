@@ -145,7 +145,7 @@ This prevents false-positive halts when the user corrects the plan manually betw
 
 **M=3 replan cycles on a single slice** is the default escalation threshold. Hitting M cycles on the same slice signals that the plan is fundamentally misframed for that slice — the main agent halts and escalates to the user.
 
-**This is a skill-overridable default** (consistent with TC-B1 — the TDD iteration cap is also skill-overridable). The orchestrator skill (`delivery-orchestration-plan-executor`) MAY override M at runtime via the protocol-injection prompt slot. It is NOT a hard protocol constant. Consuming skills that need a different threshold (e.g., auto-research, which may tolerate more replan cycles) override it explicitly rather than forking the protocol.
+**This is a skill-overridable default** (consistent with TC-B1 — the TDD iteration cap is also skill-overridable). The orchestrator skill (`delivery-orchestration-plan-executor`) MAY override M at runtime via the protocol-injection prompt slot. It is NOT a hard protocol constant. Consuming skills that need a different threshold (e.g., optimization-process-researcher, which may tolerate more replan cycles) override it explicitly rather than forking the protocol.
 
 M is distinct from the per-attempt attempt cap N=2 (which is governed by `delivery-orchestration-dispatch-contract` pre-flight). M counts how many times the replan-contract has fired on the same slice across all its attempts; N counts raw dispatch attempts.
 

@@ -72,7 +72,7 @@ description: "Use when asked to create a new skill, build a skill for X, or writ
 **Bad:**
 ```yaml
 description: "Creates skills by understanding intent, building SKILL.md with
-companion files, generating EVAL.md, and running synapse-skill-skill-improver validation loops."
+companion files, generating EVAL.md, and running synapse-skill-improver validation loops."
 ```
 *This IS the workflow. The agent can follow this without reading the body.*
 

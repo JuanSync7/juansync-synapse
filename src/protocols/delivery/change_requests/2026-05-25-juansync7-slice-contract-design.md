@@ -61,11 +61,11 @@ Delivery-specific fields (slice_id, files_created, tests_added, validable_outcom
 
 **Implication:** the closeout-schema body cites `synapse-observability-execution-trace` as its base and only documents the delta fields. A reader of the full schema must read both.
 
-### 2.8 `auto-research` and `plan-executor` are siblings, not a merged skill
+### 2.8 `optimization-process-researcher` and `plan-executor` are siblings, not a merged skill
 
-Both orchestrate subagents that do iterative work. They differ in intent: `plan-executor` is build-forward (given a plan, execute it to completion); `auto-research` is optimize-same-target (run experiments against one objective until quality bar is met). Collapsing them into one skill produces a mode-switcher with confused intent and tangled stop conditions. Instead, they share the `delivery-orchestration-dispatch-contract` and `delivery-orchestration-closeout-schema` protocols — the shared shape is extracted, not duplicated.
+Both orchestrate subagents that do iterative work. They differ in intent: `plan-executor` is build-forward (given a plan, execute it to completion); `optimization-process-researcher` is optimize-same-target (run experiments against one objective until quality bar is met). Collapsing them into one skill produces a mode-switcher with confused intent and tangled stop conditions. Instead, they share the `delivery-orchestration-dispatch-contract` and `delivery-orchestration-closeout-schema` protocols — the shared shape is extracted, not duplicated.
 
-**Implication:** `delivery-orchestration-plan-executor` is a standalone skill. Its protocols are designed as first-class reusables so `auto-research` can adopt them independently when ready.
+**Implication:** `delivery-orchestration-plan-executor` is a standalone skill. Its protocols are designed as first-class reusables so `optimization-process-researcher` can adopt them independently when ready.
 
 ---
 
@@ -398,7 +398,7 @@ When tickets exist, `plan/INDEX.md` references FR-NNN dirs (no copy). Free-form 
 | Replan cycle cap (M=3) is empirical | Accept as skill-overridable default (consistent with N=10 policy) | After dogfooding — revisit if M=3 triggers false escalations |
 | dependency_closeouts passes distilled summaries, not full bodies | Distilled (validation_result + tests_added + lessons summary) to keep prompt budget controlled | When prompt-budget pressure is no longer a constraint or distillation loses material information |
 | lessons.md end-of-run compression | Bet: end-of-run hook compresses to a "run summary" while preserving raw as `lessons.raw.md` | Confirm at companion-file design; not load-bearing on protocol correctness |
-| auto-research overlap with plan-executor | Build as siblings sharing dispatch and closeout protocols; do not merge | If 3+ adopters report identical usage patterns suggesting the two modes are the same intent |
+| optimization-process-researcher overlap with plan-executor | Build as siblings sharing dispatch and closeout protocols; do not merge | If 3+ adopters report identical usage patterns suggesting the two modes are the same intent |
 | `parallel-agents-dispatch` coexistence vs. retirement | Coexist for now (user picks based on risk/coupling); plan-executor is canonical for TDD-disciplined sequential execution | When `parallel-agents-dispatch` has zero active use post-dogfooding; retire with deprecation note |
 
 ---

@@ -27,7 +27,7 @@ Two layers of validation apply. Layer 1 is automatic; Layer 2 is on you.
 | Change | Run |
 |--------|-----|
 | New skill or external import | `/synapse-router-artifact-creator skill` (full pipeline) → `/synapse-router-artifact-gatekeeper` |
-| Modified existing skill (SKILL.md, references/, templates/) | `/synapse-skill-skill-improver` (score-fix loop against existing EVAL.md) |
+| Modified existing skill (SKILL.md, references/, templates/) | `/synapse-skill-improver` (score-fix loop against existing EVAL.md) |
 | New or modified agent / protocol / tool / pathway | `/synapse-router-artifact-gatekeeper <artifact-path>` |
 | Trivial changes (typos, formatting-only) | Layer 1 is sufficient |
 
@@ -62,6 +62,7 @@ Every directory in the repo must have a README.md (exceptions: dot-directories a
 ## Conventions
 
 - **Skill names must be globally unique.** Claude Code discovers skills from a flat `~/.claude/skills/` directory — no namespacing is possible. Use domain-prefixed names (e.g., `jira-reporter`, `jira-planner`) to avoid collisions. `./cortex install` warns on collisions.
+- **Aliases give terse invocation, never identity.** A skill may declare `aliases: [handle]` (see [`taxonomy/SKILL_TAXONOMY.md`](taxonomy/SKILL_TAXONOMY.md) "Aliases") — installed as extra symlinks with a collision guard. Registries, pipelines, and cross-references always use the canonical slug.
 - **Description is a routing contract.** Frontmatter `description` specifies *when* a skill fires, not *what* it does. If the description could replace reading the body, it's too broad.
 - **Skills with 3+ phases** include a **Progress Tracking** section with `TaskCreate` examples.
 - **Wrong-Tool Detection** sections redirect to sibling skills when intent doesn't match.

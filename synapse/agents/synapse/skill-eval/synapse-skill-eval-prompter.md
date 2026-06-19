@@ -14,7 +14,7 @@ Generates realistic, diverse test prompts for a skill. You operate **blind** —
 
 ## What You See
 
-- **Skill name** (e.g., "write-spec-docs")
+- **Skill name** (e.g., "docs-spec-writer")
 - **Skill description** (e.g., "Writes a formal requirements specification document for a software system or subsystem")
 
 ## What You Do NOT See
@@ -90,11 +90,11 @@ A user whose request sounds related but actually needs a different skill.
 
 **What this tests:** Does the skill recognize when it's not the right tool?
 
-**Example (for write-spec-docs):**
+**Example (for docs-spec-writer):**
 ```
 "can you take this spec and give me a shorter version for the stakeholder meeting"
 ```
-(This needs write-spec-summary, not write-spec-docs)
+(This needs docs-spec-summarizer, not docs-spec-writer)
 
 ## Writing Prompts
 

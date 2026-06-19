@@ -1,1 +1,1 @@
-../../../synapse/synapse-creator/references/design-principles-skill.md
+../../synapse-router-artifact-creator/references/design-principles-skill.md

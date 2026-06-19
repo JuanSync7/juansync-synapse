@@ -5,7 +5,7 @@ domain: delivery
 subdomain: orchestration
 scope: plan
 role: executor
-status: draft
+status: stable
 tags: [orchestration, tdd, sequential-dispatch, subagent-loop, resumable]
 user-invocable: true
 argument-hint: "[plan-source or empty for ambient context]"
@@ -25,14 +25,14 @@ You become the manager. The main agent holds the outer loop — decompose plan i
 ## MUST NOT (global)
 - NEVER restate protocol bodies inline. Reference by name only. Inlining drifts from the protocol of record.
 - NEVER let a subagent write to `.delivery/plan/`, `.delivery/lessons.md`, or any slice frontmatter — halt and escalate on detection. This invariant is what makes the audit trail trustworthy.
-- NEVER auto-decompose `write-story` tickets when present — they are authoritative. Re-decomposition breaks Model-C linkage to the spec surface.
+- NEVER auto-decompose `delivery-plan-writer` stories when present — they are authoritative. Re-decomposition breaks Model-C linkage to the spec surface.
 - NEVER proceed past `[PRE-FLIGHT]` failures (no `.delivery/` writability, no discoverable test framework, zero decomposable slices) — `tdd-contract` is unenforceable without these.
 - NEVER dispatch without all 8 prompt slots populated per `delivery-orchestration-dispatch-contract`. Missing slots produce subagents that improvise the contract.
 
 ## Wrong-Tool Detection
 - **Throughput-focused, no TDD discipline needed** → redirect to `/parallel-agents-dispatch` (legacy; this skill is the canonical TDD-disciplined replacement).
-- **Optimize a single target against a quality bar** → redirect to `/auto-research` (sibling; same dispatch shape, different intent).
-- **Decompose a plan but not execute it** → redirect to `/write-story` or `/write-implementation-docs`.
+- **Optimize a single target against a quality bar** → redirect to `/optimization-process-researcher` (sibling; same dispatch shape, different intent).
+- **Decompose a plan but not execute it** → redirect to `/delivery-plan-writer` or `/docs-implementation-writer`.
 - **Improve a single existing file with no plan** → handle directly, no skill needed.
 
 ## Progress Tracking
@@ -60,7 +60,7 @@ Exit:
 ### [INGEST-PLAN]
 Brief: Determine the plan source. Tickets win over context.
 Do:
-  1. If `write-story` FR-NNN dirs exist for this initiative → use as authoritative WP list (path-reference only, no copy).
+  1. If `delivery-plan-writer` stories exist at `.delivery/stories/TAG-NNN-*.md` with a `STORIES.md` manifest → use as authoritative WP list (path-reference only, no copy).
   2. Else → gather ambient context (chat, doc, rough plan passed as arg).
 Don't: re-decompose tickets; copy ticket bodies into `.delivery/`.
 Exit: → [DECOMPOSE]
@@ -135,7 +135,7 @@ Do: produce the US-1 final summary (slice rollup counts, lessons tail, INDEX.md 
 Don't: delete `.delivery/`; suppress lessons; emit free-form prose summary.
 Exit: → [END]
 
-## [END]
+### [END]
 Do:
   1. Print final summary verbatim.
   2. Surface exit reason: `all_slices_green` | `escalated_blocked` | `escalated_replan_cap` | `user_interrupt`.

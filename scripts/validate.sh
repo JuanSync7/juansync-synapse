@@ -47,7 +47,7 @@ Options:
 Examples:
   validate.sh                                        # validate all artifacts
   validate.sh synapse/skills/synapse-router-artifact-creator   # validate one framework skill
-  validate.sh src/skills/docs/write-spec-docs        # validate one adopter skill
+  validate.sh src/skills/docs/docs-spec-writer        # validate one adopter skill
   validate.sh synapse/skills/                        # validate framework skills
   validate.sh src/agents/                            # validate adopter agents
   validate.sh scripts/install.sh                     # validate one script
@@ -221,8 +221,18 @@ validate_skill() {
     return
   fi
 
-  # 2. Required fields
-  for field in name description domain subdomain scope role; do
+  # Persona / mode skills: separate class, no scope-role signature
+  if echo "$skill_dir" | grep -q '/persona/' || grep -qE '^class: *persona' "$skill_md"; then
+    for field in name description; do
+      [ -z "$(extract_frontmatter_field "$skill_md" "$field")" ] && \
+        report_error "$rel_path" "missing or empty frontmatter field '$field'"
+    done
+    case "$skill_name" in persona-*) : ;; *) report_error "$rel_path" "persona skill name must start with 'persona-'" ;; esac
+    return
+  fi
+
+  # 2. Required fields (subdomain is OPTIONAL under the variable-head grammar)
+  for field in name description domain scope role; do
     local val
     val="$(extract_frontmatter_field "$skill_md" "$field")"
     if [ -z "$val" ]; then
@@ -252,6 +262,16 @@ validate_skill() {
   fi
   if [ -n "$role_val" ] && ! check_taxonomy_value "$SKILL_VOCABULARY" "Roles" "$role_val"; then
     report_error "$rel_path" "role '$role_val' not found in registry/SKILL_VOCABULARY.md"
+  fi
+
+  # 4b. name's last two tokens must equal scope-role (fixed-tail grammar)
+  local name_val
+  name_val="$(extract_frontmatter_field "$skill_md" "name")"
+  if [ -n "$name_val" ] && [ -n "$scope_val" ] && [ -n "$role_val" ]; then
+    case "$name_val" in
+      *-"$scope_val-$role_val") : ;;
+      *) report_error "$rel_path" "name '$name_val' must end with the scope-role tail '$scope_val-$role_val'" ;;
+    esac
   fi
 
   # 5. EVAL.md exists (skipped for draft skills — they predate the EVAL requirement)
@@ -562,13 +582,13 @@ find_all_skills() {
 
 find_all_agents() {
   for root in "${ART_AGENT_ROOTS[@]}"; do
-    [ -d "$root" ] && find "$root" -name "*.md" -type f ! -name "README.md" ! -path "*/change_requests/*" 2>/dev/null
+    [ -d "$root" ] && find "$root" -name "*.md" -type f ! -name "README.md" ! -name "*.eval.md" ! -path "*/change_requests/*" 2>/dev/null
   done | sort
 }
 
 find_all_protocols() {
   for root in "${ART_PROTO_ROOTS[@]}"; do
-    [ -d "$root" ] && find "$root" -name "*.md" -type f ! -name "README.md" ! -path "*/change_requests/*" 2>/dev/null
+    [ -d "$root" ] && find "$root" -name "*.md" -type f ! -name "README.md" ! -name "*.eval.md" ! -path "*/change_requests/*" 2>/dev/null
   done | sort
 }
 
@@ -757,6 +777,20 @@ else
       validate_script "$f"
     done < <(find_all_scripts)
   fi
+
+  # Alias uniqueness: every skill name + alias shares one global pool
+  # (taxonomy/SKILL_TAXONOMY.md "Aliases" — an alias must never shadow a name or another alias)
+  echo "--- Alias uniqueness ---"
+  while IFS= read -r handle; do
+    [ -n "$handle" ] && report_error "aliases" "handle '$handle' claimed more than once across skill names/aliases"
+  done < <(
+    {
+      while IFS= read -r f; do
+        extract_frontmatter_field "$f" "name" || true
+        { extract_frontmatter_field "$f" "aliases" || true; } | tr -d '[]"' | tr "'" ' ' | tr ',' '\n' | sed 's/^ *//;s/ *$//'
+      done < <(find_all_skills)
+    } | grep -v '^$' | sort | uniq -d
+  )
 
   # Stale registry entries
   echo "--- Stale registry entries ---"

@@ -5,7 +5,7 @@ Canonical structure of a SKILL.md file. This is the **structural** spec — what
 This file is loaded by:
 - `synapse-router-artifact-creator/references/flow-skill.md` at `[W]` — to know what to draft
 - `synapse-skill-anatomy-reviewer` at runtime — to grade structural presence (binary checks)
-- `/synapse-skill-skill-improver` — for structural pre-checks
+- `/synapse-skill-improver` — for structural pre-checks
 - `/synapse-router-artifact-gatekeeper` — for promotion certification
 
 Single source of truth. If anatomy evolves, edit this file and every consumer picks up the change.

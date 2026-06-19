@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+# @name: test
+# @description: Run the full ai-synapse test suite — pytest unit tests plus bash smoke tests
+# @audience: contributor
+# @action: inspect
+# @scope: repo
 # Run the full ai-synapse test suite.
 # - pytest for Python unit tests under tests/
 # - bash-driven smoke tests for shell entry points

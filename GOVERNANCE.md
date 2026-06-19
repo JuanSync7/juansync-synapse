@@ -73,7 +73,7 @@ Skills may land on `main` as **drafts** — functional but not yet gatekeeper-ce
 
 Draft skills are usable but carry no quality guarantee. To track draft status, the skill's entry in `SKILLS_REGISTRY.yaml` should include `status: draft`. A skill without a `status` field is assumed certified.
 
-**Promoting a draft:** Run `/synapse-skill-skill-improver` until eval score ≥ 80, then `/synapse-router-artifact-gatekeeper`. Update `status: certified` (or remove the field) in the registry entry.
+**Promoting a draft:** Run `/synapse-skill-improver` until eval score ≥ 80, then `/synapse-router-artifact-gatekeeper`. Update `status: certified` (or remove the field) in the registry entry.
 
 ### Standalone vs. Submodule
 
@@ -222,7 +222,7 @@ Pathways clear two tiers. Evaluated by `synapse-router-artifact-gatekeeper`.
 
 Examples:
 - Missing registry entry (skill is pipeline-routable but has no `pipeline:` block)
-- Eval score below 80 (run `/synapse-skill-skill-improver` to raise it)
+- Eval score below 80 (run `/synapse-skill-improver` to raise it)
 - `description` reads as a workflow summary instead of a routing trigger
 - Domain `README.md` is missing the skill's row
 - `argument-hint` absent despite `user-invocable: true`
@@ -275,7 +275,7 @@ Where `<synapse>` is one of: `skill`, `agent`, `protocol`, `tool`.
 ### Steps
 
 1. **Build** — use `/synapse-router-artifact-creator skill` to scaffold the skill, or author it manually.
-2. **Improve** — run `/synapse-skill-skill-improver` until the eval score reaches ≥ 80.
+2. **Improve** — run `/synapse-skill-improver` until the eval score reaches ≥ 80.
 3. **Certify** — run `/synapse-router-artifact-gatekeeper <skill-path> --score <score>`. Resolve any REVISE gaps.
 4. **PR to develop** — open a pull request with the APPROVE verdict pasted into the description. Include any `change_requests/` files documenting the rationale. The artifact owner reviews the CR + diff, deletes the CR file on acceptance, and merges.
 5. **PR to main** — maintainer merges `develop` → `main`. The PR must contain **no `change_requests/` files** — if any are present, the merge is blocked until the artifact owner resolves them.

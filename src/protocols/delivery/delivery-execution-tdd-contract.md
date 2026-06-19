@@ -6,7 +6,7 @@ subdomain: execution
 subject: tdd
 kind: contract
 version: 1
-status: draft
+status: stable
 tags: [tdd, ralph-loop, validable-outcome, subagent-discipline, iteration-cap]
 ---
 

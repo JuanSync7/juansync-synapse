@@ -126,7 +126,7 @@ Cross-suite issues: 0
 - pathway/jira-end-to-end — APPROVE
 
 ### Recommendation
-Structurally clean and free of cross-suite issues, but escalated quality review surfaces one gap: `jira-planner` has no measured eval score, so `/synapse-router-artifact-gatekeeper` capped its verdict at REVISE. Run `/synapse-skill-skill-improver external/jira-tools/skills/jira/jira-planner` to obtain a score, then rerun the validator with `--escalate` to confirm full APPROVE.
+Structurally clean and free of cross-suite issues, but escalated quality review surfaces one gap: `jira-planner` has no measured eval score, so `/synapse-router-artifact-gatekeeper` capped its verdict at REVISE. Run `/synapse-skill-improver external/jira-tools/skills/jira/jira-planner` to obtain a score, then rerun the validator with `--escalate` to confirm full APPROVE.
 ```
 
 Note: A single escalated REVISE downgrades the suite verdict from APPROVE to REVISE — weakest-link semantics.

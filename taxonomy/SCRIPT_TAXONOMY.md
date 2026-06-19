@@ -19,6 +19,7 @@ Controlled vocabulary for script metadata. When creating a new script, pick `aud
 | `create` | Scaffold new artifacts or pathways |
 | `inspect` | Read-only analysis — list, validate, audit, doctor |
 | `repair` | Write operations that fix drift or clean state |
+| `release` | Cut, promote, or verify version tags and releases |
 
 ## Scopes
 

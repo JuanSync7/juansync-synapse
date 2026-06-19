@@ -2,10 +2,15 @@
 set -euo pipefail
 
 # Pre-commit hook: structural validation for changed skills, agents, and protocols.
-# Skills: frontmatter fields, SKILL_VOCABULARY.md values (domain/subdomain/scope/role), domain README rows, EVAL.md existence.
+# Skills: frontmatter fields, SKILL_VOCABULARY.md values, name's scope-role tail, domain README rows, EVAL.md existence.
+#   - domain/scope/role required; subdomain OPTIONAL (validated only if present).
+#   - name must end with the scope-role tail (fixed-tail grammar).
+#   - persona/mode skills (under persona/ or `class: persona`) are exempt from scope/role; need `persona-` prefix + PERSONA_REGISTRY row.
 # Agents: frontmatter fields (name/domain/subdomain/scope/role), AGENT_VOCABULARY.md values, AGENTS_REGISTRY.md listing.
-# Protocols: frontmatter fields (name/domain/subdomain/scope/role), PROTOCOL_VOCABULARY.md values.
-# All slug slots (domain/subdomain/scope/role) must be present and validate against the corresponding vocabulary file.
+# Protocols: frontmatter fields (name/domain/subdomain/subject/kind), PROTOCOL_VOCABULARY.md values.
+# Tools: TOOL.md frontmatter fields (name/description/domain/subdomain/action/target/kind), TOOL_VOCABULARY.md values, name==dirname, TOOL_REGISTRY.md row.
+# Pathways: pathways/*.yaml — harness value in PATHWAY_TAXONOMY.md, PATHWAY_REGISTRY.md row.
+# Scripts: scripts/*.sh — # @name/@description/@audience/@action/@scope comment frontmatter, SCRIPT_TAXONOMY.md values, SCRIPT_REGISTRY.md row.
 
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 SKILL_VOCABULARY="$REPO_ROOT/registry/SKILL_VOCABULARY.md"
@@ -47,7 +52,7 @@ done
 # --- Identify changed agent files ---
 changed_agent_files=()
 for file in "${staged_files[@]+"${staged_files[@]}"}"; do
-    if echo "$file" | grep -qE '^(src|synapse)/agents/.*\.md$' && ! echo "$file" | grep -q 'change_requests/' && ! echo "$file" | grep -q 'README\.md$'; then
+    if echo "$file" | grep -qE '^(src|synapse)/agents/.*\.md$' && ! echo "$file" | grep -q 'change_requests/' && ! echo "$file" | grep -q 'README\.md$' && ! echo "$file" | grep -q '\.eval\.md$'; then
         found=false
         for a in "${changed_agent_files[@]+"${changed_agent_files[@]}"}"; do
             if [ "$a" = "$file" ]; then
@@ -64,7 +69,7 @@ done
 # --- Identify changed protocol files ---
 changed_protocol_files=()
 for file in "${staged_files[@]+"${staged_files[@]}"}"; do
-    if echo "$file" | grep -qE '^(src|synapse)/protocols/.*\.md$' && ! echo "$file" | grep -q 'change_requests/' && ! echo "$file" | grep -q 'README\.md$'; then
+    if echo "$file" | grep -qE '^(src|synapse)/protocols/.*\.md$' && ! echo "$file" | grep -q 'change_requests/' && ! echo "$file" | grep -q 'README\.md$' && ! echo "$file" | grep -q '\.eval\.md$'; then
         found=false
         for p in "${changed_protocol_files[@]+"${changed_protocol_files[@]}"}"; do
             if [ "$p" = "$file" ]; then
@@ -78,8 +83,60 @@ for file in "${staged_files[@]+"${staged_files[@]}"}"; do
     fi
 done
 
+# --- Identify changed tool TOOL.md files ---
+changed_tool_md_files=()
+for file in "${staged_files[@]+"${staged_files[@]}"}"; do
+    if echo "$file" | grep -qE '^(src|synapse)/tools/.*/TOOL\.md$'; then
+        found=false
+        for t in "${changed_tool_md_files[@]+"${changed_tool_md_files[@]}"}"; do
+            if [ "$t" = "$file" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            changed_tool_md_files+=("$file")
+        fi
+    fi
+done
+
+# --- Identify changed pathway YAML files ---
+changed_pathway_files=()
+for file in "${staged_files[@]+"${staged_files[@]}"}"; do
+    if echo "$file" | grep -qE '^pathways/[^/]+\.yaml$'; then
+        found=false
+        for p in "${changed_pathway_files[@]+"${changed_pathway_files[@]}"}"; do
+            if [ "$p" = "$file" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            changed_pathway_files+=("$file")
+        fi
+    fi
+done
+
+# --- Identify changed top-level scripts (scripts/*.sh, mirrors validate.sh's maxdepth 1) ---
+changed_script_files=()
+for file in "${staged_files[@]+"${staged_files[@]}"}"; do
+    if echo "$file" | grep -qE '^scripts/[^/]+\.sh$'; then
+        found=false
+        for s in "${changed_script_files[@]+"${changed_script_files[@]}"}"; do
+            if [ "$s" = "$file" ]; then
+                found=true
+                break
+            fi
+        done
+        if [ "$found" = false ]; then
+            changed_script_files+=("$file")
+        fi
+    fi
+done
+
 # Exit early if nothing to validate
-if [ ${#changed_skill_dirs[@]} -eq 0 ] && [ ${#changed_agent_files[@]} -eq 0 ] && [ ${#changed_protocol_files[@]} -eq 0 ]; then
+if [ ${#changed_skill_dirs[@]} -eq 0 ] && [ ${#changed_agent_files[@]} -eq 0 ] && [ ${#changed_protocol_files[@]} -eq 0 ] \
+    && [ ${#changed_tool_md_files[@]} -eq 0 ] && [ ${#changed_pathway_files[@]} -eq 0 ] && [ ${#changed_script_files[@]} -eq 0 ]; then
     exit 0
 fi
 
@@ -161,15 +218,74 @@ fi
 for skill_dir in "${changed_skill_dirs[@]}"; do
     skill_md="$REPO_ROOT/$skill_dir/SKILL.md"
     skill_name="$(basename "$skill_dir")"
-
-    # --- Check 1: Frontmatter fields exist ---
     frontmatter="$(sed -n '/^---$/,/^---$/p' "$skill_md" | sed '1d;$d')"
 
-    for field in name description domain subdomain scope role; do
+    # --- Persona / mode skills: separate class, no scope-role signature ---
+    # Identified by living under a persona/ directory OR declaring `class: persona`.
+    if echo "$skill_dir" | grep -q '/persona/' || echo "$frontmatter" | grep -qE '^class: *persona'; then
+        for field in name description; do
+            if ! echo "$frontmatter" | grep -q "^${field}:"; then
+                errors+=("$skill_dir: SKILL.md missing frontmatter field '$field'")
+            fi
+        done
+        name_val="$(echo "$frontmatter" | grep '^name:' | sed 's/^name: *//' | tr -d '"' | tr -d "'" || true)"
+        if [ "$name_val" != "$skill_name" ]; then
+            errors+=("$skill_dir: name '$name_val' must equal directory name '$skill_name'")
+        fi
+        case "$skill_name" in
+            persona-*) : ;;
+            *) errors+=("$skill_dir: persona skill name must start with 'persona-'") ;;
+        esac
+        # Persona registry + README rows
+        persona_registry="$REPO_ROOT/registry/PERSONA_REGISTRY.md"
+        if [ -f "$persona_registry" ] && ! grep -qF "$skill_name" "$persona_registry"; then
+            errors+=("$skill_dir: no row for '$skill_name' in registry/PERSONA_REGISTRY.md")
+        fi
+        continue
+    fi
+
+    # --- Check 1: Frontmatter fields exist (subdomain is OPTIONAL) ---
+    for field in name description domain scope role; do
         if ! echo "$frontmatter" | grep -q "^${field}:"; then
             errors+=("$skill_dir: SKILL.md missing frontmatter field '$field'")
         fi
     done
+
+    # --- Check 1b: name's last two tokens must equal scope-role (fixed tail) ---
+    name_val="$(echo "$frontmatter" | grep '^name:' | sed 's/^name: *//' | tr -d '"' | tr -d "'" || true)"
+    fm_scope="$(echo "$frontmatter" | grep '^scope:' | sed 's/^scope: *//' | tr -d '"' | tr -d "'" || true)"
+    fm_role="$(echo "$frontmatter" | grep '^role:' | sed 's/^role: *//' | tr -d '"' | tr -d "'" || true)"
+    if [ -n "$name_val" ] && [ -n "$fm_scope" ] && [ -n "$fm_role" ]; then
+        case "$name_val" in
+            *-"$fm_scope-$fm_role") : ;;  # namespace…-scope-role  ✓
+            *) errors+=("$skill_dir: name '$name_val' must end with the scope-role tail '$fm_scope-$fm_role'") ;;
+        esac
+    fi
+
+    # --- Check 1c: aliases must be unique across every skill name + alias in the repo ---
+    # Aliases are install-time convenience handles (taxonomy/SKILL_TAXONOMY.md "Aliases");
+    # they share one uniqueness pool with names so an alias can never shadow a skill.
+    alias_line="$(echo "$frontmatter" | grep '^aliases:' | sed 's/^aliases: *//' | tr -d '[]"' | tr -d "'" || true)"
+    if [ -n "$alias_line" ]; then
+        IFS=',' read -ra alias_arr <<< "$alias_line"
+        for alias in "${alias_arr[@]}"; do
+            alias="$(echo "$alias" | xargs)"
+            [ -z "$alias" ] && continue
+            while IFS= read -r other_md; do
+                other_dir="$(dirname "$other_md")"
+                [ "$other_dir" = "$REPO_ROOT/$skill_dir" ] && continue
+                other_fm="$(sed -n '/^---$/,/^---$/p' "$other_md" | sed '1d;$d')"
+                other_name="$(echo "$other_fm" | grep '^name:' | sed 's/^name: *//' | tr -d '"' | tr -d "'" || true)"
+                if [ "$other_name" = "$alias" ]; then
+                    errors+=("$skill_dir: alias '$alias' shadows skill '$other_name' (${other_dir#"$REPO_ROOT"/})")
+                fi
+                other_aliases="$(echo "$other_fm" | grep '^aliases:' | sed 's/^aliases: *//' | tr -d '[]"' | tr -d "'" || true)"
+                if [ -n "$other_aliases" ] && echo ",$other_aliases," | tr -d ' ' | grep -qF ",$alias,"; then
+                    errors+=("$skill_dir: alias '$alias' already claimed by ${other_dir#"$REPO_ROOT"/}")
+                fi
+            done < <(find "$REPO_ROOT/src/skills" "$REPO_ROOT/synapse/skills" -name SKILL.md -type f 2>/dev/null)
+        done
+    fi
 
     # --- Check 2: domain, subdomain, scope, role values are in SKILL_VOCABULARY.md ---
     domain_val="$(echo "$frontmatter" | grep '^domain:' | sed 's/^domain: *//' | tr -d '"' | tr -d "'" || true)"
@@ -546,6 +662,238 @@ for tool_dir in "${changed_tool_dirs[@]+"${changed_tool_dirs[@]}"}"; do
             fi
         done
         shopt -u nullglob
+    fi
+done
+
+# =============================================================================
+# Tool validation (TOOL.md structural checks — mirrors scripts/validate.sh validate_tool)
+# =============================================================================
+
+TOOL_VOCABULARY="$REPO_ROOT/registry/TOOL_VOCABULARY.md"
+tool_domains=()
+tool_subdomains=()
+tool_actions=()
+tool_targets=()
+tool_kinds=()
+if [ ${#changed_tool_md_files[@]} -gt 0 ] && [ -f "$TOOL_VOCABULARY" ]; then
+    extract_taxonomy_values "$TOOL_VOCABULARY" "Domains"
+    tool_domains=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
+    extract_taxonomy_values "$TOOL_VOCABULARY" "Subdomains"
+    tool_subdomains=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
+    extract_taxonomy_values "$TOOL_VOCABULARY" "Actions"
+    tool_actions=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
+    extract_taxonomy_values "$TOOL_VOCABULARY" "Targets"
+    tool_targets=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
+    extract_taxonomy_values "$TOOL_VOCABULARY" "Kinds"
+    tool_kinds=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
+fi
+
+for tool_file in "${changed_tool_md_files[@]+"${changed_tool_md_files[@]}"}"; do
+    tool_md="$REPO_ROOT/$tool_file"
+    [ -f "$tool_md" ] || continue
+    tool_name="$(basename "$(dirname "$tool_file")")"
+
+    frontmatter="$(sed -n '/^---$/,/^---$/p' "$tool_md" | sed '1d;$d')"
+    if [ -z "$frontmatter" ]; then
+        errors+=("$tool_file: missing YAML frontmatter (--- delimiters)")
+        continue
+    fi
+
+    # --- Check 1: Frontmatter fields exist ---
+    for field in name description domain subdomain action target kind; do
+        if ! echo "$frontmatter" | grep -q "^${field}:"; then
+            errors+=("$tool_file: missing frontmatter field '$field'")
+        fi
+    done
+
+    # --- Check 2: domain, subdomain, action, target, kind values are in TOOL_VOCABULARY.md ---
+    domain_val="$(echo "$frontmatter" | grep '^domain:' | sed 's/^domain: *//' | tr -d '"' | tr -d "'" || true)"
+    subdomain_val="$(echo "$frontmatter" | grep '^subdomain:' | sed 's/^subdomain: *//' | tr -d '"' | tr -d "'" || true)"
+    action_val="$(echo "$frontmatter" | grep '^action:' | sed 's/^action: *//' | tr -d '"' | tr -d "'" || true)"
+    target_val="$(echo "$frontmatter" | grep '^target:' | sed 's/^target: *//' | tr -d '"' | tr -d "'" || true)"
+    kind_val="$(echo "$frontmatter" | grep '^kind:' | sed 's/^kind: *//' | tr -d '"' | tr -d "'" || true)"
+
+    if [ -n "$domain_val" ]; then
+        found=false
+        for d in "${tool_domains[@]+"${tool_domains[@]}"}"; do
+            if [ "$d" = "$domain_val" ]; then found=true; break; fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$tool_file: domain '$domain_val' not found in registry/TOOL_VOCABULARY.md")
+        fi
+    fi
+
+    if [ -n "$subdomain_val" ]; then
+        found=false
+        for s in "${tool_subdomains[@]+"${tool_subdomains[@]}"}"; do
+            if [ "$s" = "$subdomain_val" ]; then found=true; break; fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$tool_file: subdomain '$subdomain_val' not found in registry/TOOL_VOCABULARY.md")
+        fi
+    fi
+
+    if [ -n "$action_val" ]; then
+        found=false
+        for a in "${tool_actions[@]+"${tool_actions[@]}"}"; do
+            if [ "$a" = "$action_val" ]; then found=true; break; fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$tool_file: action '$action_val' not found in registry/TOOL_VOCABULARY.md")
+        fi
+    fi
+
+    if [ -n "$target_val" ]; then
+        found=false
+        for t in "${tool_targets[@]+"${tool_targets[@]}"}"; do
+            if [ "$t" = "$target_val" ]; then found=true; break; fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$tool_file: target '$target_val' not found in registry/TOOL_VOCABULARY.md")
+        fi
+    fi
+
+    if [ -n "$kind_val" ]; then
+        found=false
+        for k in "${tool_kinds[@]+"${tool_kinds[@]}"}"; do
+            if [ "$k" = "$kind_val" ]; then found=true; break; fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$tool_file: kind '$kind_val' not found in registry/TOOL_VOCABULARY.md")
+        fi
+    fi
+
+    # --- Check 3: name matches directory name ---
+    name_val="$(echo "$frontmatter" | grep '^name:' | sed 's/^name: *//' | tr -d '"' | tr -d "'" || true)"
+    if [ -n "$name_val" ] && [ "$name_val" != "$tool_name" ]; then
+        errors+=("$tool_file: name '$name_val' does not match directory '$tool_name'")
+    fi
+
+    # --- Check 4: Listed in TOOL_REGISTRY.md ---
+    tool_registry="$REPO_ROOT/registry/TOOL_REGISTRY.md"
+    if [ -f "$tool_registry" ]; then
+        if ! grep -q "\[$tool_name\]" "$tool_registry"; then
+            errors+=("$tool_file: no row for '$tool_name' in registry/TOOL_REGISTRY.md")
+        fi
+    else
+        errors+=("$tool_file: registry/TOOL_REGISTRY.md not found")
+    fi
+done
+
+# =============================================================================
+# Pathway validation (pathways/*.yaml — harness value + registry row)
+# =============================================================================
+
+PATHWAY_TAXONOMY="$REPO_ROOT/taxonomy/PATHWAY_TAXONOMY.md"
+pathway_harnesses=()
+if [ ${#changed_pathway_files[@]} -gt 0 ] && [ -f "$PATHWAY_TAXONOMY" ]; then
+    extract_taxonomy_values "$PATHWAY_TAXONOMY" "Harnesses"
+    pathway_harnesses=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
+fi
+
+for pathway_file in "${changed_pathway_files[@]+"${changed_pathway_files[@]}"}"; do
+    pathway_yaml="$REPO_ROOT/$pathway_file"
+    [ -f "$pathway_yaml" ] || continue
+    pathway_name="$(basename "$pathway_file" .yaml)"
+
+    # --- Check 1: Listed in PATHWAY_REGISTRY.md ---
+    pathway_registry="$REPO_ROOT/registry/PATHWAY_REGISTRY.md"
+    if [ -f "$pathway_registry" ]; then
+        if ! grep -q "\[$pathway_name\]" "$pathway_registry"; then
+            errors+=("$pathway_file: no row for '$pathway_name' in registry/PATHWAY_REGISTRY.md")
+        fi
+    else
+        errors+=("$pathway_file: registry/PATHWAY_REGISTRY.md not found")
+    fi
+
+    # --- Check 2: harness value is in PATHWAY_TAXONOMY.md "Harnesses" ---
+    frontmatter="$(sed -n '/^---$/,/^---$/p' "$pathway_yaml" | sed '1d;$d')"
+    harness_val="$(echo "$frontmatter" | grep '^harness:' | sed 's/^harness: *//' | tr -d '"' | tr -d "'" || true)"
+    if [ -z "$harness_val" ]; then
+        errors+=("$pathway_file: missing 'harness:' field")
+    elif [ ${#pathway_harnesses[@]} -gt 0 ]; then
+        found=false
+        for h in "${pathway_harnesses[@]}"; do
+            if [ "$h" = "$harness_val" ]; then found=true; break; fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$pathway_file: harness '$harness_val' not found in taxonomy/PATHWAY_TAXONOMY.md")
+        fi
+    fi
+done
+
+# =============================================================================
+# Script validation (scripts/*.sh — mirrors scripts/validate.sh validate_script)
+# =============================================================================
+
+SCRIPT_TAXONOMY="$REPO_ROOT/taxonomy/SCRIPT_TAXONOMY.md"
+script_audiences=()
+script_actions=()
+script_scopes=()
+if [ ${#changed_script_files[@]} -gt 0 ] && [ -f "$SCRIPT_TAXONOMY" ]; then
+    extract_taxonomy_values "$SCRIPT_TAXONOMY" "Audiences"
+    script_audiences=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
+    extract_taxonomy_values "$SCRIPT_TAXONOMY" "Actions"
+    script_actions=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
+    extract_taxonomy_values "$SCRIPT_TAXONOMY" "Scopes"
+    script_scopes=("${_taxonomy_values[@]+"${_taxonomy_values[@]}"}")
+fi
+
+for script_file in "${changed_script_files[@]+"${changed_script_files[@]}"}"; do
+    script_path="$REPO_ROOT/$script_file"
+    [ -f "$script_path" ] || continue
+    script_name="$(basename "$script_file" .sh)"
+
+    # --- Check 1: Comment frontmatter fields exist (# @field: value) ---
+    for field in name description audience action scope; do
+        if ! grep -q "^# @${field}:" "$script_path"; then
+            errors+=("$script_file: missing comment frontmatter field '# @${field}:'")
+        fi
+    done
+
+    # --- Check 2: audience, action, scope values are in SCRIPT_TAXONOMY.md ---
+    audience_val="$(grep '^# @audience:' "$script_path" | head -1 | sed 's/^# @audience: *//' | sed 's/ *$//' || true)"
+    action_val="$(grep '^# @action:' "$script_path" | head -1 | sed 's/^# @action: *//' | sed 's/ *$//' || true)"
+    scope_val="$(grep '^# @scope:' "$script_path" | head -1 | sed 's/^# @scope: *//' | sed 's/ *$//' || true)"
+
+    if [ -n "$audience_val" ]; then
+        found=false
+        for a in "${script_audiences[@]+"${script_audiences[@]}"}"; do
+            if [ "$a" = "$audience_val" ]; then found=true; break; fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$script_file: audience '$audience_val' not found in taxonomy/SCRIPT_TAXONOMY.md")
+        fi
+    fi
+
+    if [ -n "$action_val" ]; then
+        found=false
+        for a in "${script_actions[@]+"${script_actions[@]}"}"; do
+            if [ "$a" = "$action_val" ]; then found=true; break; fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$script_file: action '$action_val' not found in taxonomy/SCRIPT_TAXONOMY.md")
+        fi
+    fi
+
+    if [ -n "$scope_val" ]; then
+        found=false
+        for s in "${script_scopes[@]+"${script_scopes[@]}"}"; do
+            if [ "$s" = "$scope_val" ]; then found=true; break; fi
+        done
+        if [ "$found" = false ]; then
+            errors+=("$script_file: scope '$scope_val' not found in taxonomy/SCRIPT_TAXONOMY.md")
+        fi
+    fi
+
+    # --- Check 3: Listed in SCRIPT_REGISTRY.md ---
+    script_registry="$REPO_ROOT/registry/SCRIPT_REGISTRY.md"
+    if [ -f "$script_registry" ]; then
+        if ! grep -q "\[$script_name\]" "$script_registry" && ! grep -q "\[$script_name\.sh\]" "$script_registry"; then
+            errors+=("$script_file: no row for '$script_name' in registry/SCRIPT_REGISTRY.md")
+        fi
+    else
+        errors+=("$script_file: registry/SCRIPT_REGISTRY.md not found")
     fi
 done
 

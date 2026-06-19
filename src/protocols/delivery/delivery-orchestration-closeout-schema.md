@@ -5,8 +5,8 @@ domain: delivery
 subdomain: orchestration
 subject: closeout
 kind: schema
-version: 1
-status: draft
+version: 2
+status: stable
 tags: [closeout, dual-target, audit-trail, resumable, extends-execution-trace]
 ---
 
@@ -44,6 +44,18 @@ This schema **extends** `synapse-observability-execution-trace` — delivery-spe
    | `plan_drift_detected` | bool | `true` if subagent observed assignment-vs-reality drift |
    | `plan_drift_reason` | string | **Required when `plan_drift_detected: true`** |
    | `blocked_reason` | string | **Required when `validation_result: blocked`** |
+   | `closeout_schema_version` | integer | Self-declared schema version (currently `2`). Drives orchestrator dual-mode intake (legacy v1 closeouts treat coding-contract fields as `not_applicable`) |
+   | `lint_result` | enum | `pass \| fail \| not_applicable`. `required-when: always`. Drives coding-contract rule 5 |
+   | `lint_command_invoked` | string | The exact lint command executed. `required-when: applicable` (i.e., when `lint_result ∈ {pass, fail}`). Anti-fabrication: a `pass` without command-invoked evidence is a violation |
+   | `lint_exit_code` | integer | `required-when: applicable`. Cross-check against `lint_result` |
+   | `lint_output_digest` | string | sha256 hex of captured lint output, or `null` when `not_applicable`. `required-when: applicable`. Enables intake fabrication detection |
+   | `typecheck_result` | enum | `pass \| fail \| not_applicable`. `required-when: always` |
+   | `typecheck_command_invoked` | string | `required-when: applicable` |
+   | `typecheck_exit_code` | integer | `required-when: applicable` |
+   | `dead_code_violations` | list[{path, line, snippet}] | `required-when: always`; empty `[]` if none. Drives coding-contract rule 3 |
+   | `neighbors_consulted` | list[string] | Files the subagent read before editing. `required-when: always`; **MUST be non-empty** — empty list is a violation, not a vacuous pass. Drives coding-contract rule 2 |
+   | `applied_deltas` | list[{rule_id: int, exception_scope: string, justification: string}] | `required-when: always`; empty `[]` if none. Echoes verbatim the `discipline_deltas` injected at dispatch; mismatch is a violation |
+   | `declared_edges` | list[{slice_id: string, kind: enum(consumes\|produces\|extends)}] | `required-when: always`; empty `[]` if none. Inter-slice contract claims for the orchestrator to cross-check against `depends_on` from STORIES.md |
 
 4. **`validable_outcome` is verbatim.** The subagent MUST copy the outcome string from the slice assignment without paraphrase. Paraphrase is a contract violation (signature **d**) that signals the subagent did not faithfully read the brief.
 
@@ -58,6 +70,8 @@ A closeout passes intake validation when **all** hold:
 5. `files_modified` ⊆ slice's declared `touches` (cross-referenced with slice-contract).
 6. `validable_outcome` is verbatim from the assignment.
 7. Closeout file exists at `.delivery/closeouts/<slice_id>-attempt-<attempt_number>.yaml` with identical content to the inline block.
+8. **Lint/typecheck evidence consistent.** `lint_result` and `typecheck_result` are present; when either is `pass | fail`, the corresponding `*_command_invoked` and `*_exit_code` are populated; additionally `lint_output_digest` is populated when `lint_result ∈ {pass, fail}` (anti-fabrication evidence).
+9. **`applied_deltas` matches the `discipline_deltas` injected at dispatch time** (verbatim subset check against the deltas the orchestrator pre-authorized for this dispatch per delivery-execution-coding-contract rule 7).
 
 ## Violation Signatures
 
@@ -70,6 +84,10 @@ Main agent rejects the closeout (routes to `delivery-orchestration-replan-contra
 | (c) | `files_modified` includes paths outside declared `touches` | Subagent overreach — route to replan |
 | (d) | `validable_outcome` paraphrased rather than verbatim | Brief not faithfully read — treat as `rejected`; re-dispatch with stronger brief injection |
 | (e) | Malformed YAML | Auto-retry **once** with parse-error hint in re-prompt; second malformation escalates to user (no unbounded retry loop) |
+| (f) | `lint_result: pass` without `lint_command_invoked` / `lint_exit_code` | Fabricated lint pass — escalate for human review (cheating signature, no auto-replan) |
+| (g) | `typecheck_result: pass` without `typecheck_command_invoked` / `typecheck_exit_code` | Fabricated typecheck pass — escalate for human review |
+| (h) | `neighbors_consulted: []` | Neighbors-unconsulted — route to replan with `neighbors_unconsulted` reason |
+| (i) | `applied_deltas` references unknown `rule_id` OR diverges from injected `discipline_deltas` | Contract tamper — reject as `rejected`; do not auto-replan |
 
 ## Ingestion Semantics — Scoped Out
 
@@ -90,6 +108,8 @@ The parent at `synapse/protocols/observability/synapse-observability-execution-t
 | Subagent writes correct file with wrong `attempt_number` | Filename collision detected by main agent counting existing closeouts for the slice |
 | `next_moves` references a nonexistent slice_id | replan-contract resolves; closeout-schema does not validate — treat as a loose proposal |
 | `files_modified` includes untracked files outside `touches` | Violation (c) — overreach; route to replan |
+| No applicable linter / typechecker in repo | Orchestrator `[PRE-FLIGHT]` sets `lint_result` / `typecheck_result` to `not_applicable` for the subagent. The worker MUST NOT self-declare `not_applicable` |
+| Pre-v2 legacy closeout on resume (missing `closeout_schema_version` or value `< 2`) | Orchestrator dual-mode intake treats v2-only fields as `not_applicable` markers; only violations (a)–(e) are evaluated. Preserves resumability across schema break |
 
 ## Failure Reporting
 

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Delivery Pipeline — Working Principle</title>
+<style>
+  :root {
+    --bg: #fafaf7;
+    --fg: #1c1c1c;
+    --muted: #5c5c5c;
+    --accent: #1f4e8a;
+    --accent-soft: #e6efff;
+    --border: #d4d4d4;
+    --code-bg: #f3f3ee;
+    --warn: #b85c00;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.55;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 6rem;
+  }
+  h1, h2, h3 { line-height: 1.25; }
+  h1 { font-size: 1.9rem; border-bottom: 2px solid var(--accent); padding-bottom: 0.4rem; margin-bottom: 0.2rem; }
+  h2 { font-size: 1.35rem; margin-top: 2.5rem; color: var(--accent); }
+  h3 { font-size: 1.1rem; margin-top: 1.5rem; }
+  .subtitle { color: var(--muted); margin: 0 0 2rem; font-style: italic; }
+  code, pre {
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.85rem;
+  }
+  code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 3px; }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1rem;
+    overflow-x: auto;
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0 1.5rem;
+    font-size: 0.9rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.55rem 0.7rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  th { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  tr:hover td { background: rgba(0,0,0,0.02); }
+  .stage {
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 4px;
+    padding: 0.9rem 1.2rem;
+    margin: 0.8rem 0;
+    background: white;
+  }
+  .stage h3 { margin-top: 0; color: var(--accent); }
+  .stage .role { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.4rem; }
+  .stage .gate {
+    margin-top: 0.6rem;
+    padding: 0.4rem 0.6rem;
+    background: #fff7e6;
+    border-left: 3px solid var(--warn);
+    font-size: 0.85rem;
+    color: var(--warn);
+    font-weight: 500;
+  }
+  .arrow { text-align: center; color: var(--accent); font-size: 1.3rem; margin: -0.2rem 0; }
+  .note {
+    background: var(--accent-soft);
+    border-left: 4px solid var(--accent);
+    padding: 0.6rem 0.9rem;
+    margin: 1rem 0;
+    font-size: 0.92rem;
+  }
+  .small { font-size: 0.85rem; color: var(--muted); }
+  ul.tight li { margin: 0.2rem 0; }
+</style>
+</head>
+<body>
+
+<h1>Delivery Pipeline — Customer → Green Build</h1>
+<p class="subtitle">Full working principle: actor model, stage flow, protocol injection, artifact map, resumability.</p>
+
+<h2>1. Actor model</h2>
+<p>Three contexts, three altitudes. Protocols are not actors — they are <em>system-prompt fragments</em> injected into whichever context needs that discipline.</p>
+
+<table>
+<tr><th>Context</th><th>Lives</th><th>Owns</th><th>Scope</th></tr>
+<tr>
+  <td><strong>Customer</strong></td>
+  <td>Outside the system</td>
+  <td>The goal, gate decisions</td>
+  <td>Approves / redirects at each handoff</td>
+</tr>
+<tr>
+  <td><strong>Main agent</strong></td>
+  <td>Top-level conversation, multi-turn, durable across compaction</td>
+  <td>Orchestration, all writer skills, plan-writer, plan-executor outer loop, filesystem audit trail</td>
+  <td>Stateful — owns <code>INDEX.md</code>, <code>STORIES.md</code>, <code>closeouts/</code>, <code>lessons.md</code>, <code>CHANGELOG.md</code></td>
+</tr>
+<tr>
+  <td><strong>Subagent</strong></td>
+  <td>One-shot dispatch from main, exits at closeout</td>
+  <td>Inner TDD/Ralph loop for one slice</td>
+  <td>Stateless across slices — fresh context per dispatch</td>
+</tr>
+</table>
+
+<h2>2. Stage flow (vertical-slice pipeline)</h2>
+
+<div class="stage">
+  <div class="role">Skill: delivery-program-program-orchestrator (proposed, top of stack)</div>
+  <h3>Stage 0 — Intake + shape detection</h3>
+  <p>Customer drops PRD / spec / chat-intent goal. Orchestrator classifies the request as vertical-slice or horizontal/per-module work and decides which upstream stages to skip vs. require.</p>
+  <ul class="tight">
+    <li>Vague intent → routes to Stage 1 discovery</li>
+    <li>PRD present → skips to Stage 2</li>
+    <li>Spec + arch + scope already on disk → skips to Stage 5</li>
+  </ul>
+</div>
+
+<div class="arrow">▼</div>
+
+<div class="stage">
+  <div class="role">Inline interview node (orchestrator or plan-writer [Q])</div>
+  <h3>Stage 1 — Discovery / clarification</h3>
+  <p>3–5 targeted questions until the minimum chat-intent schema is filled: <code>problem</code>, <code>in-scope</code>, <code>out-of-scope</code>, <code>constraints</code>.</p>
+  <div class="gate">GATE — customer confirms the framing.</div>
+</div>
+
+<div class="arrow">▼</div>
+
+<div class="stage">
+  <div class="role">Skill: /docs-spec-writer</div>
+  <h3>Stage 2 — Spec authoring</h3>
+  <p>Produces <code>SPEC.md</code> — FR-NNN list, NFRs, glossary, actors, acceptance criteria.</p>
+  <div class="gate">GATE — customer reviews SPEC.md, approves or revises.</div>
+</div>
+
+<div class="arrow">▼</div>
+
+<div class="stage">
+  <div class="role">Skill: /docs-architecture-writer</div>
+  <h3>Stage 3 — Architecture</h3>
+  <p>Produces <code>architecture.md</code> — tech stack, component boundaries, data flow, integration approach.</p>
+  <p class="small"><strong>Load-bearing:</strong> <code>foundations: [auth, db, logger]</code> frontmatter field. Plan-writer's [F] foundation cascade reads this structurally — do not omit.</p>
+  <div class="gate">GATE — customer signs off on tech stack.</div>
+</div>
+
+<div class="arrow">▼</div>
+
+<div class="stage">
+  <div class="role">Skill: /docs-scope-writer</div>
+  <h3>Stage 4 — Scope / phasing</h3>
+  <p>Produces <code>scope.md</code> — Phase 1 (TAG=AUTH), Phase 2 (TAG=BILL), and so on. Each phase corresponds to one plan-writer run.</p>
+  <div class="gate">GATE — customer picks the TAG to plan now.</div>
+</div>
+
+<div class="arrow">▼</div>
+
+<div class="stage">
+  <div class="role">Skill: /delivery-plan-writer  --tag AUTH</div>
+  <h3>Stage 5 — Vertical-slice planning</h3>
+  <p>Flow: <code>[NEW] → [START] → [H] → [F] → [D] → [M] → [END]</code></p>
+  <ul class="tight">
+    <li><strong>[START]</strong> pre-flight — tag, input-mode, writable directory</li>
+    <li><strong>[H]</strong> horizontal doc discovery — reads <code>architecture.md</code> / NFRs / scope; surfaces CONFLICT blocks rather than silently resolving</li>
+    <li><strong>[F]</strong> foundation cascade — declared → architecture <code>foundations:</code> → ≥60% cross-FR heuristic → <code>none-with-risk</code>; records <code>foundation_source</code> in STORIES.md</li>
+    <li><strong>[D]</strong> decompose — 4-required + 6-extension frontmatter; granularity gates (HARD floor, SOFT cap = 8 files, ≤30 stories, no 1-story decomposition); topo-sort + cycle detect</li>
+    <li><strong>[M]</strong> manifest assembly — STORIES.md + atomic batch write of all story files</li>
+  </ul>
+  <p>Output: <code>.delivery/stories/AUTH-NNN-*.md</code> + <code>STORIES.md</code> (frontmatter: <code>tag</code>, <code>spec_hash</code>, <code>foundation_source</code>).</p>
+  <div class="gate">GATE — customer reviews STORIES.md graph, approves.</div>
+</div>
+
+<div class="arrow">▼</div>
+
+<div class="stage">
+  <div class="role">Skill: /delivery-orchestration-plan-executor</div>
+  <h3>Stage 6 — Plan execution — Ralph outer loop</h3>
+  <p>Flow: <code>[PRE-FLIGHT] → [PICK-NEXT-SLICE] → [DISPATCH] → [INGEST] → [REPLAN] → …</code></p>
+  <p>Per-slice (sequential by default):</p>
+  <ul class="tight">
+    <li><strong>[DISPATCH]</strong> builds the subagent system prompt — slice body + 3 worker-side protocols injected via <code>{{worker_protocols}}</code> slot + per-story <code>discipline_deltas</code></li>
+    <li><strong>Subagent</strong> runs inner Ralph/TDD loop: red → green → refactor up to iteration cap (default 10); emits closeout YAML via dual-target atomic write</li>
+    <li><strong>[INGEST]</strong> reads closeout, updates INDEX.md status</li>
+    <li><strong>[REPLAN]</strong> per replan-contract: green → next slice; blocked → replan or escalate; <code>plan_drift_detected</code> → re-shape stories; <code>M=3</code> replan cap → escalate</li>
+  </ul>
+  <p>Termination conditions: <code>all_slices_green</code> | <code>escalated_blocked</code> | <code>escalated_replan_cap</code> | <code>user_interrupt</code></p>
+</div>
+
+<div class="arrow">▼</div>
+
+<div class="stage">
+  <div class="role">Format: references/final-summary-format.md</div>
+  <h3>Stage 7 — Termination + handoff summary</h3>
+  <p>Surfaces exit reason, slice rollup, slice detail, lessons tail (5–10 verbatim), pointers (INDEX.md, closeouts/, lessons.md, CHANGELOG.md), and a single-sentence next move mapped from the exit reason.</p>
+  <div class="gate">GATE — customer decides merge / escalate / re-shape.</div>
+</div>
+
+<h2>3. Protocol injection map</h2>
+<p>Which protocol enters which context, at which stage, why.</p>
+
+<table>
+<tr><th>Protocol</th><th>Injected into</th><th>Stage</th><th>Why</th></tr>
+<tr>
+  <td><code>delivery-execution-slice-contract</code></td>
+  <td>Subagent system prompt (also read by plan-writer at [D] for emit-format)</td>
+  <td>5 [D], 6 [DISPATCH]</td>
+  <td>Defines a slice — required fields, size bounds, violation signatures. Plan-writer emits to it; worker is measured by it.</td>
+</tr>
+<tr>
+  <td><code>delivery-execution-tdd-contract</code></td>
+  <td>Subagent system prompt</td>
+  <td>6 [DISPATCH]</td>
+  <td>Inner Ralph/TDD loop discipline — test-first, iterate-to-green, cap-aware-blocked.</td>
+</tr>
+<tr>
+  <td><code>delivery-execution-coding-contract</code></td>
+  <td>Subagent system prompt</td>
+  <td>6 [DISPATCH]</td>
+  <td>Code-quality discipline — YAGNI, neighbors-first, no-dead-code, fail-loudly, green-tree-exit, security-tripwires.</td>
+</tr>
+<tr>
+  <td><code>delivery-orchestration-dispatch-contract</code></td>
+  <td>Main agent (plan-executor body)</td>
+  <td>6 [DISPATCH]</td>
+  <td>8 mandatory prompt slots, 4 pre-flight checks, parallel-escape conditions, collision check.</td>
+</tr>
+<tr>
+  <td><code>delivery-orchestration-closeout-schema</code></td>
+  <td>Both — main reads, subagent emits</td>
+  <td>6 [INGEST]</td>
+  <td>YAML schema for the dual-target atomic-write closeout (file before inline).</td>
+</tr>
+<tr>
+  <td><code>delivery-orchestration-replan-contract</code></td>
+  <td>Main agent (plan-executor body)</td>
+  <td>6 [REPLAN]</td>
+  <td>Firing signals, allowed/forbidden mutations, mandatory CHANGELOG audit, M=3 escalation bound.</td>
+</tr>
+</table>
+
+<div class="note">
+The slice-contract is the load-bearing handshake between the two delivery skills. Plan-writer emits stories that pass the slice-contract validator the executor runs at pre-dispatch. Get this contract wrong on either side and the executor halts before the first slice ships.
+</div>
+
+<h2>4. Artifact map (filesystem state across compactions)</h2>
+
+<table>
+<tr><th>Path</th><th>Owner</th><th>Read by</th><th>Purpose</th></tr>
+<tr><td><code>SPEC.md</code></td><td>Stage 2</td><td>Stage 5 [START], [D]</td><td>FR / NFR source of truth</td></tr>
+<tr><td><code>architecture.md</code></td><td>Stage 3</td><td>Stage 5 [H], [F]</td><td>Horizontal doc; <code>foundations:</code> field drives cascade</td></tr>
+<tr><td><code>scope.md</code></td><td>Stage 4</td><td>Stage 5 [H]; orchestrator</td><td>Phasing, TAG definitions</td></tr>
+<tr><td><code>.delivery/config.yaml</code></td><td>Repo-level</td><td>Stage 5 [D], Stage 6</td><td>Granularity thresholds, iteration caps</td></tr>
+<tr><td><code>.delivery/stories/TAG-NNN-*.md</code></td><td>Stage 5 [M]</td><td>Stage 6 [DISPATCH]</td><td>Story = one subagent dispatch payload</td></tr>
+<tr><td><code>.delivery/stories/STORIES.md</code></td><td>Stage 5 [M]</td><td>Stage 6 [PRE-FLIGHT]</td><td>Plan manifest (frontmatter: tag, spec_hash, foundation_source)</td></tr>
+<tr><td><code>.delivery/plan/INDEX.md</code></td><td>Stage 6</td><td>Every iteration</td><td>Status walk — which slice next</td></tr>
+<tr><td><code>.delivery/closeouts/TAG-NNN-attempt-K.yaml</code></td><td>Subagent (file half of dual-target write)</td><td>Stage 6 [INGEST]</td><td>Closeout trail</td></tr>
+<tr><td><code>.delivery/lessons.md</code></td><td>Stage 6 [INGEST] append</td><td>Stage 7 summary; future lessons→priors loop</td><td>Verbatim lesson tail</td></tr>
+<tr><td><code>.delivery/plan/CHANGELOG.md</code></td><td>Stage 6 [REPLAN]</td><td>Audit</td><td>Every plan mutation with rationale</td></tr>
+</table>
+
+<h2>5. Resumability invariants</h2>
+<p>Both stateful skills emit <code>Position: [node-id] — &lt;context&gt;</code> every turn. On context compaction the next turn re-reads:</p>
+<ol>
+  <li>Skill state file (<code>meta.yaml</code> or equivalent) → which node was active</li>
+  <li>Filesystem state (INDEX.md / STORIES.md / closeouts/) → where the work is</li>
+  <li>Resume at the recorded node with no re-litigation</li>
+</ol>
+<p>This is why the outer loop has to live in a main-agent skill, not a subagent — subagents have no Position to recover to.</p>
+
+<h2>6. The horizontal / per-module pipeline (alternate path)</h2>
+<p>When Stage 0 detects refactor / migration / single-module modernization (not vertical-slice-shaped), the orchestrator routes to the horizontal pipeline instead:</p>
+<pre>spec → architecture → /docs-design-writer → /docs-implementation-writer
+     → /docs-test-plan-writer → /code-build-planner → (per-task subagent dispatch)</pre>
+<p>Same gates between stages, different decomposition grammar — horizontal/per-module rather than vertical/per-slice. The orchestrator picks one path or the other based on input shape; never both, never mixed. Mixing produces two parallel decompositions of the same code.</p>
+
+<h2>7. Two loops, one nest</h2>
+<p><strong>Inner loop</strong> (Ralph / TDD) — lives in the subagent. Dispatch prompt carries the tdd-contract; subagent runs red → green → refactor up to the iteration cap. One slice, one subagent, one inner-loop run.</p>
+<p><strong>Outer loop</strong> (orchestration) — lives in the main agent. <code>[PICK-NEXT-SLICE] → [DISPATCH] → [INGEST] → [REPLAN]</code> across all slices in the manifest. Stateful, multi-turn, escalation-capable. Cannot move into a subagent — subagents are one-shot, can't ask the user, can't recover Position on compaction.</p>
+
+<p class="small" style="margin-top: 3rem; text-align: center; color: var(--muted);">Snapshot: 2026-06-11 — ai-synapse delivery domain.</p>
+
+</body>
+</html>

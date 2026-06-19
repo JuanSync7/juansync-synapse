@@ -1,6 +1,6 @@
 # Package skills as .zip for Claude Desktop
 # Usage: .\zip-skills.ps1              (all skills)
-#        .\zip-skills.ps1 patch-docs   (one skill)
+#        .\zip-skills.ps1 docs-doc-patcher   (one skill)
 
 param([string]$SkillName = "")
 

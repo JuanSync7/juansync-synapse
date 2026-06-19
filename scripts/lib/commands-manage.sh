@@ -78,6 +78,27 @@ cmd_clean() {
                 _lockfile_drop_artifact "skill" "$_name"
                 count=$((count + 1))
             fi
+        elif [ -d "$link" ] && grep -q '^alias-of: ' "$link/SKILL.md" 2>/dev/null; then
+            # Materialized alias dir (generated SKILL.md + companion symlinks into this repo,
+            # or dangling after a repo move). Remove if its companions point at us or nowhere.
+            local probe ours=true
+            for probe in "$link"/*; do
+                [ -L "$probe" ] || continue
+                local preal
+                preal="$(readlink "$probe")"
+                if [[ "$preal" != "$SKILLS_DIR"* ]] && [ -e "$probe" ]; then
+                    ours=false
+                    break
+                fi
+            done
+            if [ "$ours" = true ]; then
+                local _name
+                _name="$(basename "$link")"
+                rm -rf "$link"
+                echo "  rm  $_name (alias)"
+                _lockfile_drop_artifact "skill-alias" "$_name"
+                count=$((count + 1))
+            fi
         fi
     done
 

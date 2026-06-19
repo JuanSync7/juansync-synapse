@@ -26,7 +26,7 @@ This is **breadth-first and structural-only**. It does not run LLM-graded qualit
 |-------------------------|-------------|
 | Validate ONE artifact (skill / agent / protocol / tool / pathway) | `/synapse-router-artifact-gatekeeper <artifact-path>` |
 | Build a new artifact from scratch | `/synapse-router-artifact-creator` |
-| Improve an existing artifact's quality score | `/synapse-skill-skill-improver` |
+| Improve an existing artifact's quality score | `/synapse-skill-improver` |
 | Generate an EVAL.md for an artifact | `/synapse-router-eval-writer` |
 | Validate an in-tree (`src/` or `synapse/`) artifact | `/synapse-router-artifact-gatekeeper` — this skill is specifically for submodule suites |
 
@@ -91,9 +91,9 @@ For each discovered artifact, parse frontmatter and record `{ type, path, name }
 
 ## Phase 3 — Per-artifact structural checks
 
-> **Read [`../../skill/synapse-router-artifact-gatekeeper/SKILL.md`](../../skill/synapse-router-artifact-gatekeeper/SKILL.md)** Phase 2 — reuse the structural-tier tables for each artifact type. The per-type checklists are defined there in one place; this skill applies them.
+> **Read [`../../skills/synapse-router-artifact-gatekeeper/SKILL.md`](../../skills/synapse-router-artifact-gatekeeper/SKILL.md)** Phase 2 — reuse the structural-tier tables for each artifact type. The per-type checklists are defined there in one place; this skill applies them.
 
-> **Read [`../../../../taxonomy/SKILL_TAXONOMY.md`](../../../../taxonomy/SKILL_TAXONOMY.md), [`../../../../taxonomy/AGENT_TAXONOMY.md`](../../../../taxonomy/AGENT_TAXONOMY.md), [`../../../../taxonomy/PROTOCOL_TAXONOMY.md`](../../../../taxonomy/PROTOCOL_TAXONOMY.md), [`../../../../taxonomy/TOOL_TAXONOMY.md`](../../../../taxonomy/TOOL_TAXONOMY.md), and [`../../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../../taxonomy/PATHWAY_TAXONOMY.md)** once at the start of this phase, so taxonomy values can be checked locally per artifact without re-reading.
+> **Read [`../../../taxonomy/SKILL_TAXONOMY.md`](../../../taxonomy/SKILL_TAXONOMY.md), [`../../../taxonomy/AGENT_TAXONOMY.md`](../../../taxonomy/AGENT_TAXONOMY.md), [`../../../taxonomy/PROTOCOL_TAXONOMY.md`](../../../taxonomy/PROTOCOL_TAXONOMY.md), [`../../../taxonomy/TOOL_TAXONOMY.md`](../../../taxonomy/TOOL_TAXONOMY.md), and [`../../../taxonomy/PATHWAY_TAXONOMY.md`](../../../taxonomy/PATHWAY_TAXONOMY.md)** once at the start of this phase, so taxonomy values can be checked locally per artifact without re-reading.
 
 **Universal checks per artifact** (applied via the gatekeeper Phase 2 table for the artifact's type):
 - Required frontmatter fields all present.

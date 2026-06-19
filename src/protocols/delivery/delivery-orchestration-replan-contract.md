@@ -6,7 +6,7 @@ subdomain: orchestration
 subject: replan
 kind: contract
 version: 1
-status: draft
+status: stable
 tags: [replan, plan-mutation, audit-trail, changelog, escalation-bound, append-only-lessons]
 ---
 
@@ -80,7 +80,7 @@ This prevents false-positive halts when the user manually corrects the plan betw
 
 **M=3 replan cycles on a single slice** is the default escalation threshold. Hitting M cycles on the same slice signals the plan is fundamentally misframed for that slice — main agent halts and escalates to the user with the message: *"plan likely fundamentally misframed."*
 
-**Skill-overridable** (parallel to TC-B1 — the TDD iteration cap is also skill-overridable). The orchestrator skill (`delivery-orchestration-plan-executor`) MAY override M at runtime via the protocol-injection prompt. NOT a hard protocol constant. Consuming skills with different needs (auto-research, e.g., may tolerate more replan cycles) override explicitly rather than fork the protocol.
+**Skill-overridable** (parallel to TC-B1 — the TDD iteration cap is also skill-overridable). The orchestrator skill (`delivery-orchestration-plan-executor`) MAY override M at runtime via the protocol-injection prompt. NOT a hard protocol constant. Consuming skills with different needs (optimization-process-researcher, e.g., may tolerate more replan cycles) override explicitly rather than fork the protocol.
 
 **M is distinct from N**: N (per `delivery-orchestration-dispatch-contract`) counts raw dispatch attempts on a slice (cap N=2). M counts replan-contract firings on the same slice across all attempts. A slice can hit M without hitting N if each attempt triggers a replan that re-frames rather than re-dispatches.
 
@@ -126,7 +126,7 @@ This protocol owns the full **ingest-to-mutation** flow:
 
 ## Failure Reporting
 
-Violations of this protocol use the `synapse-observability-failure-reporting-schema` format:
+When a violation is detected, the main agent MUST immediately emit the following tag using the `synapse-observability-failure-reporting-schema` format, then halt or escalate per the response column in the Violation Signatures table:
 
 ```
 PROTOCOL FAILURE: delivery-orchestration-replan-contract <slice_id> [violation_id reason]

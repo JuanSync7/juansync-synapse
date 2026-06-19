@@ -175,7 +175,7 @@ Exit: pass → [PICK-NEXT-SLICE]; fail → halt with specific diagnostic.
 | `synapse-observability-execution-trace` | consumes (via closeout-schema) | Base schema that closeout-schema extends — do not fork |
 | `write-story` | consumes upstream output | Produces FR-NNN ticket directories; plan-executor reads them as authoritative WP list when present |
 | `parallel-agents-dispatch` | retirement relationship | This skill is the canonical sequential replacement; parallel-agents-dispatch retained only for explicit throughput-over-discipline use cases |
-| `build-plan`, `write-implementation-docs` | upstream producers | May produce plan-shaped artifacts consumed at [INGEST-PLAN] |
+| `code-build-planner`, `docs-implementation-writer` | upstream producers | May produce plan-shaped artifacts consumed at [INGEST-PLAN] |
 
 ---
 

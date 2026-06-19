@@ -19,7 +19,7 @@ The agent would be dispatched by any `*-creator` skill after synapse creation/up
 
 - New agent definition in `src/agents/synapse/` (or appropriate domain)
 - Each `*-creator` skill gains a final step: dispatch the README agent
-- Also useful for `synapse-skill-skill-improver` when changes affect frontmatter (description, intent)
+- Also useful for `synapse-skill-improver` when changes affect frontmatter (description, intent)
 - The agent reads the synapse and the README — no other context needed
 
 ## Why

@@ -1,12 +1,12 @@
 ---
 name: delivery-orchestration-dispatch-contract
-description: "Sequential-by-default subagent dispatch contract — 8 mandatory prompt slots, 4 pre-dispatch checks, explicit model selection, parallel escape hatch with three named conditions"
+description: "Sequential-by-default subagent dispatch contract — 8 mandatory prompt slots, 5 pre-dispatch checks, explicit model selection, parallel escape hatch with three named conditions"
 domain: delivery
 subdomain: orchestration
 subject: dispatch
 kind: contract
-version: 1
-status: draft
+version: 2
+status: stable
 tags: [dispatch, sequential-default, prompt-assembly, pre-dispatch-checks, escape-hatch]
 ---
 
@@ -37,14 +37,15 @@ This is the main agent's pre-flight checklist. Nothing may be dispatched unless 
    | `{{dependency_closeouts}}` | Distilled summaries (validation_result + tests_added paths + lessons summary) for closeouts of slices in `depends_on` — NOT full bodies | Missing → subagent re-invents pinned contracts (contract drift) |
    | `{{prior_attempt_closeouts}}` | Closeouts of prior attempts on THIS slice (if `attempt_number > 1`) | Missing → same failing approach retried verbatim (loop death) |
    | `{{lessons_md}}` | Full `.delivery/lessons.md` content (curated at write-time by replan-contract; no read-time filtering) | Missing → no compounding across slices; each subagent starts cold |
-   | `{{worker_protocols}}` | Bodies of `delivery-execution-slice-contract`, `delivery-execution-tdd-contract`, `delivery-orchestration-closeout-schema` | Missing → subagent doesn't know it owes a closeout, test-first discipline, or iteration cap |
+   | `{{worker_protocols}}` | Bodies of `delivery-execution-slice-contract`, `delivery-execution-tdd-contract`, `delivery-execution-coding-contract`, `delivery-orchestration-closeout-schema` | Missing → subagent doesn't know it owes a closeout, test-first discipline, an iteration cap, or the code-quality discipline (YAGNI, neighbors-first, no-dead-code, fail-loudly, green-tree-exit, security-tripwires) |
    | `{{model}}` | Explicit model identifier | Missing → cost surprises and non-reproducible runs |
 
-5. **Pre-dispatch checks (all four, in order, every dispatch):**
+5. **Pre-dispatch checks (all five, in order, every dispatch):**
    1. **Slice-contract validation** — the chosen slice file passes `delivery-execution-slice-contract`. On malformation: refuse dispatch; route to replan-contract.
    2. **Dependency check** — every slice listed in this slice's `depends_on` has a `validation_result: pass` closeout. On unmet dependency: route to replan-contract.
    3. **No-in-flight check** — sequential invariant. Confirm no subagent is currently executing. On in-flight: halt and escalate.
-   4. **Slot completeness** — all 8 prompt slots are populated. On any missing slot: abort (do not launch a partial brief).
+   4. **Slot completeness** — all 8 prompt slots are populated. On any missing slot: abort (do not launch a partial brief). In particular, `{{worker_protocols}}` MUST contain all four protocol bodies; absence of `delivery-execution-coding-contract` in the rendered injection is a halt-loud condition, not a soft warn.
+   5. **Coding-discipline collision check** — exactly one coding-discipline protocol body is present in `{{worker_protocols}}`. If multiple variants are detected (e.g., a vestigial discipline body alongside `delivery-execution-coding-contract`, or two competing coding-contract drafts), halt-loud and escalate to user. Silent acceptance of a collision would let conflicting code-quality rules reach the subagent.
 
 ## Violation Signatures
 
@@ -55,6 +56,8 @@ This is the main agent's pre-flight checklist. Nothing may be dispatched unless 
 | (c) | Missing any prompt slot | Abort — never launch with a partial brief |
 | (d) | Dispatch on a slice with unresolved `depends_on` | Route to replan-contract |
 | (e) | Parallel dispatch without all three escape-hatch conditions | Revert to sequential + warn the user |
+| (f) | `{{worker_protocols}}` rendered without `delivery-execution-coding-contract` body | Halt-loud — never dispatch without code-quality discipline |
+| (g) | Multiple coding-discipline variants present in `{{worker_protocols}}` | Halt-loud + escalate to user |
 
 ## Slot Design Rationale
 
@@ -64,8 +67,8 @@ Passing full closeout bodies inflates prompt budget quadratically as the run gro
 ### `{{lessons_md}}` — passed whole, no section-filtering
 Relevance scoring at read-time is judgment the main agent should not spend per dispatch. Curation happens at **write-time** in `delivery-orchestration-replan-contract` — by the time `lessons.md` is injected, it is already the curated signal. Dump it whole.
 
-### `{{worker_protocols}}` — three bodies, not by reference
-The subagent runs in a fresh context with no access to the main agent's loaded protocols. Bodies MUST be inlined into the prompt. Reference-only would force the subagent to load files it cannot reach.
+### `{{worker_protocols}}` — four bodies, not by reference
+The subagent runs in a fresh context with no access to the main agent's loaded protocols. Bodies MUST be inlined into the prompt: `delivery-execution-slice-contract`, `delivery-execution-tdd-contract`, `delivery-execution-coding-contract`, `delivery-orchestration-closeout-schema`. Reference-only would force the subagent to load files it cannot reach.
 
 ## "Rolling-ball" Sequential Rationale
 
@@ -77,9 +80,9 @@ The subagent runs in a fresh context with no access to the main agent's loaded p
 
 The escape hatch exists for the rare case of truly independent slices — keeping the option open without making it the path of least resistance.
 
-## Reusability — `auto-research` Adoption
+## Reusability — `optimization-process-researcher` Adoption
 
-This contract's shape (8-slot table + sequential gate + model mandate) is intentionally extracted as a reusable shape, not bespoke to `delivery-orchestration-plan-executor`. `auto-research` differs in intent (optimize-same-target vs. build-forward) but shares the same dispatch-safety requirements and can adopt this contract unchanged when ready.
+This contract's shape (8-slot table + sequential gate + model mandate) is intentionally extracted as a reusable shape, not bespoke to `delivery-orchestration-plan-executor`. `optimization-process-researcher` differs in intent (optimize-same-target vs. build-forward) but shares the same dispatch-safety requirements and can adopt this contract unchanged when ready.
 
 ## Edge Cases
 
@@ -99,7 +102,7 @@ When a violation of this protocol is detected, the main agent MUST immediately e
 PROTOCOL FAILURE: delivery-orchestration-dispatch-contract <slice_id> [violation_id reason]
 ```
 
-Where `violation_id` is the letter from the Violation Signatures table (a–e) and `reason` is a one-line description of the unmet condition.
+Where `violation_id` is the letter from the Violation Signatures table (a–g) and `reason` is a one-line description of the unmet condition.
 
 ## Injection
 

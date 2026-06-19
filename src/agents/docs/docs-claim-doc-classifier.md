@@ -11,7 +11,7 @@ tags: [classifier, docs, claim, read-only]
 
 # docs-claim-doc-classifier
 
-Read-only entry-gate classifier for the `docs-claim-doc-shrinker` workflow. Dispatched at the shrinker's `audit` entry, before any extraction, judging, or rewriting work. Given a markdown file's full content and path, the agent returns a structural genre classification (one of six categories), an optional claim sub-type when the genre is claim-based, and a confidence value. Its output gates the entire downstream workflow: if the shrinker's `classifier_confidence_floor` is not met, or the category is not `claim-based`, no further agents run. The agent never writes, never re-classifies, never assesses quality.
+Read-only entry-gate classifier for the `docs-claim-shrinker` workflow. Dispatched at the shrinker's `audit` entry, before any extraction, judging, or rewriting work. Given a markdown file's full content and path, the agent returns a structural genre classification (one of six categories), an optional claim sub-type when the genre is claim-based, and a confidence value. Its output gates the entire downstream workflow: if the shrinker's `classifier_confidence_floor` is not met, or the category is not `claim-based`, no further agents run. The agent never writes, never re-classifies, never assesses quality.
 
 ## Input Contract
 
@@ -51,7 +51,7 @@ Field semantics:
 - `schema_version` — string, always `"1"` at this revision.
 - `category` — one of the six closed enum values defined in Behavior rule 3.
 - `sub_type` — non-null only when `category` is `claim-based`, or when `category=mixed` and a primary claim region is detectable (rule 4). Otherwise `null`.
-- `confidence` — calibrated certainty in `category`. The caller compares against its own `classifier_confidence_floor` (default `0.6`, defined in `src/skills/docs/docs-claim-doc-shrinker/references/thresholds.yaml`).
+- `confidence` — calibrated certainty in `category`. The caller compares against its own `classifier_confidence_floor` (default `0.6`, defined in `src/skills/docs/docs-claim-shrinker/references/thresholds.yaml`).
 
 No `reasoning_summary`, no proposed rewrites, no quality assessment, no contradiction detection — those are out of scope by design.
 
@@ -83,4 +83,4 @@ A clear failure report is more valuable than a partial or ambiguous classificati
 
 ## Dispatching Skill
 
-Dispatched by `docs-claim-doc-shrinker` at its `audit` entry. The shrinker passes `file_content` and `file_path`, reads `classifier_output`, applies its `classifier_confidence_floor` and category-allowed-list policy, and either proceeds to dispatch `docs-claim-doc-extractor` (when `category=claim-based` and confidence ≥ floor) or refuses with a user-facing message. The classifier itself never speaks to the user.
+Dispatched by `docs-claim-shrinker` at its `audit` entry. The shrinker passes `file_content` and `file_path`, reads `classifier_output`, applies its `classifier_confidence_floor` and category-allowed-list policy, and either proceeds to dispatch `docs-claim-doc-extractor` (when `category=claim-based` and confidence ≥ floor) or refuses with a user-facing message. The classifier itself never speaks to the user.

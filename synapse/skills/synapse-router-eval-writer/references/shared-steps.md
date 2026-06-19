@@ -61,7 +61,7 @@ One-line purpose: Default-deny overwrite of an existing EVAL artifact at the tar
 1. Check whether a file exists at `$EVAL_PATH`.
 2. If no → return; nothing to guard.
 3. If yes and `$FORCE == false` → fail loudly with:
-   `FAIL: EVAL.md exists at <path>. Use --force to overwrite, or run /synapse-skill-skill-improver to refine via measurement.`
+   `FAIL: EVAL.md exists at <path>. Use --force to overwrite, or run /synapse-skill-improver to refine via measurement.`
 4. If yes and `$FORCE == true` → log "overwriting existing EVAL at <path>" and return.
 
 **Failure modes:**

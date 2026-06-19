@@ -137,8 +137,8 @@ schema_version: "1"
 
 | File | Loaded at | Purpose |
 |---|---|---|
-| `src/skills/docs/docs-claim-doc-shrinker/references/claim-schema.md` | Agent prompt | Canonical claim object schema — shared source of truth across all 5 artifacts |
-| `src/skills/docs/docs-claim-doc-shrinker/references/thresholds.yaml` | Agent prompt (if needed) | Not directly consumed by extractor; referenced by skill dispatch |
+| `src/skills/docs/docs-claim-shrinker/references/claim-schema.md` | Agent prompt | Canonical claim object schema — shared source of truth across all 5 artifacts |
+| `src/skills/docs/docs-claim-shrinker/references/thresholds.yaml` | Agent prompt (if needed) | Not directly consumed by extractor; referenced by skill dispatch |
 
 ---
 
@@ -147,7 +147,7 @@ schema_version: "1"
 | Artifact | Direction | Contract |
 |---|---|---|
 | `docs-claim-doc-classifier` | Consumes (upstream) | Shrinker runs classifier before extractor; extractor is only called when `category=claim-based`. Classifier output not injected into extractor — extractor operates on raw content. |
-| `docs-claim-doc-shrinker` | Produces for | Extractor output (`claims`, `contradictions`, `redundancies`) feeds shrinker's audit phase → written to `.shrink/<file>.audit.md` |
+| `docs-claim-shrinker` | Produces for | Extractor output (`claims`, `contradictions`, `redundancies`) feeds shrinker's audit phase → written to `.shrink/<file>.audit.md` |
 | `docs-claim-doc-writer` | Produces for | `kept_claims` (filtered subset of extractor's `claims` list) is the primary writer input in the compress phase |
 | `docs-claim-claim-judge` | Produces for (indirectly) | Judge receives individual `Claim` objects; the claim schema is defined by extractor output |
 

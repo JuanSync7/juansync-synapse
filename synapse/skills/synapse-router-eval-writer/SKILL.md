@@ -36,7 +36,7 @@ The four flows are asymmetric by design:
 - Fall back to baked-in criteria if a gatekeeper checklist file is missing — fail loud with the unresolved Load path; no silent fallback
 
 ## Wrong-Tool Detection
-- **Improving a skill against an existing EVAL.md** → redirect to `/synapse-skill-skill-improver <path>`
+- **Improving a skill against an existing EVAL.md** → redirect to `/synapse-skill-improver <path>`
 - **Certifying an artifact for promotion** → redirect to `/synapse-router-artifact-gatekeeper <path>`
 - **Brainstorming what eval to write** → redirect to `/synapse-router-artifact-brainstormer`
 - **Path points at an existing EVAL.md, not the source artifact** → clarify and redirect to source artifact path
@@ -81,7 +81,7 @@ Do:
   3. If `$ARTIFACT_PATH` missing → prompt for it
   4. Verify `$ARTIFACT_PATH` exists and matches `type-config[$TYPE].artifact_shape` (directory vs flat file); fail with type/path mismatch hint on miss
   5. Read source frontmatter — extract artifact name only; do NOT validate taxonomy values
-  6. Resolve target eval path via `type-config[$TYPE].output_path_shape` + `output_filename`; if a file already exists at that path, fail with: "EVAL.md exists; use `--force` to overwrite or `/synapse-skill-skill-improver` to refine via measurement"
+  6. Resolve target eval path via `type-config[$TYPE].output_path_shape` + `output_filename`; if a file already exists at that path, fail with: "EVAL.md exists; use `--force` to overwrite or `/synapse-skill-improver` to refine via measurement"
   7. Load EXACTLY ONE `references/flow-<TYPE>.md`
   8. Jump to that flow's `[START]`
 Don't:
@@ -116,8 +116,8 @@ Exit signal: file path + tier-count summary (e.g., "Wrote EVAL.md with 12 EVAL-S
 
 **Valid invocation (skill):**
 ```
-/synapse-router-eval-writer skill synapse/skills/synapse-skill-skill-improver
-→ Wrote synapse/skills/synapse-skill-skill-improver/EVAL.md with 14 EVAL-S, 9 EVAL-O, 6 test prompts
+/synapse-router-eval-writer skill synapse/skills/synapse-skill-improver
+→ Wrote synapse/skills/synapse-skill-improver/EVAL.md with 14 EVAL-S, 9 EVAL-O, 6 test prompts
 ```
 
 **Invalid `$TYPE`:**
@@ -137,5 +137,5 @@ Exit signal: file path + tier-count summary (e.g., "Wrote EVAL.md with 12 EVAL-S
 ```
 /synapse-router-eval-writer skill synapse/skills/synapse-router-artifact-gatekeeper
 → FAIL: EVAL.md exists at synapse/skills/synapse-router-artifact-gatekeeper/EVAL.md.
-  Use --force to overwrite, or /synapse-skill-skill-improver to refine via measurement.
+  Use --force to overwrite, or /synapse-skill-improver to refine via measurement.
 ```
