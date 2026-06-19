@@ -73,6 +73,7 @@ editing RTL, and append the lesson to a project `DV_RULES.md`.
 
 ## Provenance & status
 Harvested 2026-05 from the MIT-licensed CoreSmith repo's prompt/skill library and
-made vendor-neutral. Core skill (SKILL.md + references + rules) is complete;
-formal `EVAL.md`, `modes.yaml`, and gatekeeper sign-off are pending — run through
-`synapse-skill-improver` / `synapse-gatekeeper` to promote.
+made vendor-neutral. Core skill (SKILL.md + references + rules) and `EVAL.md` are
+complete; a measured eval score and gatekeeper sign-off are pending — run
+`/synapse-skill-improver` to score, then `/synapse-router-artifact-gatekeeper` to
+promote from `draft` to `stable`.
